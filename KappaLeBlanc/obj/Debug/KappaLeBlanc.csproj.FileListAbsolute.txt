@@ -1,0 +1,11 @@
+C:\Users\User\Documents\Arktos\Kappa\Reverse_Katarina\bin\Debug\EloBuddy.dll
+C:\Users\User\Documents\Arktos\Kappa\Reverse_Katarina\bin\Debug\EloBuddy.SDK.dll
+C:\Users\User\Documents\Arktos\Kappa\Reverse_Katarina\bin\Debug\SharpDX.Direct3D9.dll
+C:\Users\User\Documents\Arktos\Kappa\Reverse_Katarina\bin\Debug\SharpDX.dll
+C:\Users\User\Documents\Arktos\Kappa\Reverse_Katarina\bin\Debug\Newtonsoft.Json.dll
+C:\Users\User\Documents\Arktos\Kappa\Reverse_Katarina\obj\Debug\KappaLeBlanc.csprojResolveAssemblyReference.cache
+C:\Users\User\Documents\Arktos\Kappa\Reverse_Katarina\bin\Debug\KappaLeBlanc.exe.config
+C:\Users\User\Documents\Arktos\Kappa\Reverse_Katarina\bin\Debug\KappaLeBlanc.exe
+C:\Users\User\Documents\Arktos\Kappa\Reverse_Katarina\bin\Debug\KappaLeBlanc.pdb
+C:\Users\User\Documents\Arktos\Kappa\Reverse_Katarina\obj\Debug\KappaLeBlanc.exe
+C:\Users\User\Documents\Arktos\Kappa\Reverse_Katarina\obj\Debug\KappaLeBlanc.pdb
