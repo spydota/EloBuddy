@@ -11,11 +11,6 @@ namespace KappaLeBlanc
 {
     class Program
     {
-        static void OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs buff)
-        {
-            if (sender.IsMe && buff.Buff.Name == "Distortion")
-                Chat.Print("ichigolixo");
-        }
 
         public const string Leblanc = "Leblanc";
         public static Menu Menu,
@@ -40,7 +35,6 @@ namespace KappaLeBlanc
 
         private static void Game_OnStart(EventArgs args)
         {
-            Obj_AI_Base.OnBuffGain += OnBuffGain;
             if (Player.Instance.ChampionName == Leblanc)
             {
                 Chat.Print("Leblanc loaded!");
