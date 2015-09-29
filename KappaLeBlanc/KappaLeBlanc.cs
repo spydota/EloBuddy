@@ -6,6 +6,7 @@ using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
 using EloBuddy.SDK.Rendering;
 using System;
+using System.Linq;
 using Color = System.Drawing.Color;
 namespace KappaLeBlanc
 {
@@ -17,7 +18,6 @@ namespace KappaLeBlanc
 
         public static Spell.Targeted Q;
         public static Spell.Skillshot W;
-        public static Spell.Active W2;
         public static Spell.Skillshot E;
         public static Spell.Targeted R;
 
@@ -45,7 +45,6 @@ namespace KappaLeBlanc
                 Chat.Print("Leblanc loaded!");
             }
             Q = new Spell.Targeted(SpellSlot.Q, 700);
-            W2 = new Spell.Active(SpellSlot.W);
             W = new Spell.Skillshot(SpellSlot.W, 600, SkillShotType.Circular);
             E = new Spell.Skillshot(SpellSlot.E, 950, SkillShotType.Linear);
             R = new Spell.Targeted(SpellSlot.R, 700);
@@ -91,6 +90,7 @@ namespace KappaLeBlanc
                     R.Cast(alvo);
                 }
 
+                if (ObjectManager.Player.HasBuff("Distorion")) return;          
 
                 if (W.IsReady() && _Player.Distance(alvo) <= W.Range)
                 {
@@ -105,9 +105,11 @@ namespace KappaLeBlanc
             {
                 if (Q.IsReady() && W.IsReady() && _Player.Distance(alvo) <= Q.Range)
                 {
+
                     Q.Cast(alvo);
                     W.Cast(alvo);
-                    
+                    W.Cast(alvo);
+
                 }
                 
 
