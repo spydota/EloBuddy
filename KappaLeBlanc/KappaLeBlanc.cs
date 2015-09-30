@@ -40,7 +40,7 @@ namespace KappaLeBlanc
                 Chat.Print("Leblanc loaded!");
             }
 
-            else if (Player.Instance.ChampionName != Leblanc)
+            if (Player.Instance.ChampionName != Leblanc)
             {
                 Chat.Print("Champion not supported");
             }
@@ -176,7 +176,7 @@ namespace KappaLeBlanc
                     E.Cast(alvo);
                 }
 
-               else if (R.IsReady() && _Player.Distance(alvo) <= R.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.R).Name == "LeblancSoulShackleM")
+                if (R.IsReady() && _Player.Distance(alvo) <= R.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.R).Name == "LeblancSoulShackleM")
                 {
                     R.Cast(alvo);
                 }
