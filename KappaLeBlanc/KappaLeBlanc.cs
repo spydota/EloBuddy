@@ -149,7 +149,7 @@ namespace KappaLeBlanc
                 }
 
 
-                if (R.IsReady() && _Player.Distance(alvo) <= R.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.R).Name == "LeblancChaosOrbM")
+                if (R.IsReady() && _Player.Distance(alvo) <= R.Range)
                 {
                     R.Cast(alvo);
                 }
@@ -176,7 +176,7 @@ namespace KappaLeBlanc
                     E.Cast(alvo);
                 }
 
-                if (R.IsReady() && _Player.Distance(alvo) <= R.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.R).Name == "LeblancSoulShackleM")
+                if (R.IsReady() && _Player.Distance(alvo) <= R.Range)
                 {
                     R.Cast(alvo);
                 }
@@ -197,7 +197,7 @@ namespace KappaLeBlanc
                     E.Cast(alvo);
                 }
 
-                if (R.IsReady() && _Player.Distance(alvo) <= R.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.R).Name == "LeblancSoulShackleM")
+                if (R.IsReady() && _Player.Distance(alvo) <= R.Range)
                 {
                     R.Cast(alvo);
                 }
