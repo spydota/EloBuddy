@@ -12,24 +12,63 @@ namespace KappaLeBlanc
 {
     class Program
     {
+        public static AIHeroClient LeBlanc
+        {
+            get { return ObjectManager.Player; }
+        }
+
         public static void WLaneClear()
         {
-            var minions = EntityManager.GetLaneMinions();
-            if (!minions.Any()) return;
-            if (LaneClearMenu["lcw"].Cast<CheckBox>().CurrentValue && W.IsReady())
+            var WCHECK = LaneClearMenu["lcW"].Cast<CheckBox>().CurrentValue;
+            var WREADY = W.IsReady();
+
+            if (WCHECK && WREADY)
             {
-                var pred = Prediction.Position.PredictCircularMissileAoe(minions.ToArray(), 750, 40, 750, 0);
-                if (pred.Any())
+                var enemy = GetBestWLocation(GameObjectType.obj_AI_Minion);
+
+                if (enemy != null)
+                   W.Cast(enemy.Position);
+            }
+
+        }
+
+        public static Obj_AI_Base GetBestWLocation(GameObjectType type)
+        {
+            var numEnemiesInRange = 0;
+            Obj_AI_Base enem = null;
+
+            foreach (var enemy in ObjectManager.Get<Obj_AI_Base>()
+                .OrderBy(a => a.Health)
+                .Where(a => a.Distance(LeBlanc) <= W.Range
+                            && a.IsEnemy
+                            && a.Type == type
+                            && !a.IsDead
+                            && !a.IsInvulnerable))
+            {
+                var tempNumEnemies = 0;
+                foreach (var enemy2 in ObjectManager.Get<Obj_AI_Base>()
+                    .OrderBy(a => a.Health)
+                    .Where(a => a.Distance(LeBlanc) <= W.Range
+                                && a.IsEnemy
+                                && !a.IsDead
+                                && a.Type == type
+                                && !a.IsInvulnerable))
                 {
-                    var pred2 = pred.OrderByDescending(a => a.CollisionObjects.Count()).FirstOrDefault();
-                    if (pred2 != null && pred2.CollisionObjects.Count() >= 2)
-                    {
-                        W.Cast(pred2.CastPosition);
-                    }
+                    if (enemy != enemy2
+                        && enemy2.Distance(enemy) <= 75)
+                        tempNumEnemies++;
                 }
 
+                if (tempNumEnemies > numEnemiesInRange)
+                {
+                    enem = enemy;
+                    numEnemiesInRange = tempNumEnemies;
+                }
             }
+            return enem;
         }
+
+
         public static float GetDamage(SpellSlot spell, Obj_AI_Base target)
         {
             float ap = _Player.FlatMagicDamageMod + _Player.BaseAbilityDamage;
@@ -116,7 +155,7 @@ namespace KappaLeBlanc
             HarassMenu.Add("hQEW", new CheckBox("Use QEW Harass", false));
 
             LaneClearMenu = Menu.AddSubMenu("Laneclear", "laneclear");
-            LaneClearMenu.Add("lcw", new CheckBox("Use W Laneclear", true));
+            LaneClearMenu.Add("lcW", new CheckBox("Use W Laneclear", true));
 
             KillStealMenu = Menu.AddSubMenu("KS", "ks");
             KillStealMenu.Add("qks", new CheckBox("Use Q to KillSteal"));
