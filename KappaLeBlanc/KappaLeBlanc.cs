@@ -6,16 +6,51 @@ using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
 using EloBuddy.SDK.Rendering;
 using System;
+using System.Linq;
 using Color = System.Drawing.Color;
 namespace KappaLeBlanc
 {
     class Program
     {
+        public static void WLaneClear()
+        {
+            if (LaneClearMenu["lcw"].Cast<CheckBox>().CurrentValue && W.IsReady())
+            {
+                var lastMinion = ObjectManager.Get<Obj_AI_Minion>().Where(a => a.IsEnemy).Where(a => !a.IsDead).Where(a => a.Distance(_Player) < W.Range).LastOrDefault();
+                if (lastMinion == null) return;
 
+                W.Cast(lastMinion.Position);
+            }
+        }
+        public static float GetDamage(SpellSlot spell, Obj_AI_Base target)
+        {
+            float ap = _Player.FlatMagicDamageMod + _Player.BaseAbilityDamage;
+            if (spell == SpellSlot.Q)
+            {
+                if (!Q.IsReady())
+                    return 0;
+                return _Player.CalculateDamageOnUnit(target, DamageType.Magical, 15f + 35f * (Q.Level - 1) + 100 / 100 * ap);
+            }
+            return 0;
+
+        }
+        private static void KillSteal()
+        {
+            var target = TargetSelector.GetTarget(Q.Range, DamageType.Magical);
+            var useQ = KillStealMenu["wqks"].Cast<CheckBox>().CurrentValue;
+
+            if (useQ && Q.IsReady() && target.IsValidTarget(Q.Range) && target.Health <= GetDamage(SpellSlot.Q, target))
+            {
+                Q.Cast(target);
+            }
+
+        }
         public const string Leblanc = "Leblanc";
         public static Menu Menu,
             DrawMenu,
             ComboMenu,
+            KillStealMenu,
+            LaneClearMenu,
             HarassMenu;
         public static Spell.Targeted Q;
         public static Spell.Skillshot W;
@@ -73,6 +108,12 @@ namespace KappaLeBlanc
             HarassMenu.Add("hQW", new CheckBox("Use QW Harass", true));
             HarassMenu.Add("hQEW", new CheckBox("Use QEW Harass", false));
 
+            LaneClearMenu = Menu.AddSubMenu("Laneclear", "laneclear");
+            LaneClearMenu.Add("lcw", new CheckBox("Use W Laneclear", true));
+            LaneClearMenu.Add("lcwslide", new Slider("Min enemies for cast W: ", 3, 1, 6));
+
+            KillStealMenu = Menu.AddSubMenu("KS", "ks");
+            KillStealMenu.Add("wqks", new CheckBox("Use Q to KillSteal"));
         }
 
         public static void Game_OnDraw(EventArgs args)
@@ -130,11 +171,16 @@ namespace KappaLeBlanc
         }
         public static void Game_OnUpdate(EventArgs args)
         {
-
+            KillSteal();
 
             var alvo = TargetSelector.GetTarget(720, DamageType.Magical);
 
             if (!alvo.IsValid()) return;
+
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear))
+            {
+                WLaneClear();
+            }
 
             if (ComboMenu["comboEQRW"].Cast<CheckBox>().CurrentValue && Orbwalker.ActiveModesFlags == Orbwalker.ActiveModes.Combo)
             {
