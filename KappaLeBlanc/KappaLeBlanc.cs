@@ -14,12 +14,20 @@ namespace KappaLeBlanc
     {
         public static void WLaneClear()
         {
+            var minions = EntityManager.GetLaneMinions();
+            if (!minions.Any()) return;
             if (LaneClearMenu["lcw"].Cast<CheckBox>().CurrentValue && W.IsReady())
             {
-                var lastMinion = ObjectManager.Get<Obj_AI_Minion>().Where(a => a.IsEnemy).Where(a => !a.IsDead).Where(a => a.Distance(_Player) < W.Range).LastOrDefault();
-                if (lastMinion == null) return;
+                var pred = Prediction.Position.PredictCircularMissileAoe(minions.ToArray(), 750, 40, 750, 0);
+                if (pred.Any())
+                {
+                    var pred2 = pred.OrderByDescending(a => a.CollisionObjects.Count()).FirstOrDefault();
+                    if (pred2 != null && pred2.CollisionObjects.Count() >= 2)
+                    {
+                        W.Cast(pred2.CastPosition);
+                    }
+                }
 
-                W.Cast(lastMinion.Position);
             }
         }
         public static float GetDamage(SpellSlot spell, Obj_AI_Base target)
@@ -37,9 +45,8 @@ namespace KappaLeBlanc
         private static void KillSteal()
         {
             var target = TargetSelector.GetTarget(Q.Range, DamageType.Magical);
-            var useQ = KillStealMenu["wqks"].Cast<CheckBox>().CurrentValue;
 
-            if (useQ && Q.IsReady() && target.IsValidTarget(Q.Range) && target.Health <= GetDamage(SpellSlot.Q, target))
+            if (KillStealMenu["qks"].Cast<CheckBox>().CurrentValue && Q.IsReady() && target.IsValidTarget(Q.Range) && target.Health <= GetDamage(SpellSlot.Q, target))
             {
                 Q.Cast(target);
             }
@@ -110,10 +117,9 @@ namespace KappaLeBlanc
 
             LaneClearMenu = Menu.AddSubMenu("Laneclear", "laneclear");
             LaneClearMenu.Add("lcw", new CheckBox("Use W Laneclear", true));
-            LaneClearMenu.Add("lcwslide", new Slider("Min enemies for cast W: ", 3, 1, 6));
 
             KillStealMenu = Menu.AddSubMenu("KS", "ks");
-            KillStealMenu.Add("wqks", new CheckBox("Use Q to KillSteal"));
+            KillStealMenu.Add("qks", new CheckBox("Use Q to KillSteal"));
         }
 
         public static void Game_OnDraw(EventArgs args)
