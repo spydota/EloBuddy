@@ -109,6 +109,8 @@ namespace KappaLeBlanc
         }
         public static void Game_OnUpdate(EventArgs args)
         {
+
+
             var alvo = TargetSelector.GetTarget(720, DamageType.Magical);
 
             if (!alvo.IsValid()) return;
@@ -125,16 +127,18 @@ namespace KappaLeBlanc
                     Q.Cast(alvo);
                 }
 
-                if (R.IsReady() && _Player.Distance(alvo) <= R.Range)
+
+                if (R.IsReady() && _Player.Distance(alvo) <= R.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.R).Name == "LeblancChaosOrbM")
                 {
                     R.Cast(alvo);
                 }
 
-                if (W.IsReady() && _Player.Distance(alvo) <= W.Range)
+                if (W.IsReady() && _Player.Distance(alvo) <= W.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W).Name == "LeblancSlideM")
                 {
                     W.Cast(alvo);
 
                 }
+
 
 
             }
@@ -151,12 +155,12 @@ namespace KappaLeBlanc
                     E.Cast(alvo);
                 }
 
-                if (R.IsReady() && _Player.Distance(alvo) <= R.Range)
+                if (R.IsReady() && _Player.Distance(alvo) <= R.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.R).Name == "LeblancSoulShackleM")
                 {
                     R.Cast(alvo);
                 }
 
-                if (W.IsReady() && _Player.Distance(alvo) <= W.Range)
+                if (W.IsReady() && _Player.Distance(alvo) <= W.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W).Name == "LeblancSlideM")
                 {
                     W.Cast(alvo);
 
@@ -172,7 +176,7 @@ namespace KappaLeBlanc
                     E.Cast(alvo);
                 }
 
-                if (R.IsReady() && _Player.Distance(alvo) <= R.Range)
+               else if (R.IsReady() && _Player.Distance(alvo) <= R.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.R).Name == "LeblancSoulShackleM")
                 {
                     R.Cast(alvo);
                 }
@@ -182,7 +186,7 @@ namespace KappaLeBlanc
                     R.Cast(alvo);
                 }
 
-                if (W.IsReady() && _Player.Distance(alvo) <= W.Range)
+                if (W.IsReady() && _Player.Distance(alvo) <= W.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W).Name == "LeblancSlideM")
                 {
                     W.Cast(alvo);
 
@@ -194,7 +198,7 @@ namespace KappaLeBlanc
             if (Orbwalker.ActiveModesFlags == Orbwalker.ActiveModes.Harass)
             {
 
-                if (HarassMenu["hQEW"].Cast<CheckBox>().CurrentValue && Q.IsReady() && W.IsReady() && _Player.Distance(alvo) <= W.Range + Q.Range)
+                if (HarassMenu["hQEW"].Cast<CheckBox>().CurrentValue && Q.IsReady() && E.IsReady() && W.IsReady() && _Player.Distance(alvo) <= W.Range + E.Range)
                 {
 
                     Q.Cast(alvo);
@@ -211,7 +215,7 @@ namespace KappaLeBlanc
                     W.Cast(alvo);
 
                 }
-                if (HarassMenu["hEQ"].Cast<CheckBox>().CurrentValue && Q.IsReady() && W.IsReady() && _Player.Distance(alvo) <= E.Range)
+                if (HarassMenu["hEQ"].Cast<CheckBox>().CurrentValue && E.IsReady() && Q.IsReady() && _Player.Distance(alvo) <= E.Range)
                 {
 
                     E.Cast(alvo);
