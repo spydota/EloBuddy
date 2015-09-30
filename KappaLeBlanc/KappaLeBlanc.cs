@@ -57,6 +57,7 @@ namespace KappaLeBlanc
 
             DrawMenu = Menu.AddSubMenu("Draw", "draw");
             DrawMenu.Add("drawDisable", new CheckBox("Disable draws", true));
+            DrawMenu.Add("highDraws", new CheckBox("High Quality draws", false));
             DrawMenu.Add("drawQ", new CheckBox("Draw Q", false));
             DrawMenu.Add("drawW", new CheckBox("Draw W", false));
             DrawMenu.Add("drawE", new CheckBox("Draw E", false));
@@ -76,20 +77,40 @@ namespace KappaLeBlanc
 
         public static void Game_OnDraw(EventArgs args)
         {
-            if (DrawMenu["drawQ"].Cast<CheckBox>().CurrentValue && !DrawMenu["drawDisable"].Cast<CheckBox>().CurrentValue && (Q.IsReady()))
+            if (DrawMenu["highDraws"].Cast<CheckBox>().CurrentValue && DrawMenu["drawQ"].Cast<CheckBox>().CurrentValue && !DrawMenu["drawDisable"].Cast<CheckBox>().CurrentValue && (Q.IsReady()))
             {
                 Drawing.DrawCircle(_Player.Position, Q.Range, Color.Yellow);
             }
 
-            if (DrawMenu["drawW"].Cast<CheckBox>().CurrentValue && !DrawMenu["drawDisable"].Cast<CheckBox>().CurrentValue && (W.IsReady()))
+            if (DrawMenu["highDraws"].Cast<CheckBox>().CurrentValue && DrawMenu["drawW"].Cast<CheckBox>().CurrentValue && !DrawMenu["drawDisable"].Cast<CheckBox>().CurrentValue && (W.IsReady()))
             {
                 Drawing.DrawCircle(_Player.Position, W.Range, Color.Yellow);
             }
 
-            if (DrawMenu["drawE"].Cast<CheckBox>().CurrentValue && !DrawMenu["drawDisable"].Cast<CheckBox>().CurrentValue && (E.IsReady()))
+            if (DrawMenu["highDraws"].Cast<CheckBox>().CurrentValue && DrawMenu["drawE"].Cast<CheckBox>().CurrentValue && !DrawMenu["drawDisable"].Cast<CheckBox>().CurrentValue && (E.IsReady()))
             {
                 Drawing.DrawCircle(_Player.Position, E.Range, Color.Yellow);
             }
+
+            if (!DrawMenu["highDraws"].Cast<CheckBox>().CurrentValue && DrawMenu["drawQ"].Cast<CheckBox>().CurrentValue && !DrawMenu["drawDisable"].Cast<CheckBox>().CurrentValue && (Q.IsReady()))
+            {
+                new Circle() { Color = Color.White, Radius = 700, BorderWidth = 2f }.Draw(_Player.Position);
+            }
+
+            if (!DrawMenu["highDraws"].Cast<CheckBox>().CurrentValue && DrawMenu["drawW"].Cast<CheckBox>().CurrentValue && !DrawMenu["drawDisable"].Cast<CheckBox>().CurrentValue && (W.IsReady()))
+            {
+                new Circle() { Color = Color.White, Radius = 600, BorderWidth = 2f }.Draw(_Player.Position);
+            }
+
+            if (!DrawMenu["highDraws"].Cast<CheckBox>().CurrentValue && DrawMenu["drawE"].Cast<CheckBox>().CurrentValue && !DrawMenu["drawDisable"].Cast<CheckBox>().CurrentValue && (E.IsReady()))
+            {
+                new Circle() { Color = Color.White, Radius = 950, BorderWidth = 2f }.Draw(_Player.Position);
+            }
+
+
+
+
+
 
             if (DrawMenu["drawQ"].Cast<CheckBox>().CurrentValue && !DrawMenu["drawDisable"].Cast<CheckBox>().CurrentValue && (!Q.IsReady()))
             {
@@ -133,7 +154,7 @@ namespace KappaLeBlanc
                     R.Cast(alvo);
                 }
 
-                if (W.IsReady() && _Player.Distance(alvo) <= W.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W).Name == "LeblancSlideM")
+                if (W.IsReady() && _Player.Distance(alvo) <= W.Range)
                 {
                     W.Cast(alvo);
 
@@ -160,7 +181,7 @@ namespace KappaLeBlanc
                     R.Cast(alvo);
                 }
 
-                if (W.IsReady() && _Player.Distance(alvo) <= W.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W).Name == "LeblancSlideM")
+                if (W.IsReady() && _Player.Distance(alvo) <= W.Range)
                 {
                     W.Cast(alvo);
 
@@ -186,7 +207,7 @@ namespace KappaLeBlanc
                     R.Cast(alvo);
                 }
 
-                if (W.IsReady() && _Player.Distance(alvo) <= W.Range && ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W).Name == "LeblancSlideM")
+                if (W.IsReady() && _Player.Distance(alvo) <= W.Range)
                 {
                     W.Cast(alvo);
 
