@@ -122,7 +122,7 @@ namespace RengarHelper
         private static void Game_OnUpdate(EventArgs args)
         {
             var target = TargetSelector.GetTarget(1000, DamageType.Physical);
-            if (Player.Instance.IsDashing() && HelpMenu["autoe"].Cast<CheckBox>().CurrentValue && E.IsReady() && _Player.Mana <= 5)
+            if (Player.Instance.IsDashing() && HelpMenu["autoe"].Cast<CheckBox>().CurrentValue && E.IsReady() && _Player.Mana < 5)
             {
                 E.Cast(target);
             }
@@ -130,11 +130,11 @@ namespace RengarHelper
             {
                 E.Cast(target);
             }
-            if (Player.Instance.IsDashing() && HelpMenu["autoq"].Cast<CheckBox>().CurrentValue && _Player.Mana <= 5)
+            if (Player.Instance.IsDashing() && HelpMenu["autoq"].Cast<CheckBox>().CurrentValue && _Player.Mana < 5)
             {
                 Q.Cast();
             }
-            if (Player.Instance.IsDashing() && HelpMenu["autow"].Cast<CheckBox>().CurrentValue && _Player.Mana <= 5 && W.Range < _Player.Distance(target))
+            if (Player.Instance.IsDashing() && HelpMenu["autow"].Cast<CheckBox>().CurrentValue && _Player.Mana < 5 && W.Range < _Player.Distance(target))
             {
                 W.Cast();
             }
@@ -143,19 +143,19 @@ namespace RengarHelper
             {
                 if (!target.IsValid) return;
 
-                if (HarassMenu["hq"].Cast<CheckBox>().CurrentValue && !Orbwalker.IsAutoAttacking && Q.IsReady() && _Player.Distance(target) <= _Player.AttackRange && _Player.Mana <= 5)
+                if (HarassMenu["hq"].Cast<CheckBox>().CurrentValue && !Orbwalker.IsAutoAttacking && Q.IsReady() && _Player.Distance(target) <= _Player.AttackRange && _Player.Mana < 5)
                 {
                     Q.Cast();
                 }
-                if (HarassMenu["hw"].Cast<CheckBox>().CurrentValue && W.IsReady() && _Player.Distance(target) <= W.Range && _Player.Mana <= 5)
+                if (HarassMenu["hw"].Cast<CheckBox>().CurrentValue && W.IsReady() && _Player.Distance(target) <= W.Range - 10 && _Player.Mana < 5)
                 {
                     W.Cast();
                 }
-                if (HarassMenu["he"].Cast<CheckBox>().CurrentValue && E.IsReady() && _Player.Distance(target) <= E.Range && _Player.Mana <= 5)
+                if (HarassMenu["he"].Cast<CheckBox>().CurrentValue && E.IsReady() && _Player.Distance(target) <= E.Range - 20 && _Player.Mana < 5)
                 {
                     E.Cast(target);
                 }
-                if (HarassMenu["hpe"].Cast<CheckBox>().CurrentValue && _Player.Distance(target) <= E.Range && _Player.Mana == 5)
+                if (HarassMenu["hpe"].Cast<CheckBox>().CurrentValue && _Player.Distance(target) <= E.Range - 20 && _Player.Mana == 5)
                 {
                     E.Cast(target);
                 }
@@ -164,15 +164,15 @@ namespace RengarHelper
             {
                 if (!target.IsValid) return;
 
-                if (ComboMenu["qcombo"].Cast<CheckBox>().CurrentValue && !Orbwalker.IsAutoAttacking && Q.IsReady() && _Player.Distance(target) <= _Player.AttackRange && _Player.Mana <= 5)
+                if (ComboMenu["qcombo"].Cast<CheckBox>().CurrentValue && !Orbwalker.IsAutoAttacking && Q.IsReady() && _Player.Distance(target) <= _Player.AttackRange && _Player.Mana < 5)
                 {
                     Q.Cast();
                 }
-                if (ComboMenu["wcombo"].Cast<CheckBox>().CurrentValue && W.IsReady() && _Player.Distance(target) <= W.Range && _Player.Mana <= 5)
+                if (ComboMenu["wcombo"].Cast<CheckBox>().CurrentValue && W.IsReady() && _Player.Distance(target) <= W.Range && _Player.Mana < 5)
                 {
                     W.Cast();
                 }
-                if (ComboMenu["ecombo"].Cast<CheckBox>().CurrentValue && E.IsReady() && _Player.Distance(target) <= E.Range && _Player.Mana <= 5)
+                if (ComboMenu["ecombo"].Cast<CheckBox>().CurrentValue && E.IsReady() && _Player.Distance(target) <= E.Range && _Player.Mana < 5)
                 {
                     E.Cast(target);
                 }
