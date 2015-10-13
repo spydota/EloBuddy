@@ -93,12 +93,11 @@ namespace RengarHelper
             ComboMenu.Add("qcombo", new CheckBox("Use Q"));
             ComboMenu.Add("wcombo", new CheckBox("Use W"));
             ComboMenu.Add("ecombo", new CheckBox("Use E"));
+
             ComboMenu.AddSeparator();
             ComboMenu.Add("q2combo", new Slider("Use empowered Q if target % health ", 30, 0, 100));
             ComboMenu.Add("w2combo", new Slider("Use empowered W if player % health ", 30, 0, 100));
-            ComboMenu.AddSeparator();
-            ComboMenu.Add("e3combo", new CheckBox("Use empowered E if target is away"));
-
+            ComboMenu.Add("e2combo", new CheckBox("Use snare if enemy away"));
             HarassMenu = Menu.AddSubMenu("Harass", "har");
             HarassMenu.Add("hq", new CheckBox("Use Q in Harass"));
             HarassMenu.Add("hw", new CheckBox("Use W in Harass"));
@@ -117,11 +116,14 @@ namespace RengarHelper
                 _Player.SetSkinId(skiniddd.NewValue);
             };
 
-
         }
         private static void Game_OnUpdate(EventArgs args)
         {
+            var _PlayerHealth = ComboMenu["w2combo"].Cast<Slider>().CurrentValue;
             var target = TargetSelector.GetTarget(1000, DamageType.Physical);
+            var Qslider = ComboMenu["q2combo"].Cast<Slider>().CurrentValue;
+            var ECheckbox = ComboMenu["e2combo"].Cast<CheckBox>().CurrentValue;
+            if (target == null) return;
             if (Player.Instance.IsDashing() && HelpMenu["autoe"].Cast<CheckBox>().CurrentValue && E.IsReady() && _Player.Mana < 5)
             {
                 E.Cast(target);
@@ -134,7 +136,7 @@ namespace RengarHelper
             {
                 Q.Cast();
             }
-            if (Player.Instance.IsDashing() && HelpMenu["autow"].Cast<CheckBox>().CurrentValue && _Player.Mana < 5 && W.Range < _Player.Distance(target))
+            if (Player.Instance.IsDashing() && HelpMenu["autow"].Cast<CheckBox>().CurrentValue && _Player.Mana < 5 && W.Range >= _Player.Distance(target))
             {
                 W.Cast();
             }
@@ -143,28 +145,22 @@ namespace RengarHelper
             {
                 if (!target.IsValid) return;
 
-                if (HarassMenu["hq"].Cast<CheckBox>().CurrentValue && !Orbwalker.IsAutoAttacking && Q.IsReady() && _Player.Distance(target) <= _Player.AttackRange && _Player.Mana < 5)
-                {
-                    Q.Cast();
-                }
-                if (HarassMenu["hw"].Cast<CheckBox>().CurrentValue && W.IsReady() && _Player.Distance(target) <= W.Range - 10 && _Player.Mana < 5)
+                if (HarassMenu["hw"].Cast<CheckBox>().CurrentValue && W.IsReady() && _Player.Distance(target) <= W.Range - 50 && _Player.Mana < 5)
                 {
                     W.Cast();
                 }
-                if (HarassMenu["he"].Cast<CheckBox>().CurrentValue && E.IsReady() && _Player.Distance(target) <= E.Range - 20 && _Player.Mana < 5)
+                if (HarassMenu["he"].Cast<CheckBox>().CurrentValue && E.IsReady() && _Player.Distance(target) <= E.Range - 50 && _Player.Mana < 5)
                 {
                     E.Cast(target);
                 }
-                if (HarassMenu["hpe"].Cast<CheckBox>().CurrentValue && _Player.Distance(target) <= E.Range - 20 && _Player.Mana == 5)
+                if (HarassMenu["hpe"].Cast<CheckBox>().CurrentValue && _Player.Distance(target) <= E.Range - 100 && _Player.Mana == 5)
                 {
                     E.Cast(target);
                 }
             }
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
             {
-                if (!target.IsValid) return;
-
-                if (ComboMenu["qcombo"].Cast<CheckBox>().CurrentValue && !Orbwalker.IsAutoAttacking && Q.IsReady() && _Player.Distance(target) <= _Player.AttackRange && _Player.Mana < 5)
+                if (ComboMenu["qcombo"].Cast<CheckBox>().CurrentValue && Q.IsReady() && _Player.Distance(target) <= _Player.AttackRange && _Player.Mana < 5)
                 {
                     Q.Cast();
                 }
@@ -172,31 +168,31 @@ namespace RengarHelper
                 {
                     W.Cast();
                 }
-                if (ComboMenu["ecombo"].Cast<CheckBox>().CurrentValue && E.IsReady() && _Player.Distance(target) <= E.Range && _Player.Mana < 5)
+                if (ComboMenu["ecombo"].Cast<CheckBox>().CurrentValue && E.IsReady() && _Player.Distance(target) <= E.Range && _Player.Mana < 5 && !Orbwalker.IsAutoAttacking)
                 {
                     E.Cast(target);
                 }
 
-                if (_Player.Mana == 5)
+
+
+                if (_Player.HealthPercent <= _PlayerHealth && _Player.Mana == 5)
                 {
-                    if (target.HealthPercent < ComboMenu["q2combo"].Cast<Slider>().CurrentValue && _Player.Distance(target) <= _Player.AttackRange)
-                    {
-                        Q.Cast();
-                    }
-                    if (_Player.HealthPercent < ComboMenu["w2combo"].Cast<Slider>().CurrentValue && _Player.Distance(target) <= W.Range)
-                    {
-                        W.Cast();
-                    }
-                    if (ComboMenu["e2combo"].Cast<CheckBox>().CurrentValue && target.Distance(_Player) > 450 && !_Player.IsDashing() && _Player.Distance(target) > 1000)
-                    {
-                        E.Cast();
-                    }
+                    W.Cast();
                 }
 
-            }
-            //255 730
+                if (target.HealthPercent <= Qslider && _Player.IsInAutoAttackRange(target) && _Player.Mana == 5)
+                {
+                    Q.Cast();
+                }
 
-        }
+                if (ECheckbox &&_Player.Distance(target) > 350 && _Player.Mana == 5)
+                {
+                    E.Cast(target);
+                }
+            }
+        }  
+
+        
 
 
         private static void Game_OnDraw(EventArgs args)
