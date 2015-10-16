@@ -6,7 +6,7 @@ using EloBuddy.SDK.Rendering;
 using System;
 using System.Drawing;
 
-namespace MasterySpamemr
+namespace MasterySpammer
 {
     class Program
     {
