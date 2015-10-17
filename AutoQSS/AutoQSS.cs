@@ -39,7 +39,7 @@ namespace AutoQSS
         private static void Game_OnStart(EventArgs args)
         {
             QSS = new Item((int)ItemId.Quicksilver_Sash);
-            MercurialScimitar = new Item((int)ItemId.Dervish_Blade);            
+            MercurialScimitar = new Item((int)ItemId.Mercurial_Scimitar);            
 
             Menu = MainMenu.AddMenu("Auto QSS", "autoqss");
             Menu.Add("keybind", new KeyBind("Auto QSS", false, KeyBind.BindTypes.PressToggle, 'L'));
