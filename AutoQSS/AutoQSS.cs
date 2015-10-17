@@ -54,86 +54,93 @@ namespace AutoQSS
             Menu.Add("Charm", new CheckBox("Charm"));
             Menu.Add("Suppression", new CheckBox("Suppression"));
             Menu.Add("Silence", new CheckBox("Silence", false));
+            Menu.Add("CCDelay", new Slider("Delay for CC", 40, 0, 80));
             Menu.AddGroupLabel("Ults");
             Menu.Add("ZedUlt", new CheckBox("Zed Ult"));
             Menu.Add("VladUlt", new CheckBox("Vlad Ult"));
             Menu.Add("FizzUlt", new CheckBox("Fizz Ult"));
             Menu.Add("MordUlt", new CheckBox("Mordekaiser Ult"));
             Menu.Add("PoppyUlt", new CheckBox("Poppy Ult"));
+            Menu.Add("UltDelay", new Slider("Delay for Ults", 20, 0, 80));
 
         }
         private static void Game_OnUpdate(EventArgs args)
-        {            
-            if (!keybind || ObjectManager.Player.IsDead) return;
-            if (Player.HasBuffOfType(BuffType.Taunt) && Taunt && QSS.IsReady() || MercurialScimitar.IsReady())
+        {
+            var UltDelay = Menu["UltDelay"].Cast<Slider>().CurrentValue;
+            var CCDelay = Menu["CCDelay"].Cast<Slider>().CurrentValue;
+                  
+            if (keybind)
             {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuffOfType(BuffType.Stun) && Stun && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuffOfType(BuffType.Snare) && Snare && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuffOfType(BuffType.Polymorph) && Polymorph && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuffOfType(BuffType.Blind) && Blind && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuffOfType(BuffType.Fear) && Fear && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuffOfType(BuffType.Charm) && Charm && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuffOfType(BuffType.Suppression) && Suppression && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuffOfType(BuffType.Silence) && Silence && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuff("zedulttargetmark") && ZedUlt && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuff("VladimirHemoplague") && VladUlt && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuff("FizzMarinerDoom") && FizzUlt && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuff("MordekaiserChildrenOfTheGrave") && MordUlt && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
-            }
-            if (Player.HasBuff("PoppyDiplomaticImmunity") && PoppyUlt && QSS.IsReady() || MercurialScimitar.IsReady())
-            {
-                QSS.Cast();
-                MercurialScimitar.Cast();
+                if (Player.HasBuffOfType(BuffType.Taunt) && Taunt && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
+                }
+                if (Player.HasBuffOfType(BuffType.Stun) && Stun && QSS.IsReady() || MercurialScimitar.IsReady())
+                {                    
+                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
+                }
+                if (Player.HasBuffOfType(BuffType.Snare) && Snare && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
+                }
+                if (Player.HasBuffOfType(BuffType.Polymorph) && Polymorph && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
+                }
+                if (Player.HasBuffOfType(BuffType.Blind) && Blind && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
+                }
+                if (Player.HasBuffOfType(BuffType.Fear) && Fear && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
+                }
+                if (Player.HasBuffOfType(BuffType.Charm) && Charm && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
+                }
+                if (Player.HasBuffOfType(BuffType.Suppression) && Suppression && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
+                }
+                if (Player.HasBuffOfType(BuffType.Silence) && Silence && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
+                }
+                if (Player.HasBuff("zedulttargetmark") && ZedUlt && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), UltDelay * 50);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), UltDelay * 50);
+                }
+                if (Player.HasBuff("VladimirHemoplague") && VladUlt && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), UltDelay * 50);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), UltDelay * 50);
+                }
+                if (Player.HasBuff("FizzMarinerDoom") && FizzUlt && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), UltDelay * 10);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), UltDelay * 30);
+                }
+                if (Player.HasBuff("MordekaiserChildrenOfTheGrave") && MordUlt && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), UltDelay * 50);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), UltDelay * 30);
+                }
+                if (Player.HasBuff("PoppyDiplomaticImmunity") && PoppyUlt && QSS.IsReady() || MercurialScimitar.IsReady())
+                {
+                    Core.DelayAction(() => QSS.Cast(), UltDelay * 30);
+                    Core.DelayAction(() => MercurialScimitar.Cast(), UltDelay * 30);
+                }
             }
 
         }
