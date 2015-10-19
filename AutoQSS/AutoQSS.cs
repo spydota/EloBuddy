@@ -3,7 +3,6 @@ using EloBuddy.SDK;
 using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
 using System;
 using System.Drawing;
 
@@ -12,7 +11,6 @@ namespace AutoQSS
     class Program
     {      
         public static Menu Menu;
-        public static Text textDraw = new Text("", new Font(FontFamily.GenericSansSerif, 9, FontStyle.Bold));
         public static Item QSS, MercurialScimitar;
         public static bool keybind { get { return Menu["keybind"].Cast<KeyBind>().CurrentValue; } }
         public static bool drawk { get { return Menu["drawk"].Cast<CheckBox>().CurrentValue; } }
@@ -32,9 +30,7 @@ namespace AutoQSS
         public static bool PoppyUlt { get { return Menu["PoppyUlt"].Cast<CheckBox>().CurrentValue; } }
         private static void Main(string[] args)
         {
-            Loading.OnLoadingComplete += Game_OnStart;
-            Game.OnUpdate += Game_OnUpdate;
-            Drawing.OnDraw += Game_OnDraw;
+            Loading.OnLoadingComplete += Game_OnStart;           
         }
         private static void Game_OnStart(EventArgs args)
         {
@@ -54,7 +50,7 @@ namespace AutoQSS
             Menu.Add("Charm", new CheckBox("Charm"));
             Menu.Add("Suppression", new CheckBox("Suppression"));
             Menu.Add("Silence", new CheckBox("Silence", false));
-            Menu.Add("CCDelay", new Slider("Delay for CC", 40, 0, 80));
+            Menu.Add("CCDelay", new Slider("Delay for CC", 40, 0, 80));       
             Menu.AddGroupLabel("Ults");
             Menu.Add("ZedUlt", new CheckBox("Zed Ult"));
             Menu.Add("VladUlt", new CheckBox("Vlad Ult"));
@@ -63,12 +59,14 @@ namespace AutoQSS
             Menu.Add("PoppyUlt", new CheckBox("Poppy Ult"));
             Menu.Add("UltDelay", new Slider("Delay for Ults", 20, 0, 80));
 
+            Game.OnUpdate += Game_OnUpdate;
+            Drawing.OnDraw += Game_OnDraw;
         }
         private static void Game_OnUpdate(EventArgs args)
-        {
+        {          
             var UltDelay = Menu["UltDelay"].Cast<Slider>().CurrentValue;
-            var CCDelay = Menu["CCDelay"].Cast<Slider>().CurrentValue;
-                  
+            var CCDelay = Menu["CCDelay"].Cast<Slider>().CurrentValue;        
+
             if (keybind)
             {
                 if (Player.HasBuffOfType(BuffType.Taunt) && Taunt && QSS.IsReady() || MercurialScimitar.IsReady())
@@ -96,7 +94,7 @@ namespace AutoQSS
                     Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
                     Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
                 }
-                if (Player.HasBuffOfType(BuffType.Fear) && Fear && QSS.IsReady() || MercurialScimitar.IsReady())
+                if (Player.HasBuffOfType(BuffType.Flee) && Fear && QSS.IsReady() || MercurialScimitar.IsReady())
                 {
                     Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
                     Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
@@ -148,8 +146,9 @@ namespace AutoQSS
         {
             if (!drawk) return;
             var pos = Drawing.WorldToScreen(Player.Instance.Position);
-            textDraw.Draw(keybind ? "Auto QSS ON" : "Auto QSS OFF", keybind? SharpDX.Color.White : SharpDX.Color.Red, (int)pos.X - 45,
-                   (int)pos.Y + 40);
+            Drawing.DrawText(pos.X - 45, pos.Y + 30, keybind ? Color.White : Color.Red, keybind ? "Auto QSS ON" : "Auto QSS OFF");
+
+
         }
     }   
 }
