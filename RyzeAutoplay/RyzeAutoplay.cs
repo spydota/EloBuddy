@@ -20,6 +20,7 @@ namespace RyzeAutoplay
         public static Spell.Active R;
         public static Item SapphireCrystal, Hpot, Mpot, Tear, NeedlesslyLargeRod, ArchangelsStaff, RubyCrystal, Catalyst, BlastingWand, ROA;
         public static bool keybind { get { return Menu["keybind"].Cast<KeyBind>().CurrentValue; } }
+        public static int sliderdist { get { return Menu["sliderdist"].Cast<Slider>().CurrentValue; } }
         public static double needheal;
         private static void Main(string[] args)
         {
@@ -42,6 +43,8 @@ namespace RyzeAutoplay
 
             Menu = MainMenu.AddMenu("RyzeFollow", "ryzefollow");
             Menu.Add("keybind", new KeyBind("FollowAlly", true, KeyBind.BindTypes.PressToggle, 'L'));
+            Menu.Add("sliderdist", new Slider("Distance to ally", 70, 50, 300));
+
             Q = new Spell.Skillshot(SpellSlot.Q, 900, SkillShotType.Linear, 250, 1700, 100);
             W = new Spell.Targeted(SpellSlot.W, 600);
             E = new Spell.Targeted(SpellSlot.E, 600);
@@ -51,7 +54,7 @@ namespace RyzeAutoplay
             Gapcloser.OnGapcloser += Gapcloser_OnGapCloser;
         }
         private static void Game_OnUpdate(EventArgs args)
-        { 
+        {
             var allyturret = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
             var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null && !x.IsDead).FirstOrDefault();
 
@@ -61,10 +64,10 @@ namespace RyzeAutoplay
             }
             if (keybind && needheal == 0)
             {
-                Orbwalker.MoveTo(ally.Position - 150);               
+                Orbwalker.MoveTo(ally.Position - sliderdist);               
             }
             if (myHero.Distance(allyturret) <= 450 && needheal == 1 && !myHero.IsInShopRange() ) { Player.CastSpell(SpellSlot.Recall); }
-            if (needheal == 1 && myHero.Distance(allyturret) <= 450) { Orbwalker.MoveTo(allyturret.Position); }
+            if (needheal == 1) { Orbwalker.MoveTo(allyturret.Position); }
             if (myHero.HealthPercent < 20 || myHero.ManaPercent < 10) { needheal = 1; }
             if (myHero.HealthPercent > 90 && myHero.ManaPercent > 90) { needheal = 0; }
 
