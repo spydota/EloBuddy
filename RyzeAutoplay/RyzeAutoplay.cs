@@ -158,7 +158,7 @@ namespace RyzeAutoplay
         {
             var minion = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.IsEnemy && x.IsValidTarget(Q.Range)).OrderBy(x => x.Health).FirstOrDefault();
             if (minion == null) return;
-            if (myHero.GetAutoAttackDamage(minion) >= minion.Health && !minion.IsDead)
+            if (myHero.GetAutoAttackDamage(minion) >= minion.Health && !minion.IsDead && myHero.Distance(minion) <= 550)
             {
                 Orbwalker.ForcedTarget = minion;
             }
