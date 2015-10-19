@@ -12,7 +12,7 @@ namespace RyzeAutoplay
     class Program
     {
         //Made for own use
-        public static Menu Menu;
+        public static Menu Menu, Laneclear;
         public static AIHeroClient myHero { get { return ObjectManager.Player; } }
         public static Spell.Skillshot Q;
         public static Spell.Targeted W;
@@ -21,6 +21,8 @@ namespace RyzeAutoplay
         public static Item SapphireCrystal, Hpot, Mpot, Tear, NeedlesslyLargeRod, ArchangelsStaff, RubyCrystal, Catalyst, BlastingWand, ROA;
         public static bool keybind { get { return Menu["keybind"].Cast<KeyBind>().CurrentValue; } }
         public static int sliderdist { get { return Menu["sliderdist"].Cast<Slider>().CurrentValue; } }
+        public static bool QLaneclear { get { return Menu["QLaneclear"].Cast<CheckBox>().CurrentValue; } }
+        public static int QSlider { get { return Menu["QSlider"].Cast<Slider>().CurrentValue; } }
         public static double needheal;
         private static void Main(string[] args)
         {
@@ -44,6 +46,9 @@ namespace RyzeAutoplay
             Menu = MainMenu.AddMenu("RyzeFollow", "ryzefollow");
             Menu.Add("keybind", new KeyBind("FollowAlly", true, KeyBind.BindTypes.PressToggle, 'L'));
             Menu.Add("sliderdist", new Slider("Distance to ally", 70, 50, 300));
+            Laneclear = MainMenu.AddMenu("Laneclear", "laneclear");
+            Laneclear.Add("QLaneclear", new CheckBox("Use Q in laneclear"));
+            Laneclear.Add("QSlider", new Slider("Use Q in laneclear only if mana > than", 40, 0, 100));
 
             Q = new Spell.Skillshot(SpellSlot.Q, 900, SkillShotType.Linear, 250, 1700, 100);
             W = new Spell.Targeted(SpellSlot.W, 600);
@@ -71,33 +76,35 @@ namespace RyzeAutoplay
             if (myHero.HealthPercent < 20 || myHero.ManaPercent < 10) { needheal = 1; }
             if (myHero.HealthPercent > 90 && myHero.ManaPercent > 90) { needheal = 0; }
 
-            if (!myHero.IsInShopRange() && !myHero.IsRecalling())
-            {
-                if (myHero.HealthPercent < 60 && Hpot.IsOwned() && !Player.HasBuff("Health Potion"))
-                {
-                    Hpot.Cast();
-                }
-                if (myHero.ManaPercent < 60 && Mpot.IsOwned() && !Player.HasBuff("Mana Potion"))
-                {
-                    Mpot.Cast();
-                }
-            }
             //Needs Rework
             if (myHero.IsInShopRange() || myHero.IsDead)
             {
                 var Gold = myHero.Gold;
-                if (Gold >= 475 && !SapphireCrystal.IsOwned() && !Catalyst.IsOwned())
+                if (ROA.IsOwned())
+                {
+                    if (Gold >= 400 && !SapphireCrystal.IsOwned() && !Catalyst.IsOwned())
+                    {
+                        SapphireCrystal.Buy();
+                    }
+                    if (Gold >= 400 && !RubyCrystal.IsOwned() && !Catalyst.IsOwned())
+                    {
+                        RubyCrystal.Buy();
+                    }
+                    if (Gold >= 400 && !Catalyst.IsOwned() && SapphireCrystal.IsOwned() && RubyCrystal.IsOwned())
+                    {
+                        Catalyst.Buy();
+                    }
+                    if (Gold >= 850 && !BlastingWand.IsOwned() && Catalyst.IsOwned())
+                    {
+                        BlastingWand.Buy();
+                    }
+                    if (Gold >= 650 && BlastingWand.IsOwned() && Catalyst.IsOwned())
+                    { ROA.Buy(); }
+                }
+                if (Gold >= 475 && !SapphireCrystal.IsOwned() && !Tear.IsOwned() && !ArchangelsStaff.IsOwned())
                 {
                     SapphireCrystal.Buy();
-                }
-                if (myHero.Gold >= 35 && !Hpot.IsOwned())
-                {
-                    Hpot.Buy();
-                }
-                if (Gold >= 35 && !Mpot.IsOwned())
-                {
-                    Mpot.Buy();
-                }
+                }                
                 if (Gold >= 320 && !Tear.IsOwned() && !ArchangelsStaff.IsOwned() && SapphireCrystal.IsOwned())
                 {
                     Tear.Buy();
@@ -106,15 +113,23 @@ namespace RyzeAutoplay
                 {
                     RubyCrystal.Buy();
                 }
-                if (Gold >= 400 && !Catalyst.IsOwned() && RubyCrystal.IsOwned() && SapphireCrystal.IsOwned())
+                if (Gold >= 800 && !Catalyst.IsOwned() && RubyCrystal.IsOwned())
                 {
                     Catalyst.Buy();
                 }
-                if (Gold >= 850 && !BlastingWand.IsOwned() && ArchangelsStaff.IsOwned())
+                if (Gold >= 1250 && !ArchangelsStaff.IsOwned() && Tear.IsOwned() && !NeedlesslyLargeRod.IsOwned())
+                {
+                    NeedlesslyLargeRod.Buy();
+                }
+                if (Gold >= 1030 && !ArchangelsStaff.IsOwned() && Tear.IsOwned() && NeedlesslyLargeRod.IsOwned())
+                {
+                    ArchangelsStaff.Buy();
+                }
+                if (Gold >= 850 && !BlastingWand.IsOwned() && !ROA.IsOwned())
                 {
                     BlastingWand.Buy();
                 }
-                if (Gold >= 650 && BlastingWand.IsOwned() && Catalyst.IsOwned() && ArchangelsStaff.IsOwned())
+                if (Gold >= 650 && BlastingWand.IsOwned() && Catalyst.IsOwned() && !ROA.IsOwned())
                 {
                     ROA.Buy();
                 }
@@ -143,13 +158,16 @@ namespace RyzeAutoplay
         {
             var minion = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.IsEnemy && x.IsValidTarget(Q.Range)).OrderBy(x => x.Health).FirstOrDefault();
             if (minion == null) return;
-            if (myHero.GetSpellDamage(minion, SpellSlot.Q) >= minion.Health && !minion.IsDead)
+            if (myHero.GetAutoAttackDamage(minion) >= minion.Health && !minion.IsDead)
             {
-                Q.Cast(minion);
+                Orbwalker.ForcedTarget = minion;
             }
-            if (myHero.GetSpellDamage(minion, SpellSlot.E) >= minion.Health && !minion.IsDead)
+            if (QLaneclear)
             {
-                E.Cast(minion);
+                if (myHero.GetSpellDamage(minion, SpellSlot.Q) >= minion.Health && !minion.IsDead && myHero.ManaPercent > QSlider)
+                {
+                    Q.Cast(minion);
+                }
             }
         }
         private static void KS()
