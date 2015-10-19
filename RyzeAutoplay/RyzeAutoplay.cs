@@ -53,7 +53,7 @@ namespace RyzeAutoplay
         private static void Game_OnUpdate(EventArgs args)
         { 
             var allyturret = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
-            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null).FirstOrDefault();
+            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null && !x.IsDead).FirstOrDefault();
 
             if(ally.IsRecalling() && myHero.Distance(ally) <= 400)
             {
