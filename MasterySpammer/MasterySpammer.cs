@@ -41,5 +41,5 @@ namespace MasterySpammer
             textDraw.Draw(mspamm ? "MasterySpamm ON" : "MasterySpamm OFF", SharpDX.Color.White, (int)pos.X - 45,
                    (int)pos.Y + 40);
         }
-    }   
+    }
 }
