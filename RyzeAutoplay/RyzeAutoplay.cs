@@ -21,8 +21,8 @@ namespace RyzeAutoplay
         public static Item SapphireCrystal, Hpot, Mpot, Tear, NeedlesslyLargeRod, ArchangelsStaff, RubyCrystal, Catalyst, BlastingWand, ROA;
         public static bool keybind { get { return Menu["keybind"].Cast<KeyBind>().CurrentValue; } }
         public static int sliderdist { get { return Menu["sliderdist"].Cast<Slider>().CurrentValue; } }
-        public static bool QLaneclear { get { return Menu["QLaneclear"].Cast<CheckBox>().CurrentValue; } }
-        public static int QSlider { get { return Menu["QSlider"].Cast<Slider>().CurrentValue; } }
+        public static bool QLaneclear { get { return Laneclear["QLaneclear"].Cast<CheckBox>().CurrentValue; } }
+        public static int QSlider { get { return Laneclear["QSlider"].Cast<Slider>().CurrentValue; } }
         public static double needheal;
         private static void Main(string[] args)
         {
@@ -158,7 +158,8 @@ namespace RyzeAutoplay
         {
             var minion = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.IsEnemy && x.IsValidTarget(Q.Range)).OrderBy(x => x.Health).FirstOrDefault();
             if (minion == null) return;
-            if (myHero.GetAutoAttackDamage(minion) >= minion.Health && !minion.IsDead && myHero.Distance(minion) <= 550)
+
+            if (myHero.GetAutoAttackDamage(minion) >= minion.Health && !minion.IsDead && myHero.Distance(minion) <= 500)
             {
                 Orbwalker.ForcedTarget = minion;
             }
