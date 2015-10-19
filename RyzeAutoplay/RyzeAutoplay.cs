@@ -18,7 +18,7 @@ namespace RyzeAutoplay
         public static Spell.Targeted W;
         public static Spell.Targeted E;
         public static Spell.Active R;
-        public static Item SapphireCrystal, Hpot, Mpot, Tear, NeedlesslyLargeRod, ArchangelsStaff, RubyCrystal, Catalyst, BlastingWand, ROA;
+        public static Item SapphireCrystal, Tear, NeedlesslyLargeRod, ArchangelsStaff, RubyCrystal, Catalyst, BlastingWand, ROA;
         public static bool keybind { get { return Menu["keybind"].Cast<KeyBind>().CurrentValue; } }
         public static int sliderdist { get { return Menu["sliderdist"].Cast<Slider>().CurrentValue; } }
         public static bool QLaneclear { get { return Laneclear["QLaneclear"].Cast<CheckBox>().CurrentValue; } }
@@ -31,8 +31,6 @@ namespace RyzeAutoplay
         private static void Game_OnStart(EventArgs args)
         {
             if (myHero.ChampionName != "Ryze") return;
-            Hpot = new Item((int)ItemId.Health_Potion);
-            Mpot = new Item((int)ItemId.Mana_Potion);
             SapphireCrystal = new Item((int)ItemId.Sapphire_Crystal);
             RubyCrystal = new Item((int)ItemId.Ruby_Crystal);
             SapphireCrystal = new Item((int)ItemId.Sapphire_Crystal);
@@ -46,7 +44,7 @@ namespace RyzeAutoplay
             Menu = MainMenu.AddMenu("RyzeFollow", "ryzefollow");
             Menu.Add("keybind", new KeyBind("FollowAlly", true, KeyBind.BindTypes.PressToggle, 'L'));
             Menu.Add("sliderdist", new Slider("Distance to ally", 70, 50, 300));
-            Laneclear = MainMenu.AddMenu("Laneclear", "laneclear");
+            Laneclear = Menu.AddSubMenu("Laneclear", "laneclear");
             Laneclear.Add("QLaneclear", new CheckBox("Use Q in laneclear"));
             Laneclear.Add("QSlider", new Slider("Use Q in laneclear only if mana > than", 40, 0, 100));
 
@@ -67,7 +65,7 @@ namespace RyzeAutoplay
             {
                 Player.CastSpell(SpellSlot.Recall);
             }
-            if (keybind && needheal == 0)
+            if (keybind && needheal == 0 && myHero.Distance(ally) >= sliderdist)
             {
                 Orbwalker.MoveTo(ally.Position - sliderdist);               
             }
@@ -169,7 +167,13 @@ namespace RyzeAutoplay
                 {
                     Q.Cast(minion);
                 }
+
+                if (myHero.GetSpellDamage(minion, SpellSlot.E) >= minion.Health && minion.CountEnemiesInRange(100) >= 3)
+                {
+                    E.Cast(minion);
+                }
             }
+
         }
         private static void KS()
         {
