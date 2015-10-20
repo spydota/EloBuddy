@@ -25,6 +25,7 @@ namespace RyzeAutoplay
         public static int QSlider { get { return Laneclear["QSlider"].Cast<Slider>().CurrentValue; } }
         public static bool kill { get { return Agressive["kill"].Cast<CheckBox>().CurrentValue; } }
         public static double needheal;
+        private static string[] SmiteNames = new[] { "s5_summonersmiteplayerganker", "itemsmiteaoe", "s5_summonersmitequick", "s5_summonersmiteduel", "summonersmite" };
         public static double killing;
         private static void Main(string[] args)
         {
@@ -66,7 +67,8 @@ namespace RyzeAutoplay
             if (kill) { Killable(); }
             var allyturret = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
             var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
-            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null && !x.IsDead).FirstOrDefault();
+            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) || 
+            !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).FirstOrDefault();
             if (ally.IsRecalling() && myHero.Distance(ally) <= 400)
             {
                 Player.CastSpell(SpellSlot.Recall);
@@ -105,11 +107,11 @@ namespace RyzeAutoplay
                     if (Gold >= 650 && BlastingWand.IsOwned() && Catalyst.IsOwned())
                     { ROA.Buy(); }
                 }
-                if (Gold >= 475 && !SapphireCrystal.IsOwned() && !Tear.IsOwned() && !ArchangelsStaff.IsOwned() && !SeraphEmbrace.IsOwned())
+                if (Gold >= 475 && !SapphireCrystal.IsOwned() && !Tear.IsOwned() && !ArchangelsStaff.IsOwned())
                 {
                     SapphireCrystal.Buy();
                 }                
-                if (Gold >= 320 && !Tear.IsOwned() && !ArchangelsStaff.IsOwned() && SapphireCrystal.IsOwned() && !SeraphEmbrace.IsOwned())
+                if (Gold >= 320 && !Tear.IsOwned() && !ArchangelsStaff.IsOwned() && SapphireCrystal.IsOwned())
                 {
                     Tear.Buy();
                 }
