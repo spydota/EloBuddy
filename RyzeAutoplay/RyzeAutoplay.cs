@@ -18,7 +18,7 @@ namespace RyzeAutoplay
         public static Spell.Targeted W;
         public static Spell.Targeted E;
         public static Spell.Active R;
-        public static Item SapphireCrystal, Tear, NeedlesslyLargeRod, ArchangelsStaff, RubyCrystal, Catalyst, BlastingWand, ROA , SeraphEmbrace;
+        public static Item SapphireCrystal, Tear, NeedlesslyLargeRod, ArchangelsStaff, RubyCrystal, Catalyst, BlastingWand, ROA , SeraphEmbrace, Boots, MercuryTreads;
         public static bool keybind { get { return Menu["keybind"].Cast<KeyBind>().CurrentValue; } }
         public static int sliderdist { get { return Menu["sliderdist"].Cast<Slider>().CurrentValue; } }
         public static bool QLaneclear { get { return Laneclear["QLaneclear"].Cast<CheckBox>().CurrentValue; } }
@@ -35,6 +35,8 @@ namespace RyzeAutoplay
         private static void Game_OnStart(EventArgs args)
         {
             if (myHero.ChampionName != "Ryze") return;
+            Boots = new Item((int)ItemId.Boots_of_Speed);
+            MercuryTreads = new Item((int)ItemId.Mercurys_Treads);
             SapphireCrystal = new Item((int)ItemId.Sapphire_Crystal);
             RubyCrystal = new Item((int)ItemId.Ruby_Crystal);
             SapphireCrystal = new Item((int)ItemId.Sapphire_Crystal);
@@ -78,6 +80,11 @@ namespace RyzeAutoplay
             {
                 Orbwalker.MoveTo(ally.Position - sliderdist);               
             }
+            if (myHero.Distance(enemyturret) < 500)
+            {
+                Player.IssueOrder(GameObjectOrder.AutoAttack, enemyturret);
+            }
+
             if (myHero.Distance(allyturret) <= 450 && needheal == 1 && !myHero.IsInShopRange() ) { Player.CastSpell(SpellSlot.Recall); }
             if (needheal == 1 && myHero.Distance(allyturret) >= 450) { Orbwalker.MoveTo(allyturret.Position); }
             if (myHero.HealthPercent < 20 || myHero.ManaPercent < 10) { needheal = 1; }
@@ -140,6 +147,14 @@ namespace RyzeAutoplay
                 {
                     ROA.Buy();
                 }
+                if (Gold >= 325 && !Boots.IsOwned() && !MercuryTreads.IsOwned())
+                {
+                    Boots.Buy();
+                }
+                if (Gold >= 875 && Boots.IsOwned() && !MercuryTreads.IsOwned())
+                {
+                    MercuryTreads.Buy();
+                }
             }
             if (myHero.IsRecalling()) { return; }
             if (killing == 0) { LastHit(); }
@@ -187,7 +202,7 @@ namespace RyzeAutoplay
             if (minion == null) return;
             if (myHero.GetAutoAttackDamage(minion) >= minion.Health && !minion.IsDead && myHero.Distance(minion) <= 700)
             {
-                Orbwalker.ForcedTarget = minion;
+                Player.IssueOrder(GameObjectOrder.AutoAttack, minion);
             }
             if (QLaneclear)
             {
