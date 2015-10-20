@@ -61,9 +61,7 @@ namespace RyzeAutoplay
             W = new Spell.Targeted(SpellSlot.W, 600);
             E = new Spell.Targeted(SpellSlot.E, 600);
             R = new Spell.Active(SpellSlot.R);
-            Interrupter.OnInterruptableSpell += Interrupter_OnInterruptableSpell;
-            Game.OnUpdate += Game_OnUpdate;
-            Gapcloser.OnGapcloser += Gapcloser_OnGapCloser;
+            Game.OnUpdate += Game_OnUpdate; 
 //1095
         }
         private static void Game_OnUpdate(EventArgs args)
@@ -163,8 +161,8 @@ namespace RyzeAutoplay
         private static void Killable()
         {
             var enemy = EntityManager.Heroes.Enemies.Where(b => !b.HasBuffOfType(BuffType.Invulnerability)).OrderBy(b => b.Health).FirstOrDefault();
-            var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
-            if (enemy != null && myHero.Distance(enemy) < 1000)
+            var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(enemy)).First();
+            if (enemy != null && myHero.Distance(enemy) < 1300)
             {
                 var damageQ = (Q.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.Q) : 0);
                 var damageW = (W.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.W) : 0);
@@ -179,21 +177,7 @@ namespace RyzeAutoplay
                     }
                     
                 }
-                else { killing = 0; }
-            }
-        }
-        private static void Interrupter_OnInterruptableSpell(Obj_AI_Base sender, Interrupter.InterruptableSpellEventArgs args)
-        {
-            if (W.IsReady() && sender != null && sender.IsEnemy)
-            {
-                W.Cast(sender);
-            }
-        }
-        private static void Gapcloser_OnGapCloser(AIHeroClient sender, Gapcloser.GapcloserEventArgs args)
-        {
-            if (W.IsReady() && sender.IsEnemy && sender.IsValidTarget(W.Range))
-            {
-                W.Cast(sender);
+                if (enemy.IsDead || !enemy.IsVisible || myHero.IsDead) { killing = 0; }
             }
         }
         private static void LastHit()
