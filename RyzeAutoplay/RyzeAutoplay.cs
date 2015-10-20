@@ -26,6 +26,7 @@ namespace RyzeAutoplay
         public static bool kill { get { return Agressive["kill"].Cast<CheckBox>().CurrentValue; } }
         public static double needheal;
         private static string[] SmiteNames = new[] { "s5_summonersmiteplayerganker", "itemsmiteaoe", "s5_summonersmitequick", "s5_summonersmiteduel", "summonersmite" };
+
         public static double killing;
         private static void Main(string[] args)
         {
@@ -47,6 +48,7 @@ namespace RyzeAutoplay
             Menu = MainMenu.AddMenu("RyzeFollow", "ryzefollow");
             Menu.Add("keybind", new KeyBind("FollowAlly", true, KeyBind.BindTypes.PressToggle, 'L'));
             Menu.Add("sliderdist", new Slider("Distance to ally", 70, 50, 300));
+            Menu.Add("recall", new CheckBox("Recall if ally is recalling"));
             Laneclear = Menu.AddSubMenu("Laneclear", "laneclear");
             Laneclear.Add("QLaneclear", new CheckBox("Use Q in laneclear"));
             Laneclear.Add("QSlider", new Slider("Use Q in laneclear only if mana > than", 40, 0, 100));
@@ -67,9 +69,8 @@ namespace RyzeAutoplay
             if (kill) { Killable(); }
             var allyturret = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
             var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
-            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) || 
-            !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).FirstOrDefault();
-            if (ally.IsRecalling() && myHero.Distance(ally) <= 400)
+            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name)).FirstOrDefault();
+            if (Menu["recall"].Cast<CheckBox>().CurrentValue && ally.IsRecalling() && myHero.Distance(ally) <= 400)
             {
                 Player.CastSpell(SpellSlot.Recall);
             }
@@ -78,7 +79,7 @@ namespace RyzeAutoplay
                 Orbwalker.MoveTo(ally.Position - sliderdist);               
             }
             if (myHero.Distance(allyturret) <= 450 && needheal == 1 && !myHero.IsInShopRange() ) { Player.CastSpell(SpellSlot.Recall); }
-            if (needheal == 1) { Orbwalker.MoveTo(allyturret.Position); }
+            if (needheal == 1 && myHero.Distance(allyturret) >= 450) { Orbwalker.MoveTo(allyturret.Position); }
             if (myHero.HealthPercent < 20 || myHero.ManaPercent < 10) { needheal = 1; }
             if (myHero.HealthPercent > 90 && myHero.ManaPercent > 90) { needheal = 0; }
 
@@ -154,7 +155,7 @@ namespace RyzeAutoplay
                 var damageW = (W.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.W) : 0);
                 var damageE = (E.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.E) : 0);
 
-                if (damageQ + damageW + damageE > enemy.Health && !myHero.IsDead && !enemy.IsDead && enemy.Distance(enemyturret) > 700)
+                if (damageQ + damageW + damageE > enemy.Health && !myHero.IsDead && !enemy.IsDead && enemy.Distance(enemyturret) > 700 && enemy.IsVisible)
                 {
                     killing = 1;
                     if (myHero.Distance(enemy) >= 500)
