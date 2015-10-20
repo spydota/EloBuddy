@@ -69,7 +69,7 @@ namespace RyzeAutoplay
             if (kill) { Killable(); }
             var allyturret = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
             var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
-            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name)).FirstOrDefault();
+            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).FirstOrDefault();
             if (Menu["recall"].Cast<CheckBox>().CurrentValue && ally.IsRecalling() && myHero.Distance(ally) <= 400)
             {
                 Player.CastSpell(SpellSlot.Recall);
