@@ -12,7 +12,9 @@ namespace RyzeAutoplay
     class Program
     {
         //Made for own use
-        public static Menu Menu, Laneclear, Agressive;
+        public static Menu Menu, Laneclear, Agressive, SummonerSpells;
+        public static Spell.Active Heal;
+        public static Spell.Active Clarity;
         public static AIHeroClient myHero { get { return ObjectManager.Player; } }
         public static Spell.Skillshot Q;
         public static Spell.Targeted W;
@@ -24,6 +26,8 @@ namespace RyzeAutoplay
         public static bool QLaneclear { get { return Laneclear["QLaneclear"].Cast<CheckBox>().CurrentValue; } }
         public static int QSlider { get { return Laneclear["QSlider"].Cast<Slider>().CurrentValue; } }
         public static bool kill { get { return Agressive["kill"].Cast<CheckBox>().CurrentValue; } }
+        public static int healslider { get { return SummonerSpells["heal"].Cast<Slider>().CurrentValue; } }
+        public static int manaslider { get { return SummonerSpells["mana"].Cast<Slider>().CurrentValue; } }
         public static double needheal;
         private static string[] SmiteNames = new[] { "s5_summonersmiteplayerganker", "itemsmiteaoe", "s5_summonersmitequick", "s5_summonersmiteduel", "summonersmite" };
 
@@ -35,6 +39,12 @@ namespace RyzeAutoplay
         private static void Game_OnStart(EventArgs args)
         {
             if (myHero.ChampionName != "Ryze") return;
+            if (myHero.Spellbook.GetSpell(SpellSlot.Summoner1).Name == "summonerheal") { Heal = new Spell.Active(SpellSlot.Summoner1); }            
+            if (myHero.Spellbook.GetSpell(SpellSlot.Summoner2).Name == "summonerheal") { Heal = new Spell.Active(SpellSlot.Summoner2); }
+
+            if (myHero.Spellbook.GetSpell(SpellSlot.Summoner1).Name == "summonermana") { Clarity = new Spell.Active(SpellSlot.Summoner1); }
+            if (myHero.Spellbook.GetSpell(SpellSlot.Summoner2).Name == "summonermana") { Clarity = new Spell.Active(SpellSlot.Summoner2); }
+
             Boots = new Item((int)ItemId.Boots_of_Speed);
             MercuryTreads = new Item((int)ItemId.Mercurys_Treads);
             SapphireCrystal = new Item((int)ItemId.Sapphire_Crystal);
@@ -56,6 +66,9 @@ namespace RyzeAutoplay
             Laneclear.Add("QSlider", new Slider("Use Q in laneclear only if mana > than", 40, 0, 100));
             Agressive = Menu.AddSubMenu("Agressive mode", "agm");
             Agressive.Add("kill", new CheckBox("Orbwalk to target if enemy is killable"));
+            SummonerSpells = Menu.AddSubMenu("Summoner spells", "summs");
+            SummonerSpells.Add("heal", new Slider("Use heal at % health", 40, 0, 100));
+            SummonerSpells.Add("mana", new Slider("Use clarity at % mana", 40, 0, 100));
 
             Q = new Spell.Skillshot(SpellSlot.Q, 900, SkillShotType.Linear, 250, 1700, 100);
             W = new Spell.Targeted(SpellSlot.W, 600);
@@ -67,6 +80,8 @@ namespace RyzeAutoplay
         private static void Game_OnUpdate(EventArgs args)
         {
             if (kill) { Killable(); }
+            if (myHero.HealthPercent < healslider && Heal != null && !myHero.IsInShopRange()) { Heal.Cast(); }
+            if (myHero.ManaPercent < manaslider && Clarity != null && !myHero.IsInShopRange()) { Clarity.Cast(); }
             var allyturret = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
             var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
             var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).FirstOrDefault();
@@ -172,9 +187,9 @@ namespace RyzeAutoplay
                 if (damageQ + damageW + damageE > enemy.Health && !myHero.IsDead && !enemy.IsDead && enemy.Distance(enemyturret) > 700 && enemy.IsVisible)
                 {
                     killing = 1;
-                    if (myHero.Distance(enemy) >= 500)
+                    if (myHero.Distance(enemy) >= 350)
                     {                       
-                        Orbwalker.MoveTo(enemy.Position - 450);
+                        Orbwalker.MoveTo(enemy.Position - 350);
                     }
                     
                 }
