@@ -61,7 +61,7 @@ namespace RyzeAutoplay
             W = new Spell.Targeted(SpellSlot.W, 600);
             E = new Spell.Targeted(SpellSlot.E, 600);
             R = new Spell.Active(SpellSlot.R);
-            Game.OnUpdate += Game_OnUpdate; 
+            Game.OnUpdate += Game_OnUpdate;
 //1095
         }
         private static void Game_OnUpdate(EventArgs args)
@@ -162,6 +162,7 @@ namespace RyzeAutoplay
         {
             var enemy = EntityManager.Heroes.Enemies.Where(b => !b.HasBuffOfType(BuffType.Invulnerability)).OrderBy(b => b.Health).FirstOrDefault();
             var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(enemy)).First();
+            if (enemy.IsDead || !enemy.IsVisible || myHero.IsDead) { killing = 0; }
             if (enemy != null && myHero.Distance(enemy) < 1300)
             {
                 var damageQ = (Q.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.Q) : 0);
@@ -177,7 +178,6 @@ namespace RyzeAutoplay
                     }
                     
                 }
-                if (enemy.IsDead || !enemy.IsVisible || myHero.IsDead) { killing = 0; }
             }
         }
         private static void LastHit()
