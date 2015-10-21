@@ -38,7 +38,6 @@ namespace RyzeAutoplay
         }
         private static void Game_OnStart(EventArgs args)
         {
-            if (myHero.ChampionName != "Ryze") return;
             if (myHero.Spellbook.GetSpell(SpellSlot.Summoner1).Name == "summonerheal") { Heal = new Spell.Active(SpellSlot.Summoner1); }            
             if (myHero.Spellbook.GetSpell(SpellSlot.Summoner2).Name == "summonerheal") { Heal = new Spell.Active(SpellSlot.Summoner2); }
 
@@ -69,22 +68,24 @@ namespace RyzeAutoplay
             SummonerSpells = Menu.AddSubMenu("Summoner spells", "summs");
             SummonerSpells.Add("heal", new Slider("Use heal at % health", 40, 0, 100));
             SummonerSpells.Add("mana", new Slider("Use clarity at % mana", 40, 0, 100));
-
-            Q = new Spell.Skillshot(SpellSlot.Q, 900, SkillShotType.Linear, 250, 1700, 100);
-            W = new Spell.Targeted(SpellSlot.W, 600);
-            E = new Spell.Targeted(SpellSlot.E, 600);
-            R = new Spell.Active(SpellSlot.R);
+            if (myHero.ChampionName == "Ryze")
+            {
+                Q = new Spell.Skillshot(SpellSlot.Q, 900, SkillShotType.Linear, 250, 1700, 100);
+                W = new Spell.Targeted(SpellSlot.W, 600);
+                E = new Spell.Targeted(SpellSlot.E, 600);
+                R = new Spell.Active(SpellSlot.R);
+            }
             Game.OnUpdate += Game_OnUpdate;
 //1095
         }
         private static void Game_OnUpdate(EventArgs args)
         {
-            if (kill) { Killable(); }
+            if (kill && myHero.ChampionName == "Ryze") { Killable(); }
             if (myHero.HealthPercent < healslider && Heal != null && !myHero.IsInShopRange()) { Heal.Cast(); }
             if (myHero.ManaPercent < manaslider && Clarity != null && !myHero.IsInShopRange()) { Clarity.Cast(); }
             var allyturret = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
             var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
-            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).FirstOrDefault();
+            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).OrderBy(n => n.Level).Last();
             if (Menu["recall"].Cast<CheckBox>().CurrentValue && ally.IsRecalling() && myHero.Distance(ally) <= 400)
             {
                 Player.CastSpell(SpellSlot.Recall);
@@ -169,7 +170,7 @@ namespace RyzeAutoplay
                     MercuryTreads.Buy();
                 }
             }
-            if (myHero.IsRecalling()) { return; }
+            if (myHero.IsRecalling() || myHero.ChampionName != "Ryze") { return; }
             if (killing == 0) { LastHit(); }
             if (myHero.Distance(enemyturret) > 1000) { SluttyCombo(); }
         }
