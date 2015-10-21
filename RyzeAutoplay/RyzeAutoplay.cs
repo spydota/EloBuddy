@@ -28,7 +28,6 @@ namespace RyzeAutoplay
         public static bool kill { get { return Agressive["kill"].Cast<CheckBox>().CurrentValue; } }
         public static int healslider { get { return SummonerSpells["heal"].Cast<Slider>().CurrentValue; } }
         public static int manaslider { get { return SummonerSpells["mana"].Cast<Slider>().CurrentValue; } }
-        public static bool mode { get { return Menu["mode"].Cast<CheckBox>().CurrentValue ; } }
         public static double needheal;
         private static string[] SmiteNames = new[] { "s5_summonersmiteplayerganker", "itemsmiteaoe", "s5_summonersmitequick", "s5_summonersmiteduel", "summonersmite" };
 
@@ -61,7 +60,6 @@ namespace RyzeAutoplay
             Menu.Add("keybind", new KeyBind("FollowAlly", true, KeyBind.BindTypes.PressToggle, 'L'));
             Menu.Add("sliderdist", new Slider("Distance to ally", 70, 50, 300));
             Menu.Add("recall", new CheckBox("Recall if ally is recalling"));
-            Menu.Add("mode", new CheckBox("Follow nearest ally"));
             Laneclear = Menu.AddSubMenu("Laneclear", "laneclear");
             Laneclear.Add("QLaneclear", new CheckBox("Use Q in laneclear"));
             Laneclear.Add("QSlider", new Slider("Use Q in laneclear only if mana > than", 40, 0, 100));
@@ -87,7 +85,9 @@ namespace RyzeAutoplay
             if (myHero.ManaPercent < manaslider && Clarity != null && !myHero.IsInShopRange()) { Clarity.Cast(); }
             var allyturret = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
             var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
-            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).OrderBy(n => mode ? n.Distance(myHero) : n.TotalAttackDamage).First();
+            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) &&
+            !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).OrderBy(n => n.TotalAttackDamage).Last();
+
             if (ally == null) return;
             if (Menu["recall"].Cast<CheckBox>().CurrentValue && ally.IsRecalling() && myHero.Distance(ally) <= 400)
             {
