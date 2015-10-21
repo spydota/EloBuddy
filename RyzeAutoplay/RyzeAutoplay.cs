@@ -20,7 +20,7 @@ namespace RyzeAutoplay
         public static Spell.Targeted W;
         public static Spell.Targeted E;
         public static Spell.Active R;
-        public static Item SapphireCrystal, Tear, NeedlesslyLargeRod, ArchangelsStaff, RubyCrystal, Catalyst, BlastingWand, ROA , SeraphEmbrace, Boots, MercuryTreads;
+        public static Item SapphireCrystal, Tear, NeedlesslyLargeRod, ArchangelsStaff, RubyCrystal, Catalyst, BlastingWand, ROA , SeraphEmbrace, Boots, MercuryTreads, trinket;
         public static bool keybind { get { return Menu["keybind"].Cast<KeyBind>().CurrentValue; } }
         public static int sliderdist { get { return Menu["sliderdist"].Cast<Slider>().CurrentValue; } }
         public static bool QLaneclear { get { return Laneclear["QLaneclear"].Cast<CheckBox>().CurrentValue; } }
@@ -44,6 +44,7 @@ namespace RyzeAutoplay
             if (myHero.Spellbook.GetSpell(SpellSlot.Summoner1).Name == "summonermana") { Clarity = new Spell.Active(SpellSlot.Summoner1); }
             if (myHero.Spellbook.GetSpell(SpellSlot.Summoner2).Name == "summonermana") { Clarity = new Spell.Active(SpellSlot.Summoner2); }
 
+            trinket = new Item((int)ItemId.Warding_Totem_Trinket);
             Boots = new Item((int)ItemId.Boots_of_Speed);
             MercuryTreads = new Item((int)ItemId.Mercurys_Treads);
             SapphireCrystal = new Item((int)ItemId.Sapphire_Crystal);
@@ -85,7 +86,7 @@ namespace RyzeAutoplay
             if (myHero.ManaPercent < manaslider && Clarity != null && !myHero.IsInShopRange()) { Clarity.Cast(); }
             var allyturret = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
             var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
-            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) &&
+            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsRecalling() && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) &&
             !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).OrderBy(n => n.TotalAttackDamage).Last();
 
             if (ally == null) return;
@@ -93,7 +94,7 @@ namespace RyzeAutoplay
             {
                 Player.CastSpell(SpellSlot.Recall);
             }
-            if (keybind && needheal == 0 && myHero.Distance(ally) >= sliderdist + 20 && killing == 0)
+            if (keybind && needheal == 0 && myHero.Distance(ally) >= 100 && killing == 0)
             {
                 Orbwalker.MoveTo(ally.Position - sliderdist);               
             }
@@ -132,6 +133,7 @@ namespace RyzeAutoplay
                     if (Gold >= 650 && BlastingWand.IsOwned() && Catalyst.IsOwned())
                     { ROA.Buy(); }
                 }
+                if (!trinket.IsOwned()) { trinket.Buy();}
                 if (Gold >= 475 && !SapphireCrystal.IsOwned() && !Tear.IsOwned() && !ArchangelsStaff.IsOwned())
                 {
                     SapphireCrystal.Buy();
@@ -175,25 +177,26 @@ namespace RyzeAutoplay
             }
             if (myHero.IsRecalling() || myHero.ChampionName != "Ryze") { return; }
             if (killing == 0) { LastHit(); }
-            if (myHero.Distance(enemyturret) > 1000) { SluttyCombo(); }
+            if (myHero.Distance(enemyturret) > 700) { SluttyCombo(); }
         }
         private static void Killable()
         {
             var enemy = EntityManager.Heroes.Enemies.Where(b => !b.HasBuffOfType(BuffType.Invulnerability)).OrderBy(b => b.Health).FirstOrDefault();
             var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead).OrderBy(k => k.Distance(enemy)).First();
-            if (enemy.IsDead || !enemy.IsVisible || myHero.IsDead || enemy == null) { killing = 0; }
+            if (enemy.IsDead || !enemy.IsVisible || myHero.IsDead || enemy == null || myHero.Distance(enemy) > 2500) { killing = 0; }
             if (enemy != null && myHero.Distance(enemy) < 1300)
             {
                 var damageQ = (Q.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.Q) : 0);
                 var damageW = (W.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.W) : 0);
                 var damageE = (E.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.E) : 0);
+                var damage = damageQ + damageW + damageE;
 
-                if (damageQ + damageW + damageE > enemy.Health && !myHero.IsDead && !enemy.IsDead && enemy.Distance(enemyturret) > 700 && enemy.IsVisible)
+                if (damage > enemy.Health && !myHero.IsDead && !enemy.IsDead && enemy.Distance(enemyturret) > 500 && enemy.IsVisible)
                 {
                     killing = 1;
                     if (myHero.Distance(enemy) >= 150)
-                    {                       
-                        Orbwalker.MoveTo(enemy.Position - 150);
+                    { 
+                        Orbwalker.MoveTo(enemy.Position);
                     }
                     
                 }
