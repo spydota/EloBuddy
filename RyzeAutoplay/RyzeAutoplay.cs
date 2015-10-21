@@ -87,8 +87,8 @@ namespace RyzeAutoplay
             if (myHero.ManaPercent < manaslider && Clarity != null && !myHero.IsInShopRange()) { Clarity.Cast(); }
             var allyturret = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
             var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
-            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && x != null && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).OrderBy(n => mode ? n.Distance(myHero) : n.BaseAttackDamage).First();
-            
+            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).OrderBy(n => mode ? n.Distance(myHero) : n.TotalAttackDamage).First();
+            if (ally == null) return;
             if (Menu["recall"].Cast<CheckBox>().CurrentValue && ally.IsRecalling() && myHero.Distance(ally) <= 400)
             {
                 Player.CastSpell(SpellSlot.Recall);
@@ -180,8 +180,8 @@ namespace RyzeAutoplay
         private static void Killable()
         {
             var enemy = EntityManager.Heroes.Enemies.Where(b => !b.HasBuffOfType(BuffType.Invulnerability)).OrderBy(b => b.Health).FirstOrDefault();
-            var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(enemy)).First();
-            if (enemy.IsDead || !enemy.IsVisible || myHero.IsDead) { killing = 0; }
+            var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead).OrderBy(k => k.Distance(enemy)).First();
+            if (enemy.IsDead || !enemy.IsVisible || myHero.IsDead || enemy == null) { killing = 0; }
             if (enemy != null && myHero.Distance(enemy) < 1300)
             {
                 var damageQ = (Q.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.Q) : 0);
