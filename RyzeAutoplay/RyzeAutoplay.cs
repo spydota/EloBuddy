@@ -20,8 +20,7 @@ namespace RyzeAutoplay
         public static Spell.Targeted W;
         public static Spell.Targeted E;
         public static Spell.Active R;
-        public static Item SapphireCrystal, Tear, NeedlesslyLargeRod, ArchangelsStaff, RubyCrystal, Catalyst, BlastingWand, ROA , SeraphEmbrace, Boots, MercuryTreads, trinket;
-        public static bool keybind { get { return Menu["keybind"].Cast<KeyBind>().CurrentValue; } }
+        public static Item SapphireCrystal, Tear, NeedlesslyLargeRod, ArchangelsStaff, RubyCrystal, Catalyst, BlastingWand, ROA, SeraphEmbrace, Boots, MercuryTreads, trinket;
         public static int sliderdist { get { return Menu["sliderdist"].Cast<Slider>().CurrentValue; } }
         public static bool QLaneclear { get { return Laneclear["QLaneclear"].Cast<CheckBox>().CurrentValue; } }
         public static int QSlider { get { return Laneclear["QSlider"].Cast<Slider>().CurrentValue; } }
@@ -38,7 +37,7 @@ namespace RyzeAutoplay
         }
         private static void Game_OnStart(EventArgs args)
         {
-            if (myHero.Spellbook.GetSpell(SpellSlot.Summoner1).Name == "summonerheal") { Heal = new Spell.Active(SpellSlot.Summoner1); }            
+            if (myHero.Spellbook.GetSpell(SpellSlot.Summoner1).Name == "summonerheal") { Heal = new Spell.Active(SpellSlot.Summoner1); }
             if (myHero.Spellbook.GetSpell(SpellSlot.Summoner2).Name == "summonerheal") { Heal = new Spell.Active(SpellSlot.Summoner2); }
 
             if (myHero.Spellbook.GetSpell(SpellSlot.Summoner1).Name == "summonermana") { Clarity = new Spell.Active(SpellSlot.Summoner1); }
@@ -58,7 +57,6 @@ namespace RyzeAutoplay
             NeedlesslyLargeRod = new Item((int)ItemId.Needlessly_Large_Rod);
             SeraphEmbrace = new Item(3040);
             Menu = MainMenu.AddMenu("RyzeFollow", "ryzefollow");
-            Menu.Add("keybind", new KeyBind("FollowAlly", true, KeyBind.BindTypes.PressToggle, 'L'));
             Menu.Add("sliderdist", new Slider("Distance to ally", 70, 50, 300));
             Menu.Add("recall", new CheckBox("Recall if ally is recalling"));
             Laneclear = Menu.AddSubMenu("Laneclear", "laneclear");
@@ -77,7 +75,7 @@ namespace RyzeAutoplay
                 R = new Spell.Active(SpellSlot.R);
             }
             Game.OnUpdate += Game_OnUpdate;
-//1095
+            //1095
         }
         private static void Game_OnUpdate(EventArgs args)
         {
@@ -94,23 +92,23 @@ namespace RyzeAutoplay
             {
                 Player.CastSpell(SpellSlot.Recall);
             }
-            if (keybind && needheal == 0 && myHero.Distance(ally) >= 100 && killing == 0)
+            if (needheal == 0 && myHero.Distance(ally) >= 100 && killing == 0)
             {
-                Orbwalker.MoveTo(ally.Position - sliderdist);               
+                Orbwalker.MoveTo(ally.Position - sliderdist);
             }
             if (myHero.Distance(enemyturret) < 500)
             {
                 Player.IssueOrder(GameObjectOrder.AutoAttack, enemyturret);
             }
 
-            if (myHero.Distance(allyturret) <= 250 && needheal == 1 && !myHero.IsInShopRange() ) { Player.CastSpell(SpellSlot.Recall); }
+            if (myHero.Distance(allyturret) <= 250 && needheal == 1 && !myHero.IsInShopRange()) { Player.CastSpell(SpellSlot.Recall); }
             if (needheal == 1 && myHero.Distance(allyturret) >= 250) { Orbwalker.MoveTo(allyturret.Position); }
             if (myHero.HealthPercent < 20 || myHero.ManaPercent < 10) { needheal = 1; }
             if (myHero.HealthPercent > 90 && myHero.ManaPercent > 90) { needheal = 0; }
 
             //Needs Rework
             if (myHero.IsInShopRange() || myHero.IsDead)
-            { 
+            {
                 var Gold = myHero.Gold;
                 if (ROA.IsOwned())
                 {
@@ -133,11 +131,11 @@ namespace RyzeAutoplay
                     if (Gold >= 650 && BlastingWand.IsOwned() && Catalyst.IsOwned())
                     { ROA.Buy(); }
                 }
-                if (!trinket.IsOwned()) { trinket.Buy();}
+                if (!trinket.IsOwned()) { trinket.Buy(); }
                 if (Gold >= 475 && !SapphireCrystal.IsOwned() && !Tear.IsOwned() && !ArchangelsStaff.IsOwned())
                 {
                     SapphireCrystal.Buy();
-                }                
+                }
                 if (Gold >= 320 && !Tear.IsOwned() && !ArchangelsStaff.IsOwned() && SapphireCrystal.IsOwned())
                 {
                     Tear.Buy();
@@ -195,10 +193,10 @@ namespace RyzeAutoplay
                 {
                     killing = 1;
                     if (myHero.Distance(enemy) >= 150)
-                    { 
+                    {
                         Orbwalker.MoveTo(enemy.Position);
                     }
-                    
+
                 }
             }
         }
@@ -227,7 +225,7 @@ namespace RyzeAutoplay
             var Stacks = myHero.GetBuffCount("ryzepassivestack");
             var QPred = Prediction.Position.PredictLinearMissile(target, Q.Range, Q.Width, Q.CastDelay, Q.Speed, int.MinValue, myHero.ServerPosition);
             bool StacksBuff = myHero.HasBuff("ryzepassivestack");
-            bool Pasive = myHero.HasBuff("ryzepassivecharged");    
+            bool Pasive = myHero.HasBuff("ryzepassivecharged");
 
             if (target.IsValidTarget(Q.Range))
             {
