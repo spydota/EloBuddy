@@ -14,6 +14,7 @@ namespace RyzeAutoplay
         //Made for own use
         public static Menu Menu, Laneclear, Agressive, SummonerSpells;
         public static Spell.Active Heal;
+        public static bool kill { get { return Agressive["kill"].Cast<CheckBox>().CurrentValue; } }
         public static Spell.Active Clarity;
         public static AIHeroClient myHero { get { return ObjectManager.Player; } }
         public static Spell.Skillshot Q;
@@ -24,13 +25,12 @@ namespace RyzeAutoplay
         public static int sliderdist { get { return Menu["sliderdist"].Cast<Slider>().CurrentValue; } }
         public static bool QLaneclear { get { return Laneclear["QLaneclear"].Cast<CheckBox>().CurrentValue; } }
         public static int QSlider { get { return Laneclear["QSlider"].Cast<Slider>().CurrentValue; } }
-        public static bool kill { get { return Agressive["kill"].Cast<CheckBox>().CurrentValue; } }
         public static int healslider { get { return SummonerSpells["heal"].Cast<Slider>().CurrentValue; } }
         public static int manaslider { get { return SummonerSpells["mana"].Cast<Slider>().CurrentValue; } }
         public static double needheal;
         private static string[] SmiteNames = new[] { "s5_summonersmiteplayerganker", "itemsmiteaoe", "s5_summonersmitequick", "s5_summonersmiteduel", "summonersmite" };
+        private static int killing;
 
-        public static double killing;
         private static void Main(string[] args)
         {
             Loading.OnLoadingComplete += Game_OnStart;
@@ -59,11 +59,11 @@ namespace RyzeAutoplay
             Menu = MainMenu.AddMenu("RyzeFollow", "ryzefollow");
             Menu.Add("sliderdist", new Slider("Distance to ally", 70, 50, 300));
             Menu.Add("recall", new CheckBox("Recall if ally is recalling"));
+            Agressive = Menu.AddSubMenu("Agressive mode", "agm");
+            Agressive.Add("kill", new CheckBox("Orbwalk to target if enemy is killable"));
             Laneclear = Menu.AddSubMenu("Laneclear", "laneclear");
             Laneclear.Add("QLaneclear", new CheckBox("Use Q in laneclear"));
             Laneclear.Add("QSlider", new Slider("Use Q in laneclear only if mana > than", 40, 0, 100));
-            Agressive = Menu.AddSubMenu("Agressive mode", "agm");
-            Agressive.Add("kill", new CheckBox("Orbwalk to target if enemy is killable"));
             SummonerSpells = Menu.AddSubMenu("Summoner spells", "summs");
             SummonerSpells.Add("heal", new Slider("Use heal at % health", 40, 0, 100));
             SummonerSpells.Add("mana", new Slider("Use clarity at % mana", 40, 0, 100));
@@ -79,28 +79,20 @@ namespace RyzeAutoplay
         }
         private static void Game_OnUpdate(EventArgs args)
         {
-            if (kill && myHero.ChampionName == "Ryze") { Killable(); }
-            if (myHero.HealthPercent < healslider && Heal != null && !myHero.IsInShopRange()) { Heal.Cast(); }
-            if (myHero.ManaPercent < manaslider && Clarity != null && !myHero.IsInShopRange()) { Clarity.Cast(); }
+            if (myHero.HealthPercent < healslider && Heal != null && !myHero.IsInShopRange() && !myHero.IsRecalling()) { Heal.Cast(); }
+            if (myHero.ManaPercent < manaslider && Clarity != null && !myHero.IsInShopRange() && !myHero.IsRecalling()) { Clarity.Cast(); }
             var allyturret = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
             var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
             var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) &&
             !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).OrderBy(n => n.TotalAttackDamage).Last();
-
-            if (ally == null) return;
             if (Menu["recall"].Cast<CheckBox>().CurrentValue && ally.IsRecalling() && myHero.Distance(ally) <= 400)
             {
                 Player.CastSpell(SpellSlot.Recall);
             }
-            if (needheal == 0 && myHero.Distance(ally) >= 100 && killing == 0)
+            if (needheal == 0 && myHero.Distance(ally) >= 100 && killing == 0 && !myHero.IsRecalling())
             {
                 Orbwalker.MoveTo(ally.Position - sliderdist);
             }
-            if (myHero.Distance(enemyturret) < 500)
-            {
-                Player.IssueOrder(GameObjectOrder.AutoAttack, enemyturret);
-            }
-
             if (myHero.Distance(allyturret) <= 250 && needheal == 1 && !myHero.IsInShopRange()) { Player.CastSpell(SpellSlot.Recall); }
             if (needheal == 1 && myHero.Distance(allyturret) >= 250) { Orbwalker.MoveTo(allyturret.Position); }
             if (myHero.HealthPercent < 20 || myHero.ManaPercent < 10) { needheal = 1; }
@@ -173,41 +165,15 @@ namespace RyzeAutoplay
                     MercuryTreads.Buy();
                 }
             }
-            if (myHero.IsRecalling() || myHero.ChampionName != "Ryze") { return; }
+            if (myHero.IsRecalling() || myHero.ChampionName != "Ryze") return;
             if (killing == 0) { LastHit(); }
+            if (kill) { Killable(); }
             if (myHero.Distance(enemyturret) > 700) { SluttyCombo(); }
-        }
-        private static void Killable()
-        {
-            var enemy = EntityManager.Heroes.Enemies.Where(b => !b.HasBuffOfType(BuffType.Invulnerability)).OrderBy(b => b.Health).FirstOrDefault();
-            var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead).OrderBy(k => k.Distance(enemy)).First();
-            if (enemy.IsDead || !enemy.IsVisible || myHero.IsDead || enemy == null || myHero.Distance(enemy) > 2500) { killing = 0; }
-            if (enemy != null && myHero.Distance(enemy) < 1300)
-            {
-                var damageQ = (Q.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.Q) : 0);
-                var damageW = (W.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.W) : 0);
-                var damageE = (E.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.E) : 0);
-                var damage = damageQ + damageW + damageE;
-
-                if (damage > enemy.Health && !myHero.IsDead && !enemy.IsDead && enemy.Distance(enemyturret) > 500 && enemy.IsVisible)
-                {
-                    killing = 1;
-                    if (myHero.Distance(enemy) >= 150)
-                    {
-                        Orbwalker.MoveTo(enemy.Position);
-                    }
-
-                }
-            }
         }
         private static void LastHit()
         {
             var minion = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.IsEnemy && x.IsValidTarget(Q.Range)).OrderBy(x => x.Health).FirstOrDefault();
             if (minion == null) return;
-            if (myHero.GetAutoAttackDamage(minion) >= minion.Health && !minion.IsDead && myHero.Distance(minion) <= 700)
-            {
-                Player.IssueOrder(GameObjectOrder.AutoAttack, minion);
-            }
             if (QLaneclear)
             {
                 if (myHero.GetSpellDamage(minion, SpellSlot.Q) >= minion.Health && !minion.IsDead && myHero.ManaPercent > QSlider)
@@ -218,15 +184,39 @@ namespace RyzeAutoplay
             }
 
         }
+        private static void Killable()
+        {
+            var enemy = EntityManager.Heroes.Enemies.Where(b => !b.HasBuffOfType(BuffType.Invulnerability)).OrderBy(b => b.Health).FirstOrDefault();
+            var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead).OrderBy(k => k.Distance(enemy)).First();
+            if (enemy.IsDead || !enemy.IsVisible || myHero.IsDead || enemy == null || myHero.Distance(enemy) > 2000) { killing = 0; }
+            if (enemy != null && myHero.Distance(enemy) < 1800)
+            {
+                var damageQ = (Q.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.Q) : 0);
+                var damageW = (W.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.W) : 0);
+                var damageE = (E.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.E) : 0);
+                var damage = damageQ + damageW + damageE;
+
+                if (damage > enemy.Health && !myHero.IsDead && !enemy.IsDead && enemy.Distance(enemyturret) > 500 && enemy.IsVisible)
+                {
+                    killing = 1;                   
+                }
+                if (killing == 1)
+                {
+                    if (myHero.Distance(enemy) >= 150)
+                    {
+                        Orbwalker.MoveTo(enemy.Position);
+                    }
+                }
+            }
+        }
         private static void SluttyCombo()
         {
-            var target = TargetSelector.GetTarget(600, DamageType.Magical);
+            var target = TargetSelector.GetTarget(900, DamageType.Magical);
             if (target == null) return;
             var Stacks = myHero.GetBuffCount("ryzepassivestack");
-            var QPred = Prediction.Position.PredictLinearMissile(target, Q.Range, Q.Width, Q.CastDelay, Q.Speed, int.MinValue, myHero.ServerPosition);
+            var QPred = Prediction.Position.PredictLinearMissile(target, Q.Range, Q.Width, Q.CastDelay, Q.Speed, int.MinValue, myHero.Position);
             bool StacksBuff = myHero.HasBuff("ryzepassivestack");
             bool Pasive = myHero.HasBuff("ryzepassivecharged");
-
             if (target.IsValidTarget(Q.Range))
             {
                 if (Stacks <= 2 || !StacksBuff)
@@ -248,7 +238,6 @@ namespace RyzeAutoplay
                         if (target.IsValidTarget(W.Range)
                                 && target.Health > (myHero.GetSpellDamage(target, SpellSlot.Q) + myHero.GetSpellDamage(target, SpellSlot.E)))
                         {
-                            if (target.HasBuff("RyzeW"))
                                 R.Cast();
                         }
                     }
@@ -272,8 +261,6 @@ namespace RyzeAutoplay
                         if (target.IsValidTarget(W.Range)
                                 && target.Health > (myHero.GetSpellDamage(target, SpellSlot.Q) + myHero.GetSpellDamage(target, SpellSlot.E)))
                         {
-                            if (target.HasBuff("RyzeW"))
-                                R.Cast();
                             if (!E.IsReady() && !Q.IsReady() && !W.IsReady())
                                 R.Cast();
                         }
@@ -298,10 +285,7 @@ namespace RyzeAutoplay
                         if (target.IsValidTarget(W.Range)
                                 && target.Health > (myHero.GetSpellDamage(target, SpellSlot.Q) + myHero.GetSpellDamage(target, SpellSlot.E)))
                         {
-                            if (target.HasBuff("RyzeW"))
-                                R.Cast();
-                            if (!E.IsReady() && !Q.IsReady() && !W.IsReady())
-                                R.Cast();
+                            R.Cast();
                         }
                     }
                 }
@@ -324,10 +308,7 @@ namespace RyzeAutoplay
                         if (target.IsValidTarget(W.Range)
                             && target.Health > (myHero.GetSpellDamage(target, SpellSlot.Q) + myHero.GetSpellDamage(target, SpellSlot.E)))
                         {
-                            if (target.HasBuff("RyzeW"))
-                                R.Cast();
-                            if (!E.IsReady() && !Q.IsReady() && !W.IsReady())
-                                R.Cast();
+                            R.Cast();
                         }
                     }
                 }
