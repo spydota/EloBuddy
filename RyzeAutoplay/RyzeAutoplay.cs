@@ -43,18 +43,18 @@ namespace RyzeAutoplay
             if (myHero.Spellbook.GetSpell(SpellSlot.Summoner1).Name == "summonermana") { Clarity = new Spell.Active(SpellSlot.Summoner1); }
             if (myHero.Spellbook.GetSpell(SpellSlot.Summoner2).Name == "summonermana") { Clarity = new Spell.Active(SpellSlot.Summoner2); }
 
-            trinket = new Item((int)ItemId.Warding_Totem_Trinket);
-            Boots = new Item((int)ItemId.Boots_of_Speed);
-            MercuryTreads = new Item((int)ItemId.Mercurys_Treads);
-            SapphireCrystal = new Item((int)ItemId.Sapphire_Crystal);
-            RubyCrystal = new Item((int)ItemId.Ruby_Crystal);
-            SapphireCrystal = new Item((int)ItemId.Sapphire_Crystal);
-            BlastingWand = new Item((int)ItemId.Blasting_Wand);
-            ROA = new Item((int)ItemId.Rod_of_Ages);
-            Catalyst = new Item((int)ItemId.Catalyst_the_Protector);
-            ArchangelsStaff = new Item((int)ItemId.Archangels_Staff);
-            Tear = new Item((int)ItemId.Tear_of_the_Goddess);
-            NeedlesslyLargeRod = new Item((int)ItemId.Needlessly_Large_Rod);
+            trinket = new Item(ItemId.Warding_Totem_Trinket);
+            Boots = new Item(ItemId.Boots_of_Speed);
+            MercuryTreads = new Item(ItemId.Mercurys_Treads);
+            SapphireCrystal = new Item(ItemId.Sapphire_Crystal);
+            RubyCrystal = new Item(ItemId.Ruby_Crystal);
+            SapphireCrystal = new Item(ItemId.Sapphire_Crystal);
+            BlastingWand = new Item(ItemId.Blasting_Wand);
+            ROA = new Item(ItemId.Rod_of_Ages);
+            Catalyst = new Item(ItemId.Catalyst_the_Protector);
+            ArchangelsStaff = new Item(ItemId.Archangels_Staff);
+            Tear = new Item(ItemId.Tear_of_the_Goddess);
+            NeedlesslyLargeRod = new Item(ItemId.Needlessly_Large_Rod);
             SeraphEmbrace = new Item(3040);
             Menu = MainMenu.AddMenu("RyzeFollow", "ryzefollow");
             Menu.Add("sliderdist", new Slider("Distance to ally", 70, 50, 300));
@@ -187,16 +187,17 @@ namespace RyzeAutoplay
         private static void Killable()
         {
             var enemy = EntityManager.Heroes.Enemies.Where(b => !b.HasBuffOfType(BuffType.Invulnerability)).OrderBy(b => b.Health).FirstOrDefault();
-            var enemyturret = EntityManager.Turrets.Enemies.Where(k => !k.IsDead).OrderBy(k => k.Distance(enemy)).First();
-            if (enemy.IsDead || !enemy.IsVisible || myHero.IsDead || enemy == null || myHero.Distance(enemy) > 2000) { killing = 0; }
-            if (enemy != null && myHero.Distance(enemy) < 1800)
+            if (enemy == null) return;
+            var enemyturret = EntityManager.Turrets.Enemies.Where(x => !x.IsDead).OrderBy(x => x.Distance(enemy)).First();
+            if (!enemy.IsVisible || myHero.IsDead || enemy.IsDead || myHero.Distance(enemy) > 2000) { killing = 0; return; }
+            if (myHero.Distance(enemy) < 1800)
             {
                 var damageQ = (Q.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.Q) : 0);
                 var damageW = (W.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.W) : 0);
                 var damageE = (E.IsReady() ? myHero.GetSpellDamage(enemy, SpellSlot.E) : 0);
                 var damage = damageQ + damageW + damageE;
 
-                if (damage > enemy.Health && !myHero.IsDead && !enemy.IsDead && enemy.Distance(enemyturret) > 500 && enemy.IsVisible)
+                if (damage > enemy.Health && enemy.Distance(enemyturret) >= 500)
                 {
                     killing = 1;                   
                 }
