@@ -10,145 +10,255 @@ namespace AutoQSS
 {
     class Program
     {      
-        public static Menu Menu;
-        public static Item QSS, MercurialScimitar;
+        public static Menu Menu, CC, Ult;
+        public static Item QSS, Mercurial;
         public static bool keybind { get { return Menu["keybind"].Cast<KeyBind>().CurrentValue; } }
         public static bool drawk { get { return Menu["drawk"].Cast<CheckBox>().CurrentValue; } }
-        public static bool Taunt { get { return Menu["Taunt"].Cast<CheckBox>().CurrentValue; } }
-        public static bool Stun { get { return Menu["Stun"].Cast<CheckBox>().CurrentValue; } }
-        public static bool Snare { get { return Menu["Snare"].Cast<CheckBox>().CurrentValue; } }
-        public static bool Polymorph { get { return Menu["Polymorph"].Cast<CheckBox>().CurrentValue; } }
-        public static bool Blind { get { return Menu["Blind"].Cast<CheckBox>().CurrentValue; } }
-        public static bool Fear { get { return Menu["Fear"].Cast<CheckBox>().CurrentValue; } }
-        public static bool Charm { get { return Menu["Charm"].Cast<CheckBox>().CurrentValue; } }
-        public static bool Suppression { get { return Menu["Suppression"].Cast<CheckBox>().CurrentValue; } }
-        public static bool Silence { get { return Menu["Silence"].Cast<CheckBox>().CurrentValue; } }
-        public static bool ZedUlt { get { return Menu["ZedUlt"].Cast<CheckBox>().CurrentValue; } }
-        public static bool VladUlt { get { return Menu["VladUlt"].Cast<CheckBox>().CurrentValue; } }
-        public static bool FizzUlt { get { return Menu["FizzUlt"].Cast<CheckBox>().CurrentValue; } }
-        public static bool MordUlt { get { return Menu["MordUlt"].Cast<CheckBox>().CurrentValue; } }
-        public static bool PoppyUlt { get { return Menu["PoppyUlt"].Cast<CheckBox>().CurrentValue; } }
+
+        public static bool Taunt { get { return CC["Taunt"].Cast<CheckBox>().CurrentValue; } }
+        public static bool Stun { get { return CC["Stun"].Cast<CheckBox>().CurrentValue; } }
+        public static bool Snare { get { return CC["Snare"].Cast<CheckBox>().CurrentValue; } }
+        public static bool Polymorph { get { return CC["Polymorph"].Cast<CheckBox>().CurrentValue; } }
+        public static bool Blind { get { return CC["Blind"].Cast<CheckBox>().CurrentValue; } }
+        public static bool Fear { get { return CC["Fear"].Cast<CheckBox>().CurrentValue; } }
+        public static bool Charm { get { return CC["Charm"].Cast<CheckBox>().CurrentValue; } }
+        public static bool Suppression { get { return CC["Suppression"].Cast<CheckBox>().CurrentValue; } }
+        public static bool Silence { get { return CC["Silence"].Cast<CheckBox>().CurrentValue; } }
+
+        public static bool ZedUlt { get { return Ult["ZedUlt"].Cast<CheckBox>().CurrentValue; } }
+        public static bool VladUlt { get { return Ult["VladUlt"].Cast<CheckBox>().CurrentValue; } }
+        public static bool FizzUlt { get { return Ult["FizzUlt"].Cast<CheckBox>().CurrentValue; } }
+        public static bool MordUlt { get { return Ult["MordUlt"].Cast<CheckBox>().CurrentValue; } }
+        public static bool PoppyUlt { get { return Ult["PoppyUlt"].Cast<CheckBox>().CurrentValue; } }
+
+        public static int MinBuff { get { return Menu["minbuff"].Cast<Slider>().CurrentValue; } }
+        public static int MinDuration { get { return Menu["buffduration"].Cast<Slider>().CurrentValue; } }
+        public static int DebuffCount;
+
         private static void Main(string[] args)
         {
             Loading.OnLoadingComplete += Game_OnStart;           
         }
         private static void Game_OnStart(EventArgs args)
         {
-            QSS = new Item((int)ItemId.Quicksilver_Sash);
-            MercurialScimitar = new Item((int)ItemId.Mercurial_Scimitar);            
+            QSS = new Item(ItemId.Quicksilver_Sash);
+            Mercurial = new Item(ItemId.Mercurial_Scimitar);            
 
             Menu = MainMenu.AddMenu("Auto QSS", "autoqss");
+            CC = Menu.AddSubMenu("QSS Manager", "qsmg");
+            Ult = Menu.AddSubMenu("Ults Manager", "utls");
+
             Menu.Add("keybind", new KeyBind("Auto QSS", false, KeyBind.BindTypes.PressToggle, 'L'));
             Menu.Add("drawk", new CheckBox("Draw Keybind"));
-            Menu.AddGroupLabel("Auto QSS if :");
-            Menu.Add("Taunt", new CheckBox("Taunt"));
-            Menu.Add("Stun", new CheckBox("Stun"));
-            Menu.Add("Snare", new CheckBox("Snare"));
-            Menu.Add("Polymorph", new CheckBox("Polymorph"));
-            Menu.Add("Blind", new CheckBox("Blind", false));
-            Menu.Add("Fear", new CheckBox("Fear"));
-            Menu.Add("Charm", new CheckBox("Charm"));
-            Menu.Add("Suppression", new CheckBox("Suppression"));
-            Menu.Add("Silence", new CheckBox("Silence", false));
-            Menu.Add("CCDelay", new Slider("Delay for CC", 40, 0, 80));       
-            Menu.AddGroupLabel("Ults");
-            Menu.Add("ZedUlt", new CheckBox("Zed Ult"));
-            Menu.Add("VladUlt", new CheckBox("Vlad Ult"));
-            Menu.Add("FizzUlt", new CheckBox("Fizz Ult"));
-            Menu.Add("MordUlt", new CheckBox("Mordekaiser Ult"));
-            Menu.Add("PoppyUlt", new CheckBox("Poppy Ult"));
-            Menu.Add("UltDelay", new Slider("Delay for Ults", 20, 0, 80));
+            Menu.Add("buffduration", new Slider("Min duration to QSS", 0, 0, 4));
+            Menu.Add("minbuff", new Slider("Min buffs to QSS", 1, 1, 4));
 
-            Game.OnUpdate += Game_OnUpdate;
+            CC.AddGroupLabel("Auto QSS if :");
+            CC.Add("Taunt", new CheckBox("Taunt"));
+            CC.Add("Stun", new CheckBox("Stun"));
+            CC.Add("Snare", new CheckBox("Snare"));
+            CC.Add("Polymorph", new CheckBox("Polymorph"));
+            CC.Add("Blind", new CheckBox("Blind", false));
+            CC.Add("Fear", new CheckBox("Fear"));
+            CC.Add("Charm", new CheckBox("Charm"));
+            CC.Add("Suppression", new CheckBox("Suppression"));
+            CC.Add("Silence", new CheckBox("Silence", false));
+            CC.Add("CCDelay", new Slider("Delay for CC", 400, 0, 2000));
+
+            Ult.AddGroupLabel("Ults");
+            Ult.Add("ZedUlt", new CheckBox("Zed Ult"));
+            Ult.Add("VladUlt", new CheckBox("Vlad Ult"));
+            Ult.Add("FizzUlt", new CheckBox("Fizz Ult"));
+            Ult.Add("MordUlt", new CheckBox("Mordekaiser Ult"));
+            Ult.Add("PoppyUlt", new CheckBox("Poppy Ult"));
+            Ult.Add("UltDelay", new Slider("Delay for Ults", 1000, 0, 3000));
+
+            Obj_AI_Base.OnBuffGain += OnBuffGain;
+            Obj_AI_Base.OnBuffLose += OnBuffLose;
             Drawing.OnDraw += Game_OnDraw;
         }
-        private static void Game_OnUpdate(EventArgs args)
-        {          
-            var UltDelay = Menu["UltDelay"].Cast<Slider>().CurrentValue;
-            var CCDelay = Menu["CCDelay"].Cast<Slider>().CurrentValue;        
+       private static void OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs args)
+        {
+            if (!sender.IsMe) return;
 
-            if (keybind)
+            var type = args.Buff.Type;
+            var duration = args.Buff.EndTime - Game.Time;
+
+            if (type == BuffType.Taunt && Taunt)
             {
-                if (Player.HasBuffOfType(BuffType.Taunt) && Taunt && QSS.IsReady() || MercurialScimitar.IsReady())
+                DebuffCount++;
+                if (duration >= MinDuration)
                 {
-                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
-                }
-                if (Player.HasBuffOfType(BuffType.Stun) && Stun && QSS.IsReady() || MercurialScimitar.IsReady())
-                {                    
-                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
-                }
-                if (Player.HasBuffOfType(BuffType.Snare) && Snare && QSS.IsReady() || MercurialScimitar.IsReady())
-                {
-                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
-                }
-                if (Player.HasBuffOfType(BuffType.Polymorph) && Polymorph && QSS.IsReady() || MercurialScimitar.IsReady())
-                {
-                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
-                }
-                if (Player.HasBuffOfType(BuffType.Blind) && Blind && QSS.IsReady() || MercurialScimitar.IsReady())
-                {
-                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
-                }
-                if (Player.HasBuffOfType(BuffType.Flee) && Fear && QSS.IsReady() || MercurialScimitar.IsReady())
-                {
-                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
-                }
-                if (Player.HasBuffOfType(BuffType.Charm) && Charm && QSS.IsReady() || MercurialScimitar.IsReady())
-                {
-                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
-                }
-                if (Player.HasBuffOfType(BuffType.Suppression) && Suppression && QSS.IsReady() || MercurialScimitar.IsReady())
-                {
-                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
-                }
-                if (Player.HasBuffOfType(BuffType.Silence) && Silence && QSS.IsReady() || MercurialScimitar.IsReady())
-                {
-                    Core.DelayAction(() => QSS.Cast(), CCDelay * 10);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), CCDelay * 10);
-                }
-                if (Player.HasBuff("zedulttargetmark") && ZedUlt && QSS.IsReady() || MercurialScimitar.IsReady())
-                {
-                    Core.DelayAction(() => QSS.Cast(), UltDelay * 50);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), UltDelay * 50);
-                }
-                if (Player.HasBuff("VladimirHemoplague") && VladUlt && QSS.IsReady() || MercurialScimitar.IsReady())
-                {
-                    Core.DelayAction(() => QSS.Cast(), UltDelay * 50);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), UltDelay * 50);
-                }
-                if (Player.HasBuff("FizzMarinerDoom") && FizzUlt && QSS.IsReady() || MercurialScimitar.IsReady())
-                {
-                    Core.DelayAction(() => QSS.Cast(), UltDelay * 10);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), UltDelay * 30);
-                }
-                if (Player.HasBuff("MordekaiserChildrenOfTheGrave") && MordUlt && QSS.IsReady() || MercurialScimitar.IsReady())
-                {
-                    Core.DelayAction(() => QSS.Cast(), UltDelay * 50);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), UltDelay * 30);
-                }
-                if (Player.HasBuff("PoppyDiplomaticImmunity") && PoppyUlt && QSS.IsReady() || MercurialScimitar.IsReady())
-                {
-                    Core.DelayAction(() => QSS.Cast(), UltDelay * 30);
-                    Core.DelayAction(() => MercurialScimitar.Cast(), UltDelay * 30);
+                    DoQSS();
                 }
             }
-
+            if (type == BuffType.Stun && Stun)
+            {
+                DebuffCount++;
+                if (duration >= MinDuration)
+                {
+                    DoQSS();
+                }
+            }
+            if (type == BuffType.Snare && Snare)
+            {
+                DebuffCount++;
+                if (duration >= MinDuration)
+                {
+                    DoQSS();
+                }
+            }
+            if (type == BuffType.Polymorph && Polymorph)
+            {
+                DebuffCount++;
+                if (duration >= MinDuration)
+                {
+                    DoQSS();
+                }
+            }
+            if (type == BuffType.Blind && Blind)
+            {
+                DebuffCount++;
+                if (duration >= MinDuration)
+                {
+                    DoQSS();
+                }
+            }
+            if (type == BuffType.Flee && Fear)
+            {
+                DebuffCount++;
+                if (duration >= MinDuration)
+                {
+                    DoQSS();
+                }
+            }
+            if (type == BuffType.Charm && Charm)
+            {
+                DebuffCount++;
+                if (duration >= MinDuration)
+                {
+                    DoQSS();
+                }
+            }
+            if (type == BuffType.Suppression && Suppression)
+            {
+                DebuffCount++;
+                if (duration >= MinDuration)
+                {
+                    DoQSS();
+                }
+            }
+            if (type == BuffType.Silence && Silence)
+            {
+                DebuffCount++;
+                if(duration >= MinDuration)
+                {
+                    DoQSS();
+                }
+            }
+            if (args.Buff.Name == "zedulttargetmark" && ZedUlt)
+            {
+                UltQSS();
+            }
+            if (args.Buff.Name == "VladimirHemoplague" && VladUlt)
+            {
+                UltQSS();
+            }
+            if (args.Buff.Name == "FizzMarinerDoom" && FizzUlt)
+            {
+                UltQSS();
+            }
+            if (args.Buff.Name == "MordekaiserChildrenOfTheGrave" && MordUlt)
+            {
+                UltQSS();
+            }
+            if (args.Buff.Name == "PoppyDiplomaticImmunity" && PoppyUlt)
+            {
+                UltQSS();
+            }
         }
+
+        private static void OnBuffLose(Obj_AI_Base sender, Obj_AI_BaseBuffLoseEventArgs args)
+        {
+            if (!sender.IsMe) return;
+
+            var type = args.Buff.Type;
+
+            if (type == BuffType.Taunt && Taunt)
+            {
+                DebuffCount--;
+            }
+            if (type == BuffType.Stun && Stun)
+            {
+                DebuffCount--;
+            }
+            if (type == BuffType.Snare && Snare)
+            {
+                DebuffCount--;
+            }
+            if (type == BuffType.Polymorph && Polymorph)
+            {
+                DebuffCount--;
+            }
+            if (type == BuffType.Blind && Blind)
+            {
+                DebuffCount--;
+            }
+            if (type == BuffType.Flee && Fear)
+            {
+                DebuffCount--;
+            }
+            if (type == BuffType.Charm && Charm)
+            {
+                DebuffCount--;
+            }
+            if (type == BuffType.Suppression && Suppression)
+            {
+                DebuffCount--;
+            }
+            if (type == BuffType.Silence && Silence)
+            {
+                DebuffCount--;
+            }
+        }
+        
         private static void Game_OnDraw(EventArgs args)
         {
             if (!drawk) return;
+
             var pos = Drawing.WorldToScreen(Player.Instance.Position);
             Drawing.DrawText(pos.X - 45, pos.Y + 30, keybind ? Color.White : Color.Red, keybind ? "Auto QSS ON" : "Auto QSS OFF");
 
 
         }
+        private static void DoQSS()
+        {
+            if (DebuffCount < MinBuff || !keybind) return;
+
+            if (QSS.IsOwned() && QSS.IsReady() && ObjectManager.Player.CountEnemiesInRange(1800) > 0)
+            {
+                Core.DelayAction(() => QSS.Cast(), CC["CCDelay"].Cast<Slider>().CurrentValue);
+            }
+
+            if (Mercurial.IsOwned() && Mercurial.IsReady() && ObjectManager.Player.CountEnemiesInRange(1800) > 0)
+            {
+                Core.DelayAction(() => Mercurial.Cast(), CC["CCDelay"].Cast<Slider>().CurrentValue);
+            }
+        }
+        private static void UltQSS()
+        {
+            if (!keybind) return;
+
+            if (QSS.IsOwned() && QSS.IsReady())
+            {
+                Core.DelayAction(() => QSS.Cast(), Ult["UltDelay"].Cast<Slider>().CurrentValue);
+            }
+
+            if (Mercurial.IsOwned() && Mercurial.IsReady())
+            {
+                Core.DelayAction(() => Mercurial.Cast(), Ult["UltDelay"].Cast<Slider>().CurrentValue);
+            }
+        }
+             
     }   
 }
