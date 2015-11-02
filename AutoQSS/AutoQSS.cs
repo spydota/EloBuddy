@@ -3,11 +3,8 @@ using EloBuddy.SDK;
 using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
-using SharpDX;
 using System;
 using System.Drawing;
-using Color = System.Drawing.Color;
 
 namespace AutoQSS
 {
@@ -47,7 +44,8 @@ namespace AutoQSS
         private static void Game_OnStart(EventArgs args)
         {
             QSS = new Item(ItemId.Quicksilver_Sash);
-            Mercurial = new Item(ItemId.Mercurial_Scimitar);            
+            if (Game.MapId == GameMapId.CrystalScar) { Mercurial = new Item(ItemId.Dervish_Blade); }
+            else { Mercurial = new Item(ItemId.Mercurial_Scimitar); }
 
             Menu = MainMenu.AddMenu("Auto QSS", "autoqss");
             CC = Menu.AddSubMenu("QSS Manager", "qsmg");
