@@ -3,13 +3,16 @@ using EloBuddy.SDK;
 using EloBuddy.SDK.Events;
 using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
+using EloBuddy.SDK.Rendering;
+using SharpDX;
 using System;
 using System.Drawing;
+using Color = System.Drawing.Color;
 
 namespace AutoQSS
 {
     class Program
-    {      
+    {
         public static Menu Menu, CC, Ult;
         public static Item QSS, Mercurial;
         public static bool keybind { get { return Menu["keybind"].Cast<KeyBind>().CurrentValue; } }
@@ -34,6 +37,8 @@ namespace AutoQSS
         public static int MinBuff { get { return Menu["minbuff"].Cast<Slider>().CurrentValue; } }
         public static int MinDuration { get { return Menu["buffduration"].Cast<Slider>().CurrentValue; } }
         public static int DebuffCount;
+        public static double increased;
+        public static double decreased;
 
         private static void Main(string[] args)
         {
@@ -46,12 +51,17 @@ namespace AutoQSS
 
             Menu = MainMenu.AddMenu("Auto QSS", "autoqss");
             CC = Menu.AddSubMenu("QSS Manager", "qsmg");
-            Ult = Menu.AddSubMenu("Ults Manager", "utls");
+            Ult = Menu.AddSubMenu("Ults Manager", "ults");
 
             Menu.Add("keybind", new KeyBind("Auto QSS", false, KeyBind.BindTypes.PressToggle, 'L'));
             Menu.Add("drawk", new CheckBox("Draw Keybind"));
             Menu.Add("buffduration", new Slider("Min duration to QSS", 0, 0, 4));
             Menu.Add("minbuff", new Slider("Min buffs to QSS", 1, 1, 4));
+
+            Menu.AddLabel("(You can increase / decrease the min buffs without pressing shift)");
+            Menu.AddSeparator();
+            Menu.Add("increase", new KeyBind("Increase the min buffs to QSS", false, KeyBind.BindTypes.HoldActive, 'J'));            
+            Menu.Add("decrease", new KeyBind("Decrease the min buffs to QSS", false, KeyBind.BindTypes.HoldActive, 'N'));
 
             CC.AddGroupLabel("Auto QSS if :");
             CC.Add("Taunt", new CheckBox("Taunt"));
@@ -73,11 +83,34 @@ namespace AutoQSS
             Ult.Add("PoppyUlt", new CheckBox("Poppy Ult"));
             Ult.Add("UltDelay", new Slider("Delay for Ults", 1000, 0, 3000));
 
+              
             Obj_AI_Base.OnBuffGain += OnBuffGain;
             Obj_AI_Base.OnBuffLose += OnBuffLose;
             Drawing.OnDraw += Game_OnDraw;
+            Game.OnUpdate += OnUpdate;
         }
-       private static void OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs args)
+        private static void OnUpdate(EventArgs args)
+        {
+            if (Menu["increase"].Cast<KeyBind>().CurrentValue && increased == 0)
+            {
+                Menu["minbuff"].Cast<Slider>().CurrentValue++;
+                increased = 1;
+            }
+            if (!Menu["increase"].Cast<KeyBind>().CurrentValue && increased == 1)
+            {
+                increased = 0;
+            }
+            if (Menu["decrease"].Cast<KeyBind>().CurrentValue && decreased == 0)
+            {
+                Menu["minbuff"].Cast<Slider>().CurrentValue--;
+                decreased = 1;
+            }
+            if (!Menu["decrease"].Cast<KeyBind>().CurrentValue && decreased == 1)
+            {
+                decreased = 0;
+            }
+        }
+        private static void OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs args)
         {
             if (!sender.IsMe) return;
 
@@ -221,15 +254,16 @@ namespace AutoQSS
                 DebuffCount--;
             }
         }
-        
+
         private static void Game_OnDraw(EventArgs args)
         {
-            if (!drawk) return;
-
-            var pos = Drawing.WorldToScreen(Player.Instance.Position);
-            Drawing.DrawText(pos.X - 45, pos.Y + 30, keybind ? Color.White : Color.Red, keybind ? "Auto QSS ON" : "Auto QSS OFF");
-
-
+            if (drawk)
+            {
+                var pos = Drawing.WorldToScreen(Player.Instance.Position);
+                Drawing.DrawText(pos.X - 45, pos.Y + 30, keybind ? Color.White : Color.Red, keybind ? "Auto QSS ON" : "Auto QSS OFF");
+            }
+            Drawing.DrawText(1492, 638, Color.White, "Min buffs to QSS: " + MinBuff);
+            
         }
         private static void DoQSS()
         {
