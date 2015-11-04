@@ -92,7 +92,9 @@ namespace RyzeAutoplay
         }
         private static void LastHit()
         {
-            var minion = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.IsEnemy && x.IsValidTarget(Q.Range)).OrderBy(x => x.Health).FirstOrDefault();
+            var minion = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.IsEnemy && x.IsValidTarget(Q.Range) && !x.BaseSkinName.ToLower().Contains("gangplankbarrel")).
+                OrderBy(
+                x => x.Health).FirstOrDefault();
             
             if (minion != null)
             {
