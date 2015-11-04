@@ -14,13 +14,14 @@ namespace KappaVeigar
     class Veigar : VeigarSpells
     {
         private static void Main(string[] args) { Loading.OnLoadingComplete += Game_OnStart; }
-        public static Menu Menu, ComboM, HarassM,LaneclearM, KS, Draw, RMenu, EMenu;
+        public static Menu Menu, ComboM, HarassM,LaneclearM, KS, Draw, RMenu;
         public static bool CastCheckbox(Menu obj, string value) { return obj[value].Cast<CheckBox>().CurrentValue; }
         public static int CastSlider(Menu obj, string value) { return obj[value].Cast<Slider>().CurrentValue; }
         public static AIHeroClient myHero { get { return ObjectManager.Player; } }
         private static void Game_OnStart(EventArgs args)
         {
             if (myHero.Hero != Champion.Veigar) return;
+            Q.AllowedCollisionCount = 2;
             Chat.Print("Kappa Veigar Loaded", Color.AliceBlue);
             Chat.Print("By Capitao Addon",Color.WhiteSmoke);
             InitMenu();
