@@ -206,7 +206,6 @@ namespace KappaVeigar
             {
                 if (KSDamage(target) > target.Health)
                 {
-                    Chat.Print("KS");
                     if (CastCheckbox(KS, "useQ"))
                     {
                         var Qpred = Q.GetPrediction(target);
