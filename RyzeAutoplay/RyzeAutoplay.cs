@@ -53,7 +53,6 @@ namespace RyzeAutoplay
         }
         private static void Game_OnUpdate(EventArgs args)
         {
-            if (Game.Time < 40) return;
             if (myHero.HealthPercent < healslider && Heal != null && !myHero.IsInShopRange() && !myHero.IsRecalling() && myHero.CountEnemiesInRange(900) > 0) { Heal.Cast(); }
             if (myHero.ManaPercent < manaslider && Clarity != null && !myHero.IsInShopRange() && !myHero.IsRecalling() && myHero.CountEnemiesInRange(900) > 0) { Clarity.Cast(); }
             var allyturret = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First();
@@ -68,12 +67,24 @@ namespace RyzeAutoplay
             {
                 Orbwalker.MoveTo(ally.Position - sliderdist);
             }
-            if (ally == null) needheal = 1;
             if (myHero.Distance(allyturret) <= 250 && needheal == 1 && !myHero.IsInShopRange()) { Player.CastSpell(SpellSlot.Recall); }
             if (needheal == 1 && myHero.Distance(allyturret) >= 250) { Orbwalker.MoveTo(allyturret.Position); }
-            if (myHero.HealthPercent < 20 || myHero.ManaPercent < 10) { needheal = 1; }
-            if (myHero.HealthPercent > 90 && myHero.ManaPercent > 90) { needheal = 0; }
-           
+            if (myHero.HealthPercent < 20)
+            {
+                needheal = 1;
+            }
+            if (myHero.MaxMana > 100)
+            {
+                if (myHero.ManaPercent < 20)
+                {
+                    needheal = 1;
+                }
+                if (myHero.ManaPercent > 90)
+                {
+                    needheal = 0;
+                }
+            }
+                                 
             if (myHero.IsRecalling() || myHero.ChampionName != "Ryze") return;
             if (killing == 0) { LastHit(); }
             if (kill) { Killable(); }
@@ -82,17 +93,20 @@ namespace RyzeAutoplay
         private static void LastHit()
         {
             var minion = ObjectManager.Get<Obj_AI_Minion>().Where(x => x.IsEnemy && x.IsValidTarget(Q.Range)).OrderBy(x => x.Health).FirstOrDefault();
-            if (minion == null) return;
-            if (QLaneclear && myHero.GetBuffCount("ryzepassivestack") <= 2)
+            
+            if (minion != null)
             {
-                if (myHero.GetSpellDamage(minion, SpellSlot.Q) >= minion.Health && !minion.IsDead && myHero.ManaPercent > QSlider)
+                if (QLaneclear && myHero.GetBuffCount("ryzepassivestack") <= 2)
                 {
-                    Q.Cast(minion);
+                    if (myHero.GetSpellDamage(minion, SpellSlot.Q) >= minion.Health && !minion.IsDead && myHero.ManaPercent > QSlider)
+                    {
+                        Q.Cast(minion);
+                    }
                 }
-            }
-            if (myHero.GetAutoAttackDamage(minion) > minion.Health && !minion.IsDead)
-            {
-                Player.IssueOrder(GameObjectOrder.AttackUnit, minion);
+                if (myHero.GetAutoAttackDamage(minion) > minion.Health && !minion.IsDead)
+                {
+                    Player.IssueOrder(GameObjectOrder.AttackUnit, minion);
+                }
             }
         }
         private static void Killable()
