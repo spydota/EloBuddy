@@ -303,8 +303,8 @@ namespace KappaVeigar
             KS = Menu.AddSubMenu("Killsteal", "ks");
 
             Menu.AddGroupLabel("Kappa Veigar - Made by Capitao Addon");
-            LaneclearM.AddSeparator();
-            LaneclearM.AddSeparator();
+            Menu.AddSeparator();
+            Menu.AddSeparator();
             Menu.AddLabel("Version: 1.0.0.0");
 
             ComboM.Add("stunW", new CheckBox("Only use W in immobile enemies"));
