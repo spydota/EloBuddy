@@ -21,7 +21,7 @@ namespace KappaVeigar
         private static void Game_OnStart(EventArgs args)
         {
             if (myHero.Hero != Champion.Veigar) return;
-            Q.AllowedCollisionCount = 2;
+            Q.AllowedCollisionCount = 1;
             Chat.Print("Kappa Veigar Loaded", Color.AliceBlue);
             Chat.Print("By Capitao Addon",Color.WhiteSmoke);
             InitMenu();
