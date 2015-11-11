@@ -260,7 +260,7 @@ namespace AutoQSS
                 var pos = Drawing.WorldToScreen(Player.Instance.Position);
                 Drawing.DrawText(pos.X - 45, pos.Y + 30, keybind ? Color.White : Color.Red, keybind ? "Auto QSS ON" : "Auto QSS OFF");
             }
-            Drawing.DrawText(1492, 638, Color.White, "Min buffs to QSS: " + MinBuff);
+            Drawing.DrawText(1300, 30, Color.White, "Min buffs to QSS: " + MinBuff);
             
         }
         private static void DoQSS()
