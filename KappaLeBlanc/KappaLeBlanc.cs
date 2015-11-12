@@ -19,7 +19,6 @@ namespace KappaLeBlanc
 
             CheckForUpdates();
             LBMenu.StartMenu();
-            Chat.Print(Lib.E.AllowedCollisionCount);
             Lib.W.AllowedCollisionCount = int.MaxValue;
             Game.OnUpdate += Game_OnUpdate;
             Drawing.OnDraw += Drawings;
