@@ -57,6 +57,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Modes\Combo.cs" />
+    <Compile Include="Modes\Harass.cs" />
+    <Compile Include="Modes\Flee.cs" />
+    <Compile Include="Modes\Killsteal.cs" />
+    <Compile Include="Modes\AntiGapcloser.cs" />
+    <Compile Include="Modes\Laneclear.cs" />
+    <Compile Include="LBMenu.cs" />
+    <Compile Include="Helper.cs" />
+    <Compile Include="Slide.cs" />
+    <Compile Include="SpellLib.cs" />
     <Compile Include="KappaLeBlanc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
