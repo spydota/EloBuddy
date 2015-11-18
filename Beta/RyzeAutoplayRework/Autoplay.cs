@@ -40,7 +40,7 @@ namespace Autoplay
         }
         private static void Game_OnUpdate(EventArgs args)
         {
-            if (Game.Time < 200) return;
+            if (Game.Time < 150) return;
             var turret = GetClosestTurret(AARange());
             if (turret != null)
             {
@@ -224,7 +224,7 @@ namespace Autoplay
             }
             else if (myHero.MaxMana > 100)
             {
-                if (myHero.ManaPercent < 15)
+                if (myHero.ManaPercent < 20)
                 {
                     Recall();
                 }

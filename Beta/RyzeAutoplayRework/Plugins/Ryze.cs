@@ -110,9 +110,10 @@ namespace Plugins
             if (QDmg + WDmg + EDmg > target.Health && (target.CountEnemiesInRange(500) <= 3 || Stacks >= 4) && target.IsValidTarget(900) && !target.IsDead && target.IsVisible)
             {
                 ComboPLS = true;
+               Core.DelayAction(() =>ComboPLS = false, 5000);
             } 
-            else { ComboPLS = false; }
-            var QPred = Prediction.Position.PredictLinearMissile(target, Q.Range, Q.Width, Q.CastDelay, Q.Speed, int.MinValue, myHero.Position);
+            else if(ComboPLS) { ComboPLS = false; }
+            var QPred = Q.GetPrediction(target);
             bool StacksBuff = myHero.HasBuff("ryzepassivestack");
             bool Pasive = myHero.HasBuff("ryzepassivecharged");
             if (target.IsValidTarget(Q.Range))
