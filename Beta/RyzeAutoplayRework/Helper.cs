@@ -14,7 +14,6 @@ namespace Autoplay
         public static Vector3 Spawn;
         public static int random;
         public static int RandomCheck = 0;
-        public static bool WalkingToRecall = false;
         public static bool ChangedToAllies = false;
         public static bool WaitingHealth = false;
         public static int Tick = 0;
@@ -224,7 +223,7 @@ namespace Autoplay
         {
             List<Obj_AI_Minion> T =
                 EntityManager.MinionsAndMonsters.AlliedMinions
-                .Where(t => t.Distance(ObjectManager.Player.Position) < Range && !t.IsDead && t.Distance(myHero.Position) > 50).ToList();
+                .Where(t => t.Distance(ObjectManager.Player.Position) < Range && !t.IsDead).ToList();
 
 
             if (T.Count > 0)
@@ -253,9 +252,9 @@ namespace Autoplay
         {
             //Like old times Kappa
             var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) &&
-            !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).OrderBy(x => x.Distance(myHero)).First();
+            !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).OrderBy(x => x.Distance(myHero));
 
-            return ally;
+            return (ally.Count() > 0 ? ally.First() : null);
         }
 
         private static int tick = Environment.TickCount;

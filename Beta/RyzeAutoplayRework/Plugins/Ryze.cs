@@ -16,6 +16,7 @@ namespace Plugins
         public static void Init()
         {
             Chat.Print(Player.Instance.ChampionName + "Loaded");
+            new RyzeMenu().Init();
         }
         public static void Farm()
         {

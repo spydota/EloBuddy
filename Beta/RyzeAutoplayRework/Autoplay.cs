@@ -24,45 +24,37 @@ namespace Autoplay
             {
                 Spawn = new Vector3(14314, 14395, 172);
             }
-            switch(myHero.ChampionName)
-            {
-                case "Ryze":
-                    Ryze.Init();
-                    break;
-            }
-            Drawing.OnDraw += Drawing_OnDraw;
+            new PluginLoader().LoadPlugin();
             Game.OnUpdate += Game_OnUpdate;
+            Drawing.OnDraw += Drawing_OnDraw;         
         }
         private static void Drawing_OnDraw(EventArgs args)
         {
             Drawing.DrawCircle(Pos, 150, System.Drawing.Color.Yellow);
-            Drawing.DrawCircle(GetTopAllyTurret().Position,300, System.Drawing.Color.Red);
+            var enemy = TargetSelector.GetTarget(900, DamageType.Magical);
+            if (enemy != null)
+            {
+                Drawing.DrawCircle(enemy.ServerPosition, enemy.GetAutoAttackRange(), System.Drawing.Color.Red);
+            }
+            //Drawing.DrawCircle(GetTopAllyTurret().Position,300, System.Drawing.Color.Red);
         }
         private static void Game_OnUpdate(EventArgs args)
-        {
-            if (Game.Time < 150) return;
-            var turret = GetClosestTurret(AARange());
-            if (turret != null)
-            {
-                if (Orbwalker.CanAutoAttack)
-                {
-                    Player.IssueOrder(GameObjectOrder.AttackUnit, turret);
-                }
-            }
+        {         
+             
             if (myHero.IsInShopRange())
             {
-                switch (myHero.ChampionName)
+                switch (myHero.ChampionName.ToLower())
                 {
-                    case "Ryze":
-                        Items.BuyRyzeItems();
+                    case "ryze":
+                       Core.DelayAction(() => Shop.Items.BuyRyzeItems(), 1000);
                         break;
                 }
-                if (myHero.HealthPercent < 90)
+                if (myHero.HealthPercent < 80)
                 {
                     WaitingHealth = true;
                     Orbwalker.DisableMovement = true;
                 }
-                else if (myHero.MaxMana > 100 && myHero.ManaPercent < 90)
+                else if (myHero.MaxMana > 100 && myHero.ManaPercent < 80)
                 {
                     WaitingHealth = true;
                     Orbwalker.DisableMovement = true;
@@ -73,6 +65,15 @@ namespace Autoplay
                     if (Orbwalker.DisableMovement) { Orbwalker.DisableMovement = false; }
                 }
             }
+            var turret = GetClosestTurret(AARange());
+            if (turret != null)
+            {
+                if (Orbwalker.CanAutoAttack)
+                {
+                    Player.IssueOrder(GameObjectOrder.AttackUnit, turret);
+                }
+            }
+            
             if (myHero.IsDead) return;
             if (myHero.IsRecalling()) { Orbwalker.DisableMovement = true; Orbwalker.DisableAttacking = true; }
             else if (Orbwalker.DisableMovement) {
@@ -95,8 +96,16 @@ namespace Autoplay
         }
         private static void OrbwalkManager()
         {
-            if (WalkingToRecall || WaitingHealth) return;
+            if (WaitingHealth) return;
 
+            var enemy = TargetSelector.GetTarget(900, DamageType.Magical);
+            if (enemy != null)
+            {
+                if (enemy.IsInAutoAttackRange(myHero))
+                {
+                    Pos = GetTopAllyTurret().Position;
+                }
+            }
             var turret = GetTopAllyTurret();
             var minion = GetClosestMinion(2000);
             var allyminion = GetClosestAllyMinion(2000);
@@ -105,9 +114,9 @@ namespace Autoplay
             {
                 if (minion != null)
                 {
-                    if (ClosestAllyTurret(3000) != null)
+                    if (ClosestAllyTurret(6000) != null)
                     {
-                        var pos = minion.ServerPosition.Extend(ClosestAllyTurret(3000), 500);
+                        var pos = minion.ServerPosition.Extend(ClosestAllyTurret(6000), 500);
                         Pos = (pos).To3D();
                     }
                     else
@@ -119,7 +128,7 @@ namespace Autoplay
                 }
                 else if (allyminion != null)
                 {
-                    Pos = allyminion.Position - random - (myHero.Team == GameObjectTeam.Order ? +10 : -10);
+                    Pos = allyminion.Position - random;
                 }
                 else if (turret != null && myHero.Distance(turret) > 500)
                 {
@@ -214,7 +223,7 @@ namespace Autoplay
             }
             else if (myHero.MaxMana > 100)
             {
-                if (myHero.ManaPercent < 20)
+                if (myHero.ManaPercent <= 20)
                 {
                     Recall();
                 }

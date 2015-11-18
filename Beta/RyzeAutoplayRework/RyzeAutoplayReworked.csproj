@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Plugins\Ryze.cs" />
-    <Compile Include="Items.cs" />
+    <Compile Include="Shop\Items.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="PluginLoader.cs" />
     <Compile Include="Menu.cs" />
