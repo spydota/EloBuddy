@@ -81,11 +81,12 @@ namespace Autoplay
             if (myHero.IsRecalling()) { Orbwalker.DisableMovement = true; }
             else if (Orbwalker.DisableMovement) { Orbwalker.DisableMovement = false; }
             Orbwalker.OrbwalkTo(Pos);
-            if (!myHero.IsRecalling())
+            if (!myHero.IsRecalling() && !WalkingToRecall)
             {
                 OrbwalkManager();
                 Harass();
-                Farm();
+                if (!AttackingEnemy && !ComboPLS) { Farm(); }
+                Combo();
                 RecallManager();
             }
             if (Environment.TickCount - RandomCheck > 50000)
@@ -108,17 +109,25 @@ namespace Autoplay
         {
             if (LeaveTowerPls || WalkingToRecall || WaitingHealth) return;
             var enemy = TargetSelector.GetTarget(500, DamageType.Magical);
-            if (enemy != null && myHero.Distance(enemy) < 300)
+            if (enemy != null)
             {
-                Write("Enemy near, walking to turret");
-                Pos = myHero.ServerPosition.Extend(ClosestAllyTurret(int.MaxValue), 450).To3D();
+                if (myHero.Distance(enemy) < 300)
+                {
+                    Write("Enemy near, walking to turret");
+                    Pos = myHero.ServerPosition.Extend(ClosestAllyTurret(int.MaxValue), 450).To3D();
+                }
+                else
+                {
+                    Write("Kiting enemy");
+                    Pos = enemy.ServerPosition.Extend(ClosestAllyTurret(int.MaxValue), 500).To3D();
+                }
             }
 
             var turret = GetTopAllyTurret();
             var minion = GetClosestMinion(2000);
             var allyminion = GetClosestAllyMinion(5000);
             var ally = GetNearestAlly();
-            if (Toplane.CountEnemiesInRange(6000) <= 2 && !ChangedToAllies)
+            if (Toplane.CountEnemiesInRange(6000) <= 3 && !ChangedToAllies)
             {
                 if (minion != null)
                 {
@@ -226,13 +235,13 @@ namespace Autoplay
         }
         private static void RecallManager()
         {
-            if (myHero.HealthPercent < 20)
+            if (myHero.HealthPercent < 35)
             {
                 Recall();
             }
             else if (myHero.MaxMana > 100)
             {
-                if (myHero.ManaPercent < 20)
+                if (myHero.ManaPercent < 35)
                 {
                     Recall();
                 }

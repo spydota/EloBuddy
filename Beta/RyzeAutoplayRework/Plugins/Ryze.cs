@@ -61,7 +61,17 @@ namespace Plugins
 
             var target = TargetSelector.GetTarget(900, DamageType.Magical);
             if (target == null) return;
+
+            var QDmg = myHero.GetSpellDamage(target, SpellSlot.Q);
+            var WDmg = myHero.GetSpellDamage(target, SpellSlot.W);
+            var EDmg = myHero.GetSpellDamage(target, SpellSlot.E);
+            
             var Stacks = myHero.GetBuffCount("ryzepassivestack");
+            if (QDmg + WDmg + EDmg > target.Health && (target.CountEnemiesInRange(500) <= 3 || Stacks >= 3))
+            {
+                ComboPLS = true;
+            } 
+            else { ComboPLS = false; }
             var QPred = Prediction.Position.PredictLinearMissile(target, Q.Range, Q.Width, Q.CastDelay, Q.Speed, int.MinValue, myHero.Position);
             bool StacksBuff = myHero.HasBuff("ryzepassivestack");
             bool Pasive = myHero.HasBuff("ryzepassivecharged");

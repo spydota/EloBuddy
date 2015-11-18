@@ -27,6 +27,8 @@ namespace Autoplay
         public static bool CheckedH = false;
         public static bool CheckedC = false;
         public static bool LeaveTowerPls = false;
+        public static bool AttackingEnemy = false;
+        public static bool ComboPLS = false;
         public static int lastTurret = 0;
         public static Vector3 recall = new Vector3();
         private static string[] SmiteNames = new[] { "s5_summonersmiteplayerganker", "itemsmiteaoe", "s5_summonersmitequick", "s5_summonersmiteduel", "summonersmite" };
