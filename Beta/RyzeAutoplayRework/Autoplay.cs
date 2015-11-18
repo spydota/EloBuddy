@@ -60,6 +60,12 @@ namespace Autoplay
             }
             if (myHero.IsInShopRange())
             {
+                switch (myHero.ChampionName)
+                {
+                    case "Ryze":
+                        Items.BuyRyzeItems();
+                        break;
+                }
                 WalkingToRecall = false;
                 if (myHero.HealthPercent < 90 )
                 {
@@ -74,12 +80,6 @@ namespace Autoplay
             if (myHero.IsDead) return;
             if (myHero.IsRecalling()) { Orbwalker.DisableMovement = true; }
             else if (Orbwalker.DisableMovement) { Orbwalker.DisableMovement = false; }
-            switch (myHero.ChampionName)
-            {
-                case "Ryze":
-                    Items.BuyRyzeItems();
-                    break;
-            }
             Orbwalker.OrbwalkTo(Pos);
             if (!myHero.IsRecalling())
             {
