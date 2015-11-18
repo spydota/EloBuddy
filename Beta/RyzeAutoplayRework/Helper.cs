@@ -1,8 +1,5 @@
 ﻿using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Menu;
-using EloBuddy.SDK.Menu.Values;
-using EloBuddy.SDK.Rendering;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -69,7 +66,7 @@ namespace Autoplay
             }
 
 
-            List<Obj_AI_Turret> Turrets = GetEnemyTurrets();
+            List<Obj_AI_Turret> Turrets = GetAllyTurrets();
             List<Obj_AI_Turret> Temp = new List<Obj_AI_Turret>();
 
             foreach (Obj_AI_Turret t in Turrets)
@@ -91,7 +88,7 @@ namespace Autoplay
             List<Vector3> aTPoints = null;
 
             if (ObjectManager.Player.Team == GameObjectTeam.Order)
-                // Enemy == RED
+                // Enemy == Blue
                 aTPoints = new List<Vector3>
                 {
                     new Vector3(973, 10446, 52),
@@ -101,7 +98,7 @@ namespace Autoplay
 
             else
             {
-                // Enemy == BLUE
+                // Enemy == Red
                 aTPoints = new List<Vector3>
                 {
                     new Vector3(4337, 13817, 52),
@@ -109,7 +106,7 @@ namespace Autoplay
                     new Vector3(10446, 13645, 95)
                 };
             }
-            List<Obj_AI_Turret> Turrets = GetEnemyTurrets();
+            List<Obj_AI_Turret> Turrets = GetAllyTurrets();
             List<Obj_AI_Turret> Temp = new List<Obj_AI_Turret>();
 
             foreach (Obj_AI_Turret t in Turrets)
@@ -130,6 +127,22 @@ namespace Autoplay
             List<Obj_AI_Turret> T =
                 EntityManager.Turrets.Enemies
                 .Where(t => t.Distance(ObjectManager.Player.Position) < Range && !t.IsDead).ToList();
+
+            return (T.Count > 0 ? T[0] : null);
+        }
+        public static Obj_AI_Turret GetClosestTurret(AIHeroClient player, float Range)
+        {
+            List<Obj_AI_Turret> T =
+                EntityManager.Turrets.Enemies
+                .Where(t => t.Distance(player.Position) < Range && !t.IsDead).ToList();
+
+            return (T.Count > 0 ? T[0] : null);
+        }
+        public static Obj_AI_Turret GetClosestTurret(Vector3 player, float Range)
+        {
+            List<Obj_AI_Turret> T =
+                EntityManager.Turrets.Enemies
+                .Where(t => t.Distance(player) < Range && !t.IsDead).ToList();
 
             return (T.Count > 0 ? T[0] : null);
         }
@@ -160,7 +173,7 @@ namespace Autoplay
         {
             List<Obj_AI_Minion> T =
                 EntityManager.MinionsAndMonsters.EnemyMinions
-                .Where(t => t.Distance(ObjectManager.Player.Position) < Range && !t.IsDead).ToList();
+                .Where(t => t.Distance(ObjectManager.Player.Position) < Range && !t.IsDead && t.Name.ToLower().Contains("minion")).ToList();
 
 
             if (T.Count > 0)

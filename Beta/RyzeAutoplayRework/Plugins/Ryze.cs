@@ -1,13 +1,8 @@
 ﻿using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Menu;
-using EloBuddy.SDK.Menu.Values;
-using SharpDX;
-using System;
 using Autoplay;
-using System.Collections.Generic;
-using System.Linq;
 using EloBuddy.SDK.Enumerations;
+using System.Linq;
 
 namespace Plugins
 {
@@ -30,9 +25,54 @@ namespace Plugins
             }
             else if (myHero.GetBuffCount("ryzepassivestack") <= 4)
             {
-                if (myHero.GetSpellDamage(minion, SpellSlot.Q) >= minion.Health && !minion.IsDead && myHero.ManaPercent > 45)
+                if (myHero.GetSpellDamage(minion, SpellSlot.Q) >= minion.Health && !minion.IsDead && myHero.ManaPercent > 45 && Q.IsInRange(minion))
                 {
                     Q.Cast(minion);
+                }
+            }
+
+            var minions = EntityManager.MinionsAndMonsters.EnemyMinions.Where(x => x.Name.ToLower().Contains("minion") && x.IsValidTarget(Q.Range)).OrderBy(x => x.Health).FirstOrDefault();
+            if (minions == null || !minions.IsValid || Orbwalker.IsAutoAttacking) return;
+            bool Pasive = myHero.HasBuff("ryzepassivecharged");
+            if (!Pasive)
+            {
+                if (Q.IsReady() && myHero.ManaPercent >= 15)
+                {
+                    Q.Cast(minions);
+                }
+                if (!Q.IsReady() && E.IsReady() && myHero.ManaPercent >= 50)
+                {
+                    E.Cast(minions);
+                }
+                if (!E.IsReady() && W.IsReady() && myHero.ManaPercent >= 50)
+                {
+                    W.Cast(minions);
+                }
+                if (R.IsReady()  && myHero.ManaPercent >= 50)
+                {
+                    if (Pasive || myHero.GetBuffCount("ryzepassivestack") == 4 && !Q.IsReady() | !W.IsReady() | !E.IsReady())
+                    {
+                        R.Cast();
+                    }
+                }
+            }
+            if (Pasive)
+            {
+                if (Q.IsReady() && myHero.ManaPercent >= 15)
+                {
+                    Q.Cast(minions);
+                }
+                if (!Q.IsReady() && E.IsReady() && myHero.ManaPercent >= 40)
+                {
+                    E.Cast(minions);
+                }
+                if (!E.IsReady() && W.IsReady() && myHero.ManaPercent >= 40)
+                {
+                    W.Cast(minions);
+                }
+                if (R.IsReady() && myHero.ManaPercent >= 50)
+                {
+                    R.Cast();
                 }
             }
         }
@@ -67,7 +107,7 @@ namespace Plugins
             var EDmg = myHero.GetSpellDamage(target, SpellSlot.E);
             
             var Stacks = myHero.GetBuffCount("ryzepassivestack");
-            if (QDmg + WDmg + EDmg > target.Health && (target.CountEnemiesInRange(500) <= 3 || Stacks >= 3))
+            if (QDmg + WDmg + EDmg > target.Health && (target.CountEnemiesInRange(500) <= 3 || Stacks >= 4) && target.IsValidTarget(900) && !target.IsDead && target.IsVisible)
             {
                 ComboPLS = true;
             } 

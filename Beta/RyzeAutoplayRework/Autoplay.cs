@@ -1,14 +1,10 @@
 ﻿using EloBuddy;
 using EloBuddy.SDK;
-using EloBuddy.SDK.Enumerations;
 using EloBuddy.SDK.Events;
-using EloBuddy.SDK.Menu.Values;
 using SharpDX;
 using System;
 using Plugins;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Autoplay
 {
@@ -22,34 +18,29 @@ namespace Autoplay
         {
             if (myHero.Team == GameObjectTeam.Order)
             {
-                Spawn = new Vector3(465, 670, 183);
+                Spawn = new Vector3(422, 433, 183);
             }
             else
             {
-                Spawn = new Vector3(14090, 14248, 172);
+                Spawn = new Vector3(14314, 14395, 172);
+            }
+            switch(myHero.ChampionName)
+            {
+                case "Ryze":
+                    Ryze.Init();
+                    break;
             }
             Drawing.OnDraw += Drawing_OnDraw;
-           //AttackableUnit.OnDamage += OnDamage;
             Game.OnUpdate += Game_OnUpdate;
         }
         private static void Drawing_OnDraw(EventArgs args)
         {
             Drawing.DrawCircle(Pos, 150, System.Drawing.Color.Yellow);
+            Drawing.DrawCircle(GetTopAllyTurret().Position,300, System.Drawing.Color.Red);
         }
-      /*  private static void OnDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
-        {
-            if (sender != null &&
-                sender.Type == GameObjectType.obj_AI_Turret
-                && args.Target.NetworkId == Player.Instance.NetworkId)
-            {
-                LeaveTowerPls = true;
-                lastTurret = sender.NetworkId;
-                Pos = myHero.ServerPosition.Extend(GetClosestMinion(int.MaxValue), myHero.Distance(GetClosestMinion(int.MaxValue)) + 30).To3D();
-            }
-            Write("Tower hiting me!");
-        }  Broken */
         private static void Game_OnUpdate(EventArgs args)
         {
+            if (Game.Time < 200) return;
             var turret = GetClosestTurret(AARange());
             if (turret != null)
             {
@@ -66,26 +57,33 @@ namespace Autoplay
                         Items.BuyRyzeItems();
                         break;
                 }
-                WalkingToRecall = false;
-                if (myHero.HealthPercent < 90 )
+                if (myHero.HealthPercent < 90)
                 {
                     WaitingHealth = true;
-                    Player.IssueOrder(GameObjectOrder.Stop, myHero.Position);
+                    Orbwalker.DisableMovement = true;
+                }
+                else if (myHero.MaxMana > 100 && myHero.ManaPercent < 90)
+                {
+                    WaitingHealth = true;
+                    Orbwalker.DisableMovement = true;
                 }
                 else
                 {
                     WaitingHealth = false;
+                    if (Orbwalker.DisableMovement) { Orbwalker.DisableMovement = false; }
                 }
             }
             if (myHero.IsDead) return;
-            if (myHero.IsRecalling()) { Orbwalker.DisableMovement = true; }
-            else if (Orbwalker.DisableMovement) { Orbwalker.DisableMovement = false; }
+            if (myHero.IsRecalling()) { Orbwalker.DisableMovement = true; Orbwalker.DisableAttacking = true; }
+            else if (Orbwalker.DisableMovement) {
+                Core.DelayAction(() => Orbwalker.DisableMovement = false, 500);
+                Core.DelayAction(() => Orbwalker.DisableAttacking = false, 500);
+            }
             Orbwalker.OrbwalkTo(Pos);
-            if (!myHero.IsRecalling() && !WalkingToRecall)
+            if (!myHero.IsRecalling())
             {
                 OrbwalkManager();
-                Harass();
-                if (!AttackingEnemy && !ComboPLS) { Farm(); }
+                if (!ComboPLS) { Farm(); }
                 Combo();
                 RecallManager();
             }
@@ -94,49 +92,34 @@ namespace Autoplay
                 random = GetRandompos(50, 150);
                 RandomCheck = Environment.TickCount;
             }
-
-          /*  var turret = EntityManager.Turrets.Enemies.Where(x => x.NetworkId == lastTurret);
-            if (turret.Count() > 0)
-            {
-                if (myHero.Distance(turret.First()) > 1000)
-                {
-                    LeaveTowerPls = false;
-                    lastTurret = 0;
-                }
-            } */
         }
         private static void OrbwalkManager()
         {
-            if (LeaveTowerPls || WalkingToRecall || WaitingHealth) return;
-            var enemy = TargetSelector.GetTarget(500, DamageType.Magical);
-            if (enemy != null)
-            {
-                if (myHero.Distance(enemy) < 300)
-                {
-                    Write("Enemy near, walking to turret");
-                    Pos = myHero.ServerPosition.Extend(ClosestAllyTurret(int.MaxValue), 450).To3D();
-                }
-                else
-                {
-                    Write("Kiting enemy");
-                    Pos = enemy.ServerPosition.Extend(ClosestAllyTurret(int.MaxValue), 500).To3D();
-                }
-            }
+            if (WalkingToRecall || WaitingHealth) return;
 
             var turret = GetTopAllyTurret();
             var minion = GetClosestMinion(2000);
-            var allyminion = GetClosestAllyMinion(5000);
+            var allyminion = GetClosestAllyMinion(2000);
             var ally = GetNearestAlly();
-            if (Toplane.CountEnemiesInRange(6000) <= 3 && !ChangedToAllies)
+            if (myHero.CountEnemiesInRange(3000) <= 3 && !ChangedToAllies)
             {
                 if (minion != null)
                 {
-                    var pos = minion.ServerPosition.Extend(Spawn, 500);
-                    Pos = (pos).To3D();
+                    if (ClosestAllyTurret(3000) != null)
+                    {
+                        var pos = minion.ServerPosition.Extend(ClosestAllyTurret(3000), 500);
+                        Pos = (pos).To3D();
+                    }
+                    else
+                    {
+                        var pos = minion.ServerPosition.Extend(Spawn, 500);
+                        Pos = (pos).To3D();
+                    }
+
                 }
                 else if (allyminion != null)
                 {
-                    Pos = allyminion.Position - random - 10;
+                    Pos = allyminion.Position - random - (myHero.Team == GameObjectTeam.Order ? +10 : -10);
                 }
                 else if (turret != null && myHero.Distance(turret) > 500)
                 {
@@ -175,7 +158,6 @@ namespace Autoplay
             if (!Checked)
             {
                 recall = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First().ServerPosition.Extend(Spawn, 300).To3D();
-
                 Checked = true;
             }
             if (myHero.Distance(recall) > 200)
@@ -215,6 +197,7 @@ namespace Autoplay
 
         private static void Harass()
         {
+            if (ComboPLS) return;
             switch (myHero.ChampionName)
             {
                 case "Ryze":
@@ -241,7 +224,7 @@ namespace Autoplay
             }
             else if (myHero.MaxMana > 100)
             {
-                if (myHero.ManaPercent < 35)
+                if (myHero.ManaPercent < 15)
                 {
                     Recall();
                 }
