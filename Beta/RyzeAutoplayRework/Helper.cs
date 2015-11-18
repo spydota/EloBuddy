@@ -10,7 +10,6 @@ namespace Autoplay
     public class Helper
     {
         public static AIHeroClient myHero { get { return ObjectManager.Player; } }
-        public static Obj_AI_Minion minion = null;
         public static readonly Vector3 Toplane = new Vector3(1117, 10878, 53);
         public static Vector3 Spawn;
         public static int random;

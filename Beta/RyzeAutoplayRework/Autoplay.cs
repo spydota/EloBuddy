@@ -178,23 +178,13 @@ namespace Autoplay
 
         private static void Farm()
         {
-            minion = GetClosestMinion(8000);
-            if (minion == null) return;
-            if (myHero.IsInAutoAttackRange(minion))
+            switch (myHero.ChampionName)
             {
-                switch (myHero.ChampionName)
-                {
-                    case "Ryze":
-                        Ryze.Farm(minion);
-                        break;
-                }
-            }
-            else if (myHero.Distance(minion) < 2000)
-            {
-                Pos = minion.ServerPosition.Extend(GetClosestAllyMinion(8000).Position + new Vector3(10, 50, 0), AARange()).To3D();
+                case "Ryze":
+                    Ryze.Farm();
+                    break;
             }
         }
-
         private static void Harass()
         {
             if (ComboPLS) return;
