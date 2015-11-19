@@ -22,7 +22,7 @@ namespace Plugins
         {
 
             var minion = EntityManager.MinionsAndMonsters.EnemyMinions.Where(x => x.Name.ToLower().Contains("minion") && x.IsValidTarget(Q.Range)).OrderBy(x => x.Health).FirstOrDefault();
-            if (minion == null || !minion.IsValid || Orbwalker.IsAutoAttacking) return;
+            if (minion == null || !minion.IsValid) return;
             bool Pasive = myHero.HasBuff("ryzepassivecharged");
             if (Orbwalker.CanAutoAttack && myHero.IsInAutoAttackRange(minion))
             {
@@ -101,10 +101,10 @@ namespace Plugins
             var EDmg = myHero.GetSpellDamage(target, SpellSlot.E);
             
             var Stacks = myHero.GetBuffCount("ryzepassivestack");
-            if (QDmg + WDmg + EDmg > target.Health && (target.CountEnemiesInRange(500) <= 3 || Stacks >= 4) && target.IsValidTarget(900) && !target.IsDead && target.IsVisible)
+            if (QDmg + WDmg + EDmg > target.Health && (target.CountEnemiesInRange(500) <= 3 || Stacks >= 3) && target.IsValidTarget(900) && !target.IsDead)
             {
                 ComboPLS = true;
-               Core.DelayAction(() =>ComboPLS = false, 5000);
+               Core.DelayAction(() =>ComboPLS = false, 10000);
             } 
             else if(ComboPLS) { ComboPLS = false; }
             var QPred = Q.GetPrediction(target);

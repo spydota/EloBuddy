@@ -85,10 +85,14 @@ namespace Shop
             for (int i = 0; i < RyzeItems.Count; i++)
             {
                 if (!Item.HasItem(RyzeItems[i].ID, myHero) &&
-                    myHero.Gold >= RyzeItems[i].Gold)
+                    myHero.Gold >= RyzeItems[i].Gold &&
+                    !RyzeItems[i].Bought)
                 {
                     Item itm = new Item(RyzeItems[i].ID);
                     itm.Buy();
+                }
+                if (Item.HasItem(RyzeItems[i].ID, myHero))
+                {
                     RyzeItems[i].Bought = true;
                 }
             }

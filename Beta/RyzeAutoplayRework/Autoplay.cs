@@ -31,10 +31,9 @@ namespace Autoplay
         private static void Drawing_OnDraw(EventArgs args)
         {
             Drawing.DrawCircle(Pos, 150, System.Drawing.Color.Yellow);
-            var enemy = TargetSelector.GetTarget(900, DamageType.Magical);
-            if (enemy != null)
+            if (ComboPLS)
             {
-                Drawing.DrawCircle(enemy.ServerPosition, enemy.GetAutoAttackRange(), System.Drawing.Color.Red);
+                Drawing.DrawText(836, 481, System.Drawing.Color.White, "Combo ON");
             }
             //Drawing.DrawCircle(GetTopAllyTurret().Position,300, System.Drawing.Color.Red);
         }
@@ -98,10 +97,15 @@ namespace Autoplay
         {
             if (WaitingHealth) return;
 
+
             var enemy = TargetSelector.GetTarget(900, DamageType.Magical);
             if (enemy != null)
             {
-                if (enemy.IsInAutoAttackRange(myHero))
+                if (ComboPLS)
+                {
+                    Pos = enemy.ServerPosition.Extend(myHero, 550).To3D();
+                }
+                else if (enemy.IsInAutoAttackRange(myHero))
                 {
                     Pos = GetTopAllyTurret().Position;
                 }
@@ -114,17 +118,14 @@ namespace Autoplay
             {
                 if (minion != null)
                 {
-                    if (ClosestAllyTurret(6000) != null)
+                    if (turret != null)
                     {
-                        var pos = minion.ServerPosition.Extend(ClosestAllyTurret(6000), 500);
-                        Pos = (pos).To3D();
+                        Pos = minion.ServerPosition.Extend(GetTopAllyTurret(), 500).To3D();
                     }
                     else
                     {
-                        var pos = minion.ServerPosition.Extend(Spawn, 500);
-                        Pos = (pos).To3D();
+                        Pos = minion.ServerPosition.Extend(Spawn, 500).To3D();
                     }
-
                 }
                 else if (allyminion != null)
                 {
@@ -134,6 +135,7 @@ namespace Autoplay
                 {
                     Pos = turret.ServerPosition;
                 }
+                else { Write("Waiting minions"); }
             }
             else if (ally != null)
             {
@@ -166,7 +168,7 @@ namespace Autoplay
             if (myHero.IsInShopRange() || myHero.IsDead) return;
             if (!Checked)
             {
-                recall = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null).OrderBy(k => k.Distance(myHero)).First().ServerPosition.Extend(Spawn, 300).To3D();
+                recall = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null && k.BaseSkinName.Contains("Turret")).OrderBy(k => k.Distance(myHero)).First().ServerPosition.Extend(Spawn, 300).To3D();
                 Checked = true;
             }
             if (myHero.Distance(recall) > 200)
