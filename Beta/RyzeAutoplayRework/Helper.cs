@@ -223,7 +223,7 @@ namespace Autoplay
         {
             List<Obj_AI_Minion> T =
                 EntityManager.MinionsAndMonsters.AlliedMinions
-                .Where(t => t.Distance(ObjectManager.Player.Position) < Range && !t.IsDead).ToList();
+                .Where(t => t.Distance(ObjectManager.Player.Position) < Range && !t.IsDead && t.Name.ToLower().Contains("minion")).ToList();
 
 
             if (T.Count > 0)

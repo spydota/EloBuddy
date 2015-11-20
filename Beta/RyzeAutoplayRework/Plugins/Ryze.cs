@@ -34,15 +34,15 @@ namespace Plugins
                 {
                     Q.Cast(minion);
                 }
-                if (!Q.IsReady() && E.IsReady() && myHero.ManaPercent >= 50)
+                if (!Q.IsReady() && E.IsReady() && myHero.Level > 10 ? myHero.ManaPercent >= 50 : myHero.ManaPercent >= 75)
                 {
                     E.Cast(minion);
                 }
-                if (!E.IsReady() && W.IsReady() && myHero.ManaPercent >= 50)
+                if (!E.IsReady() && W.IsReady() && myHero.Level > 10 ? myHero.ManaPercent >= 50 : myHero.ManaPercent >= 75)
                 {
                     W.Cast(minion);
                 }
-                if (R.IsReady()  && myHero.ManaPercent >= 50)
+                if (R.IsReady()  && myHero.Level > 10 ? myHero.ManaPercent >= 75 : myHero.ManaPercent >= 90)
                 {
                     if (Pasive || myHero.GetBuffCount("ryzepassivestack") == 4 && !Q.IsReady() | !W.IsReady() | !E.IsReady())
                     {
@@ -64,28 +64,9 @@ namespace Plugins
                 {
                     W.Cast(minion);
                 }
-                if (R.IsReady() && myHero.ManaPercent >= 50)
+                if (R.IsReady() && myHero.ManaPercent >= 60)
                 {
                     R.Cast();
-                }
-            }
-        }
-        public static void Harass()
-        {
-            var target = TargetSelector.GetTarget(900, DamageType.Magical);
-            if (target != null)
-            {
-                var qpred = Q.GetPrediction(target);
-                if (Q.IsReady())
-                {
-                    Q.Cast(target);
-                }
-                if (myHero.ManaPercent > 70)
-                {
-                    if (E.IsReady() && E.IsInRange(target))
-                    {
-                        E.Cast(target);
-                    }
                 }
             }
         }
@@ -94,22 +75,31 @@ namespace Plugins
             //Lazy ;-;
 
             var target = TargetSelector.GetTarget(900, DamageType.Magical);
-            if (target == null) return;
-
-            var QDmg = myHero.GetSpellDamage(target, SpellSlot.Q);
-            var WDmg = myHero.GetSpellDamage(target, SpellSlot.W);
-            var EDmg = myHero.GetSpellDamage(target, SpellSlot.E);
-            
             var Stacks = myHero.GetBuffCount("ryzepassivestack");
-            if (QDmg + WDmg + EDmg > target.Health && (target.CountEnemiesInRange(500) <= 3 || Stacks >= 3) && target.IsValidTarget(900) && !target.IsDead)
+            if (target != null)
             {
-                ComboPLS = true;
-               Core.DelayAction(() =>ComboPLS = false, 10000);
-            } 
-            else if(ComboPLS) { ComboPLS = false; }
+                var QDmg = myHero.GetSpellDamage(target, SpellSlot.Q);
+                var WDmg = myHero.GetSpellDamage(target, SpellSlot.W);
+                var EDmg = myHero.GetSpellDamage(target, SpellSlot.E);
+                if (QDmg + WDmg + EDmg > target.Health && (target.CountEnemiesInRange(500) <= 3 || Stacks >= 3) && target.IsValidTarget(900) && !target.IsDead)
+                {
+                    ComboPLS = true;
+                }
+                else { ComboPLS = false; }
+            }
+            else { ComboPLS = false; }
+
+            if (target == null) return;         
             var QPred = Q.GetPrediction(target);
             bool StacksBuff = myHero.HasBuff("ryzepassivestack");
             bool Pasive = myHero.HasBuff("ryzepassivecharged");
+            if (!Q.IsReady() && !W.IsReady() && !E.IsReady())
+            {
+                if (Orbwalker.CanAutoAttack && myHero.IsInAutoAttackRange(target))
+                {
+                    Player.IssueOrder(GameObjectOrder.AttackUnit, target);
+                }
+            }
             if (target.IsValidTarget(Q.Range))
             {
                 if (Stacks <= 2 || !StacksBuff)

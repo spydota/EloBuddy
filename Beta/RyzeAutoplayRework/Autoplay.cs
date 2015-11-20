@@ -25,6 +25,7 @@ namespace Autoplay
                 Spawn = new Vector3(14314, 14395, 172);
             }
             new PluginLoader().LoadPlugin();
+            new SummSpells().Init();
             Game.OnUpdate += Game_OnUpdate;
             Drawing.OnDraw += Drawing_OnDraw;         
         }
@@ -103,9 +104,12 @@ namespace Autoplay
             {
                 if (ComboPLS)
                 {
-                    Pos = enemy.ServerPosition.Extend(myHero, 550).To3D();
+                    if (myHero.Distance(enemy) > 500)
+                    {
+                        Pos = enemy.ServerPosition.Extend(myHero, 450).To3D();
+                    }
                 }
-                else if (enemy.IsInAutoAttackRange(myHero))
+                else if (enemy.Distance(myHero) < enemy.GetAutoAttackRange() + 50)
                 {
                     Pos = GetTopAllyTurret().Position;
                 }
@@ -195,17 +199,6 @@ namespace Autoplay
                     Ryze.Farm();
                     break;
             }
-        }
-        private static void Harass()
-        {
-            if (ComboPLS) return;
-            switch (myHero.ChampionName)
-            {
-                case "Ryze":
-                    Ryze.Harass();
-                    break;
-            }
-
         }
 
         private static void Combo()
