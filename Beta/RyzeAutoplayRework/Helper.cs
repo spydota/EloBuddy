@@ -12,6 +12,7 @@ namespace Autoplay
         public static AIHeroClient myHero { get { return ObjectManager.Player; } }
         public static readonly Vector3 Toplane = new Vector3(1117, 10878, 53);
         public static Vector3 Spawn;
+        public static Obj_AI_Turret tower = null;
         public static int random;
         public static int RandomCheck = 0;
         public static bool ChangedToAllies = false;

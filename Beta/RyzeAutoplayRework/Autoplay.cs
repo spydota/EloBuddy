@@ -27,8 +27,24 @@ namespace Autoplay
             new PluginLoader().LoadPlugin();
             new SummSpells().Init();
             Game.OnUpdate += Game_OnUpdate;
-            Drawing.OnDraw += Drawing_OnDraw;         
+            Drawing.OnDraw += Drawing_OnDraw;
+            Player.OnDamage += Player_OnDamage;    
         }
+
+        private static void Player_OnDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
+        {
+            if (sender.IsEnemy)
+            {
+                if (sender.Type == GameObjectType.obj_AI_Turret || sender.Type == GameObjectType.obj_Turret)
+                {
+                    LeaveTowerPls = true;
+                    Pos = Spawn;
+                    tower = (Obj_AI_Turret)sender;
+                    Write("y u do dis tower");
+                }
+            }
+        }
+
         private static void Drawing_OnDraw(EventArgs args)
         {
             Drawing.DrawCircle(Pos, 150, System.Drawing.Color.Yellow);
@@ -36,11 +52,24 @@ namespace Autoplay
             {
                 Drawing.DrawText(836, 481, System.Drawing.Color.White, "Combo ON");
             }
-            //Drawing.DrawCircle(GetTopAllyTurret().Position,300, System.Drawing.Color.Red);
+            if (tower != null && myHero.Distance(tower) < 1500)
+            {
+                if (LeaveTowerPls)
+                {
+                    Drawing.DrawCircle(tower.Position, 1000, System.Drawing.Color.Red);
+                }
+            }
         }
         private static void Game_OnUpdate(EventArgs args)
         {         
-             
+            if (tower != null)
+            {
+                if (myHero.Distance(tower) > 1000)
+                {
+                    LeaveTowerPls = false;
+                }
+            }
+
             if (myHero.IsInShopRange())
             {
                 switch (myHero.ChampionName.ToLower())
@@ -96,8 +125,7 @@ namespace Autoplay
         }
         private static void OrbwalkManager()
         {
-            if (WaitingHealth) return;
-
+            if (WaitingHealth || LeaveTowerPls) return;
 
             var enemy = TargetSelector.GetTarget(900, DamageType.Magical);
             if (enemy != null)
