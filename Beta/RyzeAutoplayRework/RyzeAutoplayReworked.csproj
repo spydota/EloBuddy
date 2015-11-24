@@ -32,6 +32,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Orbwalk.cs" />
     <Compile Include="SummSpells.cs" />
     <Compile Include="Plugins\Ryze.cs" />
     <Compile Include="Shop\Items.cs" />
@@ -42,14 +43,17 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="EloBuddy, Version=1.0.0.0, Culture=neutral, PublicKeyToken=7339047cb10f6e86, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\EloBuddy\System\EloBuddy.dll</HintPath>
     </Reference>
-    <Reference Include="EloBuddy.Sandbox">
+    <Reference Include="EloBuddy.Sandbox, Version=1.0.0.0, Culture=neutral, PublicKeyToken=d671ef5d8e7e69a5, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\EloBuddy\System\EloBuddy.Sandbox.dll</HintPath>
     </Reference>
     <Reference Include="EloBuddy.SDK, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6b574a82b1ea937e, processorArchitecture=x86">

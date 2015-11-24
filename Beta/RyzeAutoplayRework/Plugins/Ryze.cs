@@ -8,15 +8,19 @@ namespace Plugins
 {
     public class Ryze : Helper
     {
-        private static Spell.Skillshot Q = new Spell.Skillshot(SpellSlot.Q, 900, SkillShotType.Linear, 250, 1700, 100);
-        private static Spell.Targeted W = new Spell.Targeted(SpellSlot.W, 600);
-        private static Spell.Targeted E = new Spell.Targeted(SpellSlot.E, 600);
-        private static Spell.Active R = new Spell.Active(SpellSlot.R);
+        private static Spell.Skillshot Q;
+        private static Spell.Targeted W;
+        private static Spell.Targeted E;
+        private static Spell.Active R;
 
         public static void Init()
         {
             Chat.Print(Player.Instance.ChampionName + "Loaded");
             new RyzeMenu().Init();
+            Q = new Spell.Skillshot(SpellSlot.Q, 900, SkillShotType.Linear, 250, 1700, 100);
+            W = new Spell.Targeted(SpellSlot.W, 600);
+            E = new Spell.Targeted(SpellSlot.E, 600);
+            R = new Spell.Active(SpellSlot.R);
         }
         public static void Farm()
         {
@@ -24,7 +28,7 @@ namespace Plugins
             var minion = EntityManager.MinionsAndMonsters.EnemyMinions.Where(x => x.Name.ToLower().Contains("minion") && x.IsValidTarget(Q.Range)).OrderBy(x => x.Health).FirstOrDefault();
             if (minion == null || !minion.IsValid) return;
             bool Pasive = myHero.HasBuff("ryzepassivecharged");
-            if (Orbwalker.CanAutoAttack && myHero.IsInAutoAttackRange(minion))
+            if (Orbwalker.CanAutoAttack && myHero.IsInAutoAttackRange(minion) && GetClosestTurret(AARange()) == null)
             {
                 Player.IssueOrder(GameObjectOrder.AttackUnit, minion);
             }
@@ -38,15 +42,18 @@ namespace Plugins
                 {
                     E.Cast(minion);
                 }
-                if (!E.IsReady() && W.IsReady() && myHero.Level > 10 ? myHero.ManaPercent >= 50 : myHero.ManaPercent >= 75)
+                if (myHero.Level > 10)
                 {
-                    W.Cast(minion);
-                }
-                if (R.IsReady()  && myHero.Level > 10 ? myHero.ManaPercent >= 75 : myHero.ManaPercent >= 90)
-                {
-                    if (Pasive || myHero.GetBuffCount("ryzepassivestack") == 4 && !Q.IsReady() | !W.IsReady() | !E.IsReady())
+                    if (!E.IsReady() && W.IsReady() && myHero.ManaPercent >= 50)
                     {
-                        R.Cast();
+                        W.Cast(minion);
+                    }
+                    if (R.IsReady() && myHero.ManaPercent >= 50)
+                    {
+                        if (Pasive || myHero.GetBuffCount("ryzepassivestack") == 4 && !Q.IsReady() | !W.IsReady() | !E.IsReady())
+                        {
+                            R.Cast();
+                        }
                     }
                 }
             }

@@ -20,6 +20,7 @@ namespace Autoplay
         public static int Tick = 0;
         public static bool Once = false;
         public static bool Checked = false;
+        public static bool RecallNoob = false;
         public static bool CheckedH = false;
         public static bool CheckedC = false;
         public static bool LeaveTowerPls = false;
@@ -31,57 +32,10 @@ namespace Autoplay
         public static Vector3 Pos;
         //CT-SummonerRift
         #region Turrets
-        public static List<Obj_AI_Turret> GetEnemyTurrets()
-        {
-            return (EntityManager.Turrets.Enemies.ToList());
-        }
         public static List<Obj_AI_Turret> GetAllyTurrets()
         {
             return (EntityManager.Turrets.Allies.ToList());
         }
-        public static List<Obj_AI_Turret> GetTopEnemyTurrets()
-        {
-
-            List<Vector3> TPoints = null;
-            if (ObjectManager.Player.Team == GameObjectTeam.Order)
-            {
-                // Enemy == RED
-                TPoints = new List<Vector3>
-                {
-                    new Vector3(4337, 13817, 52),
-                    new Vector3(7950, 13382, 52),
-                    new Vector3(10446, 13645, 95)
-                };
-            }
-            else
-            {
-                // Enemy == BLUE
-                TPoints = new List<Vector3>
-                {
-                    new Vector3(973, 10446, 52),
-                    new Vector3(1509, 6705, 52),
-                    new Vector3(1155, 4270, 95)
-                };
-            }
-
-
-            List<Obj_AI_Turret> Turrets = GetAllyTurrets();
-            List<Obj_AI_Turret> Temp = new List<Obj_AI_Turret>();
-
-            foreach (Obj_AI_Turret t in Turrets)
-            {
-                foreach (Vector3 p in TPoints)
-                {
-                    if (t.Distance(p) < 500 && !t.IsDead)
-                    {
-                        Temp.Add(t);
-                    }
-                }
-            }//foreach
-
-            return (Temp.Count > 0 ? Temp : null);
-        }
-
         public static Obj_AI_Turret GetTopAllyTurret()
         {
             List<Vector3> aTPoints = null;
@@ -119,8 +73,16 @@ namespace Autoplay
                 }
             }//foreach
 
-            return (Temp.Count > 0 ? Temp[0] : null);
+            return (Temp.Count > 0 ? Temp[0] : SpawnTurret());
         }
+
+        private static Obj_AI_Turret SpawnTurret()
+        {
+            Obj_AI_Turret spawn = null;
+            spawn = EntityManager.Turrets.Allies.Where(x => x.Distance(Spawn) < 500).First();
+            return (spawn);
+        }
+
         public static Obj_AI_Turret GetClosestTurret(float Range)
         {
             List<Obj_AI_Turret> T =
@@ -225,8 +187,6 @@ namespace Autoplay
             List<Obj_AI_Minion> T =
                 EntityManager.MinionsAndMonsters.AlliedMinions
                 .Where(t => t.Distance(ObjectManager.Player.Position) < Range && !t.IsDead && t.Name.ToLower().Contains("minion")).ToList();
-
-
             if (T.Count > 0)
             {
                 float Dist = Player.Instance.Distance(T[0].Position);
@@ -246,14 +206,46 @@ namespace Autoplay
             }
             return null;
         }
-        #endregion
+        public static Obj_AI_Minion GetFarthestAllyMinion(float Range)
+        {
+            List<Obj_AI_Minion> T =
+                EntityManager.MinionsAndMonsters.AlliedMinions
+                .Where(t => t.Distance(ObjectManager.Player.Position) < Range && !t.IsDead && t.Name.ToLower().Contains("minion")).ToList();
+            if (T.Count > 0)
+            {
+                float Dist = Player.Instance.Distance(T.Last().Position);
+                int Index = 0;
 
+                for (int i = 0; i < T.Count; i++)
+                {
+                    float D = Player.Instance.Distance(T.Last().Position);
+                    if (Dist > D)
+                    {
+                        Dist = D;
+                        Index = i;
+                    }
+
+                }
+                return T[Index];
+            }
+            return null;
+        }
+        #endregion
 
         public static AIHeroClient GetNearestAlly()
         {
             //Like old times Kappa
             var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) &&
             !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).OrderBy(x => x.Distance(myHero));
+
+            return (ally.Count() > 0 ? ally.First() : null);
+        }
+        public static AIHeroClient GetNearestAlly(float range)
+        {
+            //Like old times Kappa
+            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) &&
+            !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name) &&
+            x.Distance(myHero) < range).OrderBy(x => x.Distance(myHero));
 
             return (ally.Count() > 0 ? ally.First() : null);
         }

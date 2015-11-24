@@ -89,12 +89,13 @@ namespace Shop
                     !RyzeItems[i].Bought)
                 {
                     Item itm = new Item(RyzeItems[i].ID);
-                    itm.Buy();
+                    itm.Buy();  
                 }
                 if (Item.HasItem(RyzeItems[i].ID, myHero))
                 {
                     RyzeItems[i].Bought = true;
                 }
+                
             }
 
         }

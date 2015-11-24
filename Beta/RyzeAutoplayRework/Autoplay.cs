@@ -28,19 +28,23 @@ namespace Autoplay
             new SummSpells().Init();
             Game.OnUpdate += Game_OnUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
-            Player.OnDamage += Player_OnDamage;    
+            Player.OnDamage += Player_OnDamage;
+            Write("Ryze injected");   
         }
 
         private static void Player_OnDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
         {
-            if (sender.IsEnemy)
+            if (sender != null)
             {
-                if (sender.Type == GameObjectType.obj_AI_Turret || sender.Type == GameObjectType.obj_Turret)
+                if (sender.IsEnemy)
                 {
-                    LeaveTowerPls = true;
-                    Pos = Spawn;
-                    tower = (Obj_AI_Turret)sender;
-                    Write("y u do dis tower");
+                    if (sender.Type == GameObjectType.obj_AI_Turret)
+                    {
+                        LeaveTowerPls = true;
+                        Pos = sender.Position.Extend(myHero.Position, 1050).To3D();
+                        tower = (Obj_AI_Turret)sender;
+                        Write("y u do dis tower");
+                    }
                 }
             }
         }
@@ -62,16 +66,21 @@ namespace Autoplay
         }
         private static void Game_OnUpdate(EventArgs args)
         {         
-            if (tower != null)
+            if (tower != null && !tower.IsDead)
             {
-                if (myHero.Distance(tower) > 1000)
+                if (myHero.Distance(tower) >= 1050)
                 {
                     LeaveTowerPls = false;
                 }
             }
+            if (tower != null && tower.IsDead)
+            {
+                LeaveTowerPls = false;
+            }
 
             if (myHero.IsInShopRange())
             {
+                RecallNoob = false;
                 switch (myHero.ChampionName.ToLower())
                 {
                     case "ryze":
@@ -82,16 +91,19 @@ namespace Autoplay
                 {
                     WaitingHealth = true;
                     Orbwalker.DisableMovement = true;
+                    Orbwalker.DisableAttacking = true;
                 }
                 else if (myHero.MaxMana > 100 && myHero.ManaPercent < 80)
                 {
                     WaitingHealth = true;
                     Orbwalker.DisableMovement = true;
+                    Orbwalker.DisableAttacking = true;
                 }
                 else
                 {
                     WaitingHealth = false;
-                    if (Orbwalker.DisableMovement) { Orbwalker.DisableMovement = false; }
+                    Orbwalker.DisableMovement = false;
+                    Orbwalker.DisableAttacking = false;
                 }
             }
             var turret = GetClosestTurret(AARange());
@@ -105,105 +117,41 @@ namespace Autoplay
             
             if (myHero.IsDead) return;
             if (myHero.IsRecalling()) { Orbwalker.DisableMovement = true; Orbwalker.DisableAttacking = true; }
-            else if (Orbwalker.DisableMovement) {
+            else
+            {
                 Core.DelayAction(() => Orbwalker.DisableMovement = false, 500);
                 Core.DelayAction(() => Orbwalker.DisableAttacking = false, 500);
             }
             Orbwalker.OrbwalkTo(Pos);
             if (!myHero.IsRecalling())
             {
-                OrbwalkManager();
-                if (!ComboPLS) { Farm(); }
-                Combo();
-                RecallManager();
+                if (!RecallNoob)
+                {
+                    Orbwalk.OrbwalkManager();
+                    if (!ComboPLS) { Farm(); }
+                    Combo();
+                }
+                RecallManager();            
             }
-            if (Environment.TickCount - RandomCheck > 50000)
+
+            if (Environment.TickCount - RandomCheck > 10000)
             {
-                random = GetRandompos(50, 150);
+                random = GetRandompos(50, 200);
                 RandomCheck = Environment.TickCount;
             }
         }
-        private static void OrbwalkManager()
-        {
-            if (WaitingHealth || LeaveTowerPls) return;
-
-            var enemy = TargetSelector.GetTarget(900, DamageType.Magical);
-            if (enemy != null)
-            {
-                if (ComboPLS)
-                {
-                    if (myHero.Distance(enemy) > 500)
-                    {
-                        Pos = enemy.ServerPosition.Extend(myHero, 450).To3D();
-                    }
-                }
-                else if (enemy.Distance(myHero) < enemy.GetAutoAttackRange() + 50)
-                {
-                    Pos = GetTopAllyTurret().Position;
-                }
-            }
-            var turret = GetTopAllyTurret();
-            var minion = GetClosestMinion(2000);
-            var allyminion = GetClosestAllyMinion(2000);
-            var ally = GetNearestAlly();
-            if (myHero.CountEnemiesInRange(3000) <= 3 && !ChangedToAllies)
-            {
-                if (minion != null)
-                {
-                    if (turret != null)
-                    {
-                        Pos = minion.ServerPosition.Extend(GetTopAllyTurret(), 500).To3D();
-                    }
-                    else
-                    {
-                        Pos = minion.ServerPosition.Extend(Spawn, 500).To3D();
-                    }
-                }
-                else if (allyminion != null)
-                {
-                    Pos = allyminion.Position - random;
-                }
-                else if (turret != null && myHero.Distance(turret) > 500)
-                {
-                    Pos = turret.ServerPosition;
-                }
-                else { Write("Waiting minions"); }
-            }
-            else if (ally != null)
-            {
-                if (!Once)
-                {
-                    Write("Following allies...");
-                    ChangedToAllies = true;
-                    Tick = Environment.TickCount;
-                    Once = true;
-                }
-                if (ally.IsMelee)
-                {
-                    Pos = ally.Position - random;
-                }
-                else
-                {
-                    Pos = ally.Position + random;
-                }
-                if (Environment.TickCount - Tick > 50000)
-                {
-                    Write("Can follow now");
-                    ChangedToAllies = false;
-                    Once = false;
-                }
-            }
-        }
         
-        private static void Recall()
+        
+        public static void Recall()
         {
             if (myHero.IsInShopRange() || myHero.IsDead) return;
             if (!Checked)
             {
+                RecallNoob = true;
                 recall = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null && k.BaseSkinName.Contains("Turret")).OrderBy(k => k.Distance(myHero)).First().ServerPosition.Extend(Spawn, 300).To3D();
                 Checked = true;
             }
-            if (myHero.Distance(recall) > 200)
+            if (myHero.Distance(recall) > 100)
             {
                 Write("Walking to recall point");
                 Pos = recall;
@@ -240,13 +188,17 @@ namespace Autoplay
         }
         private static void RecallManager()
         {
+            if (RecallNoob)
+            {
+                Recall();
+            }
             if (myHero.HealthPercent < 35)
             {
                 Recall();
             }
             else if (myHero.MaxMana > 100)
             {
-                if (myHero.ManaPercent <= 20)
+                if (myHero.ManaPercent <= 15)
                 {
                     Recall();
                 }

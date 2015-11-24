@@ -8,7 +8,7 @@ namespace Autoplay
         public static Menu Menu;
         public void Init()
         {
-            Menu = MainMenu.AddMenu("RyzeAutoPlay Reworked", "whatever");
+            Menu = MainMenu.AddMenu("Ryze Reworked", "whatever", "RyzeRework");
             Menu.AddGroupLabel("Loaded");
         }
     }
