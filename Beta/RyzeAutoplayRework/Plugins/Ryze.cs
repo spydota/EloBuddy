@@ -22,6 +22,16 @@ namespace Plugins
             E = new Spell.Targeted(SpellSlot.E, 600);
             R = new Spell.Active(SpellSlot.R);
         }
+        public static void RyzeRecall()
+        {
+            var stahppls = TargetSelector.GetTarget(W.Range, DamageType.Magical);
+            if (!stahppls.IsValidTarget(W.Range) || stahppls == null) return;
+
+            if (W.IsReady() && W.IsInRange(stahppls))
+            {
+                W.Cast(stahppls);
+            }
+        }
         public static void Farm()
         {
 
@@ -82,24 +92,26 @@ namespace Plugins
             //Lazy ;-;
 
             var target = TargetSelector.GetTarget(900, DamageType.Magical);
+            bool Pasive = myHero.HasBuff("ryzepassivecharged");
             var Stacks = myHero.GetBuffCount("ryzepassivestack");
-            if (target != null)
+            if (target != null && target.IsValidTarget(900))
             {
                 var QDmg = myHero.GetSpellDamage(target, SpellSlot.Q);
                 var WDmg = myHero.GetSpellDamage(target, SpellSlot.W);
                 var EDmg = myHero.GetSpellDamage(target, SpellSlot.E);
-                if (QDmg + WDmg + EDmg > target.Health && (target.CountEnemiesInRange(500) <= 3 || Stacks >= 3) && target.IsValidTarget(900) && !target.IsDead)
+                if (QDmg + WDmg + EDmg > target.Health && (target.CountEnemiesInRange(500) <= 3 || Stacks >= 3) && !target.IsDead)
                 {
                     ComboPLS = true;
+                    Write("DIEEEE");
                 }
-                else { ComboPLS = false; }
+                else { ComboPLS = false; Write("Combo = false"); }
             }
             else { ComboPLS = false; }
 
             if (target == null) return;         
             var QPred = Q.GetPrediction(target);
             bool StacksBuff = myHero.HasBuff("ryzepassivestack");
-            bool Pasive = myHero.HasBuff("ryzepassivecharged");
+            
             if (!Q.IsReady() && !W.IsReady() && !E.IsReady())
             {
                 if (Orbwalker.CanAutoAttack && myHero.IsInAutoAttackRange(target))

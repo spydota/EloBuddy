@@ -65,17 +65,20 @@ namespace Autoplay
             }
         }
         private static void Game_OnUpdate(EventArgs args)
-        {         
-            if (tower != null && !tower.IsDead)
+        {
+            if (tower != null)
             {
-                if (myHero.Distance(tower) >= 1050)
+                if (!tower.IsDead)
+                {
+                    if (myHero.Distance(tower) >= 1010)
+                    {
+                        LeaveTowerPls = false;
+                    }
+                }
+                else
                 {
                     LeaveTowerPls = false;
                 }
-            }
-            if (tower != null && tower.IsDead)
-            {
-                LeaveTowerPls = false;
             }
 
             if (myHero.IsInShopRange())
@@ -133,7 +136,15 @@ namespace Autoplay
                 }
                 RecallManager();            
             }
-
+            if (RecallNoob)
+            {
+                switch(myHero.ChampionName)
+                {
+                    case "Ryze":
+                        Ryze.RyzeRecall();
+                        break;
+                }
+            }
             if (Environment.TickCount - RandomCheck > 10000)
             {
                 random = GetRandompos(50, 200);

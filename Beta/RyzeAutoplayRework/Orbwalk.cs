@@ -16,16 +16,16 @@ namespace Autoplay
             var allyminion = GetClosestAllyMinion(2000);
             var ally = GetNearestAlly(3000);
             var enemy = TargetSelector.GetTarget(900, DamageType.Magical);
-            if (enemy != null && myHero.Distance(enemy) < enemy.GetAutoAttackRange() + 50)
+            if (enemy != null && ComboPLS)
             {
-                if (ComboPLS)
+                if (myHero.Distance(enemy) > 500)
                 {
-                    if (myHero.Distance(enemy) > 500)
-                    {
-                        Pos = enemy.ServerPosition.Extend(myHero.ServerPosition, 450).To3D();
-                    }
+                    Pos = enemy.ServerPosition.Extend(myHero.ServerPosition, 450).To3D();
                 }
-                else if (enemy.Distance(myHero) < enemy.GetAutoAttackRange() + 100)
+            }
+            else if (enemy != null && myHero.Distance(enemy) < enemy.GetAutoAttackRange() + 50)
+            {         
+                if (enemy.Distance(myHero) < enemy.GetAutoAttackRange() + 100)
                 {
                     Pos = GetTopAllyTurret().Position;
                 }
@@ -82,8 +82,7 @@ namespace Autoplay
             }
             else
             {
-               Program.Recall();
-                Write("WTF");
+                ChangedToAllies = false;
             }
         }
     }

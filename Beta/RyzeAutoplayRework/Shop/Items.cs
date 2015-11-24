@@ -2,114 +2,127 @@
 using EloBuddy;
 using EloBuddy.SDK;
 using System.Collections.Generic;
+using System;
+
 namespace Shop
 {
     class Items : Helper
     {
-        public static List<CItem> FighterItems = new List<CItem>()
-        {
-            new CItem(false, 1000, (int)ItemId.Berserkers_Greaves),
-            new CItem(false, 2500, (int)ItemId.Statikk_Shiv),
-            new CItem(false, 800, (int)ItemId.Vampiric_Scepter),
-            new CItem(false, 1550, (int)ItemId.B_F_Sword),
-            new CItem(false, 2000, (int)ItemId.The_Bloodthirster),
-            new CItem(false, 875, (int)ItemId.Pickaxe),
-            new CItem(false, 1550, (int)ItemId.B_F_Sword),
-            new CItem(false, 1500, (int)ItemId.Infinity_Edge),
-            new CItem(false, 2300, (int)ItemId.Last_Whisper),
-            new CItem(false, 2800, (int)ItemId.Phantom_Dancer)
-        };
-
-        public static List<CItem> MageItems = new List<CItem>()
-        {
-            new CItem(false, 1100, (int)ItemId.Sorcerers_Shoes),
-            new CItem(false, 1250, (int)ItemId.Needlessly_Large_Rod),
-            new CItem(false, 1800, (int)ItemId.Ludens_Echo),
-            new CItem(false, 820, (int)ItemId.Fiendish_Codex),
-            new CItem(false, 1500, (int)ItemId.Morellonomicon),
-            new CItem(false, 2500, (int)ItemId.Void_Staff),
-            new CItem(false, 1250, (int)ItemId.Needlessly_Large_Rod),
-            new CItem(false, 850, (int)ItemId.Blasting_Wand),
-            new CItem(false, 1500, (int)ItemId.Rabadons_Deathcap),
-            new CItem(false, 3500, (int)ItemId.Rylais_Crystal_Scepter)
-        };
-        public static int index = 0;
         public static List<CItem> RyzeItems = new List<CItem>()
         {
-            new CItem(false, 350, (int)ItemId.Sapphire_Crystal),
-            new CItem(false, 400, (int)ItemId.Tear_of_the_Goddess),
-            new CItem(false, 800, (int)ItemId.Ionian_Boots_of_Lucidity), //1
-            new CItem(false, 1250, (int)ItemId.Needlessly_Large_Rod),
-            new CItem(false, 1100, (int)ItemId.Archangels_Staff), //2
-            new CItem(false, 2800, (int)ItemId.Frozen_Heart), //3
-            new CItem(false, 1200, (int)ItemId.Catalyst_the_Protector),
-            new CItem(false, 1800, (int)ItemId.Rod_of_Ages), //4
-            new CItem(false, 2650, (int)ItemId.Void_Staff), //5
-            new CItem(false, 1250, (int)ItemId.Needlessly_Large_Rod),
-            new CItem(false, 850, (int)ItemId.Blasting_Wand),
-            new CItem(false, 1700, (int)ItemId.Rabadons_Deathcap) //6
+            new CItem(0, 0),
+            new CItem(350, (int)ItemId.Sapphire_Crystal),         //1
+            new CItem(400, (int)ItemId.Tear_of_the_Goddess),      //2
+            new CItem(800, (int)ItemId.Ionian_Boots_of_Lucidity), //3
+            new CItem(1250, (int)ItemId.Needlessly_Large_Rod),    //4
+            new CItem(1100, (int)ItemId.Archangels_Staff),        //5
+            new CItem(2800, (int)ItemId.Frozen_Heart),            //6
+            new CItem(1200, (int)ItemId.Catalyst_the_Protector),  //7
+            new CItem(1800, (int)ItemId.Rod_of_Ages),             //8
+            new CItem(2650, (int)ItemId.Void_Staff),              //9
+            new CItem(850, (int)ItemId.Blasting_Wand),            //10
+            new CItem(2150, (int)ItemId.Rabadons_Deathcap)        //11
         };
-
-        public static void BuyFighterItems()
-        {
-            for (int i = 0; i < FighterItems.Count; i++)
-            {
-                if (!Item.HasItem(FighterItems[i].ID) &&
-                    myHero.Gold >= FighterItems[i].Gold &&
-                    !FighterItems[i].Bought)
-                {
-                    Item itm = new Item(FighterItems[i].ID);
-                    itm.Buy();
-                    FighterItems[i].Bought = true;
-                }
-            }
-        }
-
-        public static void BuyMageItems()
-        {
-            for (int i = 0; i < MageItems.Count; i++)
-            {
-                if (!Item.HasItem(MageItems[i].ID) &&
-                    myHero.Gold >= MageItems[i].Gold &&
-                    !MageItems[i].Bought)
-                {
-                    Item itm = new Item(MageItems[i].ID);
-                    itm.Buy();
-                    MageItems[i].Bought = true;
-                }
-            }
-        }
-
         public static void BuyRyzeItems()
         {
-            for (int i = 0; i < RyzeItems.Count; i++)
+            #region SapphireCrystal
+            if (!HasItem(RyzeItems[1]) && !HasItem(RyzeItems[2]) && !HasItem(RyzeItems[5]))
             {
-                if (!Item.HasItem(RyzeItems[i].ID, myHero) &&
-                    myHero.Gold >= RyzeItems[i].Gold &&
-                    !RyzeItems[i].Bought)
-                {
-                    Item itm = new Item(RyzeItems[i].ID);
-                    itm.Buy();  
-                }
-                if (Item.HasItem(RyzeItems[i].ID, myHero))
-                {
-                    RyzeItems[i].Bought = true;
-                }
-                
+                if (myHero.Gold >= RyzeItems[1].Gold)
+                    Buy(RyzeItems[1]);
             }
+            #endregion
+            #region Tear
+            if (!HasItem(RyzeItems[2]) && !HasItem(RyzeItems[5]) && HasItem(RyzeItems[1]))
+            {
+                if (myHero.Gold >= RyzeItems[2].Gold)
+                    Buy(RyzeItems[2]);
+            }
+            #endregion
+            #region Boots
+            if (!HasItem(RyzeItems[3]))
+            {
+                if (myHero.Gold >= RyzeItems[3].Gold)
+                    Buy(RyzeItems[3]);
+            }
+            #endregion
+            #region LargeRod
+            if (!HasItem(RyzeItems[4]) && !HasItem(RyzeItems[5]))
+            {
+                if (myHero.Gold >= RyzeItems[4].Gold)
+                    Buy(RyzeItems[4]);
+            }
+            #endregion
+            #region ArchStaff
+            if (!HasItem(RyzeItems[5]) && HasItem(RyzeItems[4]) && HasItem(RyzeItems[2]))
+            {
+                if (myHero.Gold >= RyzeItems[5].Gold)
+                    Buy(RyzeItems[5]);
+            }
+            #endregion
+            #region FrozenHearth
+            if (!HasItem(RyzeItems[6]))
+            {
+                if (myHero.Gold >= RyzeItems[6].Gold)
+                    Buy(RyzeItems[6]);
+            }
+            #endregion
+            #region Catalyst
+            if(!HasItem(RyzeItems[7]) && !HasItem(RyzeItems[8]))
+            {
+                if (myHero.Gold >= RyzeItems[7].Gold)
+                    Buy(RyzeItems[7]);
+            }
+            #endregion
+            #region ROA
+            if (!HasItem(RyzeItems[8]) && HasItem(RyzeItems[7]))
+            {
+                if (myHero.Gold >= RyzeItems[8].Gold)
+                    Buy(RyzeItems[8]);
+            }
+            #endregion
+            #region VoidStaff
+            if (!HasItem(RyzeItems[9]))
+            {
+                if (myHero.Gold >= RyzeItems[9].Gold)
+                    Buy(RyzeItems[9]);
+            }
+            #endregion
+            #region BlastWand
+            if (!HasItem(RyzeItems[10]) && !HasItem(RyzeItems[11]))
+            {
+                if (myHero.Gold >= RyzeItems[10].Gold)
+                    Buy(RyzeItems[10]);
+            }
+            #endregion
+            #region Rabadon
+            if (!HasItem(RyzeItems[11]) && HasItem(RyzeItems[10]))
+            {
+                if (myHero.Gold >= RyzeItems[11].Gold)
+                    Buy(RyzeItems[11]);
+            }
+            #endregion
+        }
 
+        private static void Buy(CItem item)
+        {
+            Item itm = new Item(item.ID);
+            itm.Buy();
+        }
+
+        private static bool HasItem(CItem item)
+        {
+            return Item.HasItem(item.ID, myHero);
         }
 
         public class CItem
         {
             public float Gold;
             public int ID;
-            public bool Bought;
-            public CItem(bool bought, float g, int id)
+            public CItem(float g, int id)
             {
-                this.Bought = bought;
-                this.Gold = g;
-                this.ID = id;
+                Gold = g;
+                ID = id;
             }
         }//CItem
     }
