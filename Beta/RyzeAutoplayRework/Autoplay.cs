@@ -70,7 +70,7 @@ namespace Autoplay
             {
                 if (!tower.IsDead)
                 {
-                    if (myHero.Distance(tower) >= 1010)
+                    if (myHero.Distance(tower) >= 1000)
                     {
                         LeaveTowerPls = false;
                     }
@@ -84,12 +84,7 @@ namespace Autoplay
             if (myHero.IsInShopRange())
             {
                 RecallNoob = false;
-                switch (myHero.ChampionName.ToLower())
-                {
-                    case "ryze":
-                       Core.DelayAction(() => Shop.Items.BuyRyzeItems(), 1000);
-                        break;
-                }
+                
                 if (myHero.HealthPercent < 80)
                 {
                     WaitingHealth = true;
@@ -109,12 +104,13 @@ namespace Autoplay
                     Orbwalker.DisableAttacking = false;
                 }
             }
-            var turret = GetClosestTurret(AARange());
-            if (turret != null)
+            if (myHero.IsInShopRange() || myHero.IsDead)
             {
-                if (Orbwalker.CanAutoAttack)
+                switch (myHero.ChampionName.ToLower())
                 {
-                    Player.IssueOrder(GameObjectOrder.AttackUnit, turret);
+                    case "ryze":
+                        Core.DelayAction(() => Shop.Items.BuyRyzeItems(), 1000);
+                        break;
                 }
             }
             
@@ -125,7 +121,15 @@ namespace Autoplay
                 Core.DelayAction(() => Orbwalker.DisableMovement = false, 500);
                 Core.DelayAction(() => Orbwalker.DisableAttacking = false, 500);
             }
-            Orbwalker.OrbwalkTo(Pos);
+            var turret = GetClosestTurret(AARange());
+            if (turret != null)
+            {
+                if (Orbwalker.CanAutoAttack)
+                {
+                    Player.IssueOrder(GameObjectOrder.AttackUnit, turret);
+                }
+            }
+            Orbwalker.OrbwalkTo(Pos + random);
             if (!myHero.IsRecalling())
             {
                 if (!RecallNoob)
@@ -147,7 +151,7 @@ namespace Autoplay
             }
             if (Environment.TickCount - RandomCheck > 10000)
             {
-                random = GetRandompos(50, 200);
+                random = GetRandompos(-50, 50);
                 RandomCheck = Environment.TickCount;
             }
         }

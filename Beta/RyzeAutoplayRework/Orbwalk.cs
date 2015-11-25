@@ -45,14 +45,14 @@ namespace Autoplay
                 }
                 else if (allyminion != null)
                 {
-                    if (myHero.Distance(allyminion.Position - random) > 100)
+                    if (myHero.Distance(allyminion.Position) > 100)
                     {
-                        Pos = allyminion.Position - random;
+                        Pos = allyminion.Position;
                     }
                 }
                 else if (turret != null && myHero.Distance(turret) > 500)
                 {
-                    Pos = turret.ServerPosition.Extend(Spawn, 500 - random).To3D();
+                    Pos = turret.ServerPosition.Extend(Spawn, 500 + random).To3D();
                 }
                 else { Write("Waiting minions"); }
             }
@@ -67,11 +67,11 @@ namespace Autoplay
                 }
                 if (ally.IsMelee)
                 {
-                    Pos = ally.Position - random;
+                    Pos = ally.Position;
                 }
                 else
                 {
-                    Pos = ally.Position + random;
+                    Pos = ally.Position;
                 }
                 if (Environment.TickCount - Tick > 50000)
                 {
@@ -83,6 +83,11 @@ namespace Autoplay
             else
             {
                 ChangedToAllies = false;
+            }
+
+            if (myHero.Distance(Pos) <= myHero.BoundingRadius + 10)
+            {
+                GetRandompos(-150, 150);
             }
         }
     }

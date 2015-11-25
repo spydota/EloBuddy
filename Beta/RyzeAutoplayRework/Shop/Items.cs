@@ -26,14 +26,14 @@ namespace Shop
         public static void BuyRyzeItems()
         {
             #region SapphireCrystal
-            if (!HasItem(RyzeItems[1]) && !HasItem(RyzeItems[2]) && !HasItem(RyzeItems[5]))
+            if (!HasItem(RyzeItems[1]) && !HasItem(RyzeItems[2]) && !HasItem(RyzeItems[5]) && !HasItem(3040) && !HasItem(3048))
             {
                 if (myHero.Gold >= RyzeItems[1].Gold)
                     Buy(RyzeItems[1]);
             }
             #endregion
             #region Tear
-            if (!HasItem(RyzeItems[2]) && !HasItem(RyzeItems[5]) && HasItem(RyzeItems[1]))
+            if (!HasItem(RyzeItems[2]) && !HasItem(RyzeItems[5]) && HasItem(RyzeItems[1]) && !HasItem(3040) && !HasItem(3048))
             {
                 if (myHero.Gold >= RyzeItems[2].Gold)
                     Buy(RyzeItems[2]);
@@ -47,14 +47,14 @@ namespace Shop
             }
             #endregion
             #region LargeRod
-            if (!HasItem(RyzeItems[4]) && !HasItem(RyzeItems[5]))
+            if (!HasItem(RyzeItems[4]) && !HasItem(RyzeItems[5]) && !HasItem(3040) && !HasItem(3048))
             {
                 if (myHero.Gold >= RyzeItems[4].Gold)
                     Buy(RyzeItems[4]);
             }
             #endregion
             #region ArchStaff
-            if (!HasItem(RyzeItems[5]) && HasItem(RyzeItems[4]) && HasItem(RyzeItems[2]))
+            if (!HasItem(RyzeItems[5]) && HasItem(RyzeItems[4]) && HasItem(RyzeItems[2]) && !HasItem(3040) && !HasItem(3048))
             {
                 if (myHero.Gold >= RyzeItems[5].Gold)
                     Buy(RyzeItems[5]);
@@ -113,6 +113,10 @@ namespace Shop
         private static bool HasItem(CItem item)
         {
             return Item.HasItem(item.ID, myHero);
+        }
+        private static bool HasItem(int id)
+        {
+            return Item.HasItem(id, myHero);
         }
 
         public class CItem
