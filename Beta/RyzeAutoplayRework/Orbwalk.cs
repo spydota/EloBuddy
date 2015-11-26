@@ -18,9 +18,9 @@ namespace Autoplay
             var enemy = TargetSelector.GetTarget(900, DamageType.Magical);
             if (enemy != null && ComboPLS)
             {
-                if (myHero.Distance(enemy) > 500)
+                if (myHero.Distance(enemy) > 400)
                 {
-                    Pos = enemy.ServerPosition.Extend(myHero.ServerPosition, 450).To3D();
+                    Pos = enemy.ServerPosition.Extend(myHero.ServerPosition, 350).To3D();
                 }
             }
             else if (enemy != null && myHero.Distance(enemy) < enemy.GetAutoAttackRange() + 50)
@@ -82,12 +82,13 @@ namespace Autoplay
             }
             else
             {
+                Pos = ClosestAllyTurret(int.MaxValue).Position.Extend(Spawn, 300).To3D();
                 ChangedToAllies = false;
             }
 
-            if (myHero.Distance(Pos) <= myHero.BoundingRadius + 10)
+            if (myHero.Distance(Pos + random) <= myHero.BoundingRadius + 10)
             {
-                GetRandompos(-150, 150);
+                random = GetRandompos(-150, 150);
             }
         }
     }

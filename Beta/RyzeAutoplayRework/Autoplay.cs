@@ -29,7 +29,8 @@ namespace Autoplay
             Game.OnUpdate += Game_OnUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
             Player.OnDamage += Player_OnDamage;
-            Write("Ryze injected");   
+            Write("Ryze injected");
+           random = GetRandompos(-150, 150);
         }
 
         private static void Player_OnDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
@@ -41,7 +42,7 @@ namespace Autoplay
                     if (sender.Type == GameObjectType.obj_AI_Turret)
                     {
                         LeaveTowerPls = true;
-                        Pos = sender.Position.Extend(myHero.Position, 1050).To3D();
+                        Pos = sender.Position.Extend(myHero.Position, 1100).To3D();
                         tower = (Obj_AI_Turret)sender;
                         Write("y u do dis tower");
                     }
@@ -51,7 +52,7 @@ namespace Autoplay
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            Drawing.DrawCircle(Pos, 150, System.Drawing.Color.Yellow);
+            Drawing.DrawCircle(Pos + random, 150, System.Drawing.Color.Yellow);
             if (ComboPLS)
             {
                 Drawing.DrawText(836, 481, System.Drawing.Color.White, "Combo ON");
@@ -149,11 +150,6 @@ namespace Autoplay
                         break;
                 }
             }
-            if (Environment.TickCount - RandomCheck > 10000)
-            {
-                random = GetRandompos(-50, 50);
-                RandomCheck = Environment.TickCount;
-            }
         }
         
         
@@ -166,7 +162,7 @@ namespace Autoplay
                 recall = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null && k.BaseSkinName.Contains("Turret")).OrderBy(k => k.Distance(myHero)).First().ServerPosition.Extend(Spawn, 300).To3D();
                 Checked = true;
             }
-            if (myHero.Distance(recall) > 100)
+            if (myHero.Distance(recall + random) > 150)
             {
                 Write("Walking to recall point");
                 Pos = recall;

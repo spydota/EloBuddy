@@ -255,20 +255,12 @@ namespace Autoplay
         public static void Write(string text)
         {
             if (text == Text)
-            {
-                if (Environment.TickCount - tick > 5000)
-                {
-                    Console.WriteLine(text);
-                    Text = text;
-                    tick = Environment.TickCount;
-                }
-            }
-            else
-            {
-                Console.WriteLine(text);
-                Text = text;
-                tick = Environment.TickCount;
-            }
+                return;
+
+            Console.WriteLine(text);
+            Text = text;
+            tick = Environment.TickCount;
+
         }
         public static int GetRandompos(int min, int max)
         {
