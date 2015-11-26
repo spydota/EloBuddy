@@ -37,10 +37,12 @@ namespace KappaLeBlanc
             ComboM = Menu.AddSubMenu("Combo", "combo");
             ComboM.Add("Q", new CheckBox("Use Q"));
             ComboM.Add("W", new CheckBox("Use W"));
-            ComboM.Add("extW", new CheckBox("Extended W (W to gapclose)", false));       
+            ComboM.Add("extW", new CheckBox("Extended W (W to gapclose)", false));
             ComboM.Add("E", new CheckBox("Use E"));
             ComboM.Add("R", new CheckBox("Use R"));
-
+            ComboM.Add("RQ", new CheckBox("Use R (Q)"));
+            ComboM.Add("RW", new CheckBox("Use R (W)", false));
+            ComboM.Add("RE", new CheckBox("Use R (E)"));
 
             LaneClearMenu();
         }

@@ -13,7 +13,7 @@ namespace Modes
             {
                 var ComboM = LBMenu.ComboM;
                 var WReady = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W).Name != "leblancslidereturn" && Lib.W.IsReady();
-                
+
                 if (CastCheckbox(ComboM, "Q"))
                 {
                     if (Lib.Q.IsReady())
@@ -80,23 +80,43 @@ namespace Modes
                 {
                     if (Lib.R.IsReady())
                     {
-                        if (Lib.R.Name == "LeblancChaosOrbM") // Q
+                        if (CastCheckbox(ComboM, "RQ"))
                         {
-                            if (Lib.Q.IsReady() || WReady || Lib.E.IsReady() || target.HasBuff("LeblancSoulShackle"))
+                            if (Lib.R.Name == "LeblancChaosOrbM") // Q
                             {
-                                Lib.CastR(target);
+                                if (Lib.Q.IsReady() || WReady || Lib.E.IsReady() || target.HasBuff("LeblancSoulShackle") || target.HasBuff("LeblancChaosOrb"))
+                                {
+                                    Lib.CastR(target);
+                                }
                             }
                         }
-                        if (Lib.R.Name == "LeblancSoulShackleM") // E
+                        if (CastCheckbox(ComboM, "RW"))
                         {
-                            if (Lib.Q.IsReady() || Lib.E.IsReady())
+                            if (Lib.R.Name == "LeblancSlideM") // W
                             {
-                                Lib.CastR(target);
+                                if (target.CountEnemiesInRange(Lib.W.Width) > 1)
+                                {
+                                    Lib.CastR(target);
+                                }
+                                else if (!Lib.Q.IsReady() && !Lib.E.IsReady())
+                                {
+                                    Lib.CastR(target);
+                                }
+                            }
+                        }
+                        if (CastCheckbox(ComboM, "RE"))
+                        {
+                            if (Lib.R.Name == "LeblancSoulShackleM") // E
+                            {
+                                if (Lib.Q.IsReady() || Lib.E.IsReady())
+                                {
+                                    Lib.CastR(target);
+                                }
                             }
                         }
                     }
                 }
             }
         }
-    }    
+    }
 }
