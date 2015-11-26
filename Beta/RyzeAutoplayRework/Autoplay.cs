@@ -162,7 +162,7 @@ namespace Autoplay
                 recall = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null && k.BaseSkinName.Contains("Turret")).OrderBy(k => k.Distance(myHero)).First().ServerPosition.Extend(Spawn, 300).To3D();
                 Checked = true;
             }
-            if (myHero.Distance(recall + random) > 150)
+            if (myHero.Distance(recall) > 450)
             {
                 Write("Walking to recall point");
                 Pos = recall;
