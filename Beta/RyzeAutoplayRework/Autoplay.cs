@@ -70,7 +70,7 @@ namespace Autoplay
             {
                 if (!tower.IsDead)
                 {
-                    if (myHero.Distance(tower) >= 1000)
+                    if (myHero.Distance(tower) >= 1100)
                     {
                         LeaveTowerPls = false;
                     }
@@ -78,10 +78,11 @@ namespace Autoplay
                 else
                 {
                     LeaveTowerPls = false;
+                    tower = null;
                 }
                 if (LeaveTowerPls)
                 {
-                    Pos = tower.ServerPosition.Extend(myHero.ServerPosition, 1200).To3D();
+                    Player.IssueOrder(GameObjectOrder.MoveTo,tower.ServerPosition.Extend(myHero.ServerPosition, 1200).To3D());
                 }
             }
             
@@ -128,7 +129,10 @@ namespace Autoplay
                     Player.IssueOrder(GameObjectOrder.AttackUnit, turret);
                 }
             }
-            Orbwalker.OrbwalkTo(Pos + random);
+            if (!LeaveTowerPls)
+            {
+                Orbwalker.OrbwalkTo(Pos + random);
+            }
             if (!myHero.IsRecalling())
             {
                 if (!RecallNoob)

@@ -13,7 +13,7 @@ namespace Shop
             new CItem(0, 0),
             new CItem(350, (int)ItemId.Sapphire_Crystal),         //1
             new CItem(400, (int)ItemId.Tear_of_the_Goddess),      //2
-            new CItem(1100, (int)ItemId.Sorcerers_Shoes), //3
+            new CItem(1100, (int)ItemId.Sorcerers_Shoes),         //3
             new CItem(1250, (int)ItemId.Needlessly_Large_Rod),    //4
             new CItem(1100, (int)ItemId.Archangels_Staff),        //5
             new CItem(2800, (int)ItemId.Frozen_Heart),            //6
