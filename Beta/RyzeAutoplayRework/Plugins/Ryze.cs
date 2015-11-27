@@ -94,7 +94,14 @@ namespace Plugins
             var target = TargetSelector.GetTarget(900, DamageType.Magical);
             bool Pasive = myHero.HasBuff("ryzepassivecharged");
             var Stacks = myHero.GetBuffCount("ryzepassivestack");
-            if (target != null && target.IsValidTarget(900))
+            if (target != null && target.IsValidTarget(900)                             
+                                              //Credits to ParaVayne (funboxxx)
+                                              && !target.HasBuff("sionpassivezombie")               //sion Passive
+                                              && !target.HasBuff("KarthusDeathDefiedBuff")          //karthus passive
+                                              && !target.HasBuff("kogmawicathiansurprise")          //kog'maw passive
+                                              && !target.HasBuff("zyrapqueenofthorns")              //zyra passive
+                                              && !target.HasBuff("ChronoShift")                     //zilean R
+                                              && !target.HasBuff("yorickrazombie"))                 //yorick R
             {
                 var QDmg = myHero.GetSpellDamage(target, SpellSlot.Q);
                 var WDmg = myHero.GetSpellDamage(target, SpellSlot.W);
