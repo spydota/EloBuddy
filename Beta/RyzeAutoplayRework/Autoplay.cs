@@ -116,12 +116,7 @@ namespace Autoplay
             }
             
             if (myHero.IsDead) return;
-            if (myHero.IsRecalling()) { Orbwalker.DisableMovement = true; Orbwalker.DisableAttacking = true; }
-            else
-            {
-                Core.DelayAction(() => Orbwalker.DisableMovement = false, 500);
-                Core.DelayAction(() => Orbwalker.DisableAttacking = false, 500);
-            }
+
             var turret = GetClosestTurret(AARange());
             if (turret != null)
             {
@@ -149,6 +144,8 @@ namespace Autoplay
                         Ryze.RyzeRecall();
                         break;
                 }
+                Orbwalker.DisableMovement = true;
+                Orbwalker.DisableAttacking = true;
             }
         }
         
@@ -162,10 +159,10 @@ namespace Autoplay
                 recall = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null && k.BaseSkinName.Contains("Turret")).OrderBy(k => k.Distance(myHero)).First().ServerPosition.Extend(Spawn, 300).To3D();
                 Checked = true;
             }
-            if (myHero.Distance(recall) > 450)
+            if (myHero.Distance(recall) > 50)
             {
                 Write("Walking to recall point");
-                Pos = recall;
+                Player.IssueOrder(GameObjectOrder.MoveTo, recall);
             }
             else
             {
@@ -205,13 +202,13 @@ namespace Autoplay
             }
             if (myHero.HealthPercent < 35)
             {
-                Recall();
+                RecallNoob = true;
             }
             else if (myHero.MaxMana > 100)
             {
                 if (myHero.ManaPercent <= 15)
                 {
-                    Recall();
+                    RecallNoob = true;
                 }
             }
         }
