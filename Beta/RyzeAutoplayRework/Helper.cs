@@ -250,7 +250,6 @@ namespace Autoplay
             return (ally.Count() > 0 ? ally.First() : null);
         }
 
-        private static int tick = Environment.TickCount;
         private static string Text = "";
         public static void Write(string text)
         {
@@ -259,13 +258,12 @@ namespace Autoplay
 
             Console.WriteLine(text);
             Text = text;
-            tick = Environment.TickCount;
 
         }
         public static int GetRandompos(int min, int max)
         {
-            var random = new Random().Next(min, max);
-            return random;
+            var erandom = new Random().Next(min, max);
+            return erandom;
         }
     }
 }

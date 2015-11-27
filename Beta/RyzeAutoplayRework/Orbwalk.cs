@@ -24,7 +24,7 @@ namespace Autoplay
                 }
             }
             else if (enemy != null && myHero.Distance(enemy) < enemy.GetAutoAttackRange() + 50)
-            {         
+            {
                 if (enemy.Distance(myHero) < enemy.GetAutoAttackRange() + 100)
                 {
                     Pos = GetTopAllyTurret().Position;
@@ -86,10 +86,13 @@ namespace Autoplay
                 ChangedToAllies = false;
             }
 
-            if (myHero.Distance(Pos + random) <= myHero.BoundingRadius + 10)
+
+            if (Environment.TickCount - tick  > 10000)
             {
-                random = GetRandompos(-150, 150);
+                tick = Environment.TickCount;
+                random = GetRandompos(-50, 50);
             }
         }
+        private static int tick = Environment.TickCount;
     }
 }
