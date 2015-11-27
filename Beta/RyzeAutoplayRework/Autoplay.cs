@@ -42,7 +42,6 @@ namespace Autoplay
                     if (sender.Type == GameObjectType.obj_AI_Turret)
                     {
                         LeaveTowerPls = true;
-                        Pos = sender.Position.Extend(myHero.Position, 1100).To3D();
                         tower = (Obj_AI_Turret)sender;
                         Write("y u do dis tower");
                     }
@@ -80,8 +79,12 @@ namespace Autoplay
                 {
                     LeaveTowerPls = false;
                 }
+                if (LeaveTowerPls)
+                {
+                    Pos = tower.ServerPosition.Extend(myHero.ServerPosition, 1200).To3D();
+                }
             }
-
+            
             if (myHero.IsInShopRange())
             {
                 RecallNoob = false;
@@ -159,7 +162,7 @@ namespace Autoplay
                 recall = EntityManager.Turrets.Allies.Where(k => !k.IsDead && k != null && k.BaseSkinName.Contains("Turret")).OrderBy(k => k.Distance(myHero)).First().ServerPosition.Extend(Spawn, 300).To3D();
                 Checked = true;
             }
-            if (myHero.Distance(recall) > 50)
+            if (myHero.Distance(recall) > 50 + myHero.BoundingRadius)
             {
                 Write("Walking to recall point");
                 Player.IssueOrder(GameObjectOrder.MoveTo, recall);
