@@ -50,17 +50,16 @@ namespace Autoplay
                         Pos = allyminion.Position;
                     }
                 }
-                else if (turret != null && myHero.Distance(turret) > 500)
+                else if (turret != null && myHero.Distance(turret) > 510 + random)
                 {
                     Pos = turret.ServerPosition.Extend(Spawn, 500 + random).To3D();
                 }
-                else { Write("Waiting minions"); }
+                else { Waitingminions = true; }
             }
             else if (ally != null)
             {
                 if (!Once)
                 {
-                    Write("Following allies...");
                     ChangedToAllies = true;
                     Tick = Environment.TickCount;
                     Once = true;
@@ -75,7 +74,6 @@ namespace Autoplay
                 }
                 if (Environment.TickCount - Tick > 50000)
                 {
-                    Write("Can follow now");
                     ChangedToAllies = false;
                     Once = false;
                 }
@@ -85,7 +83,10 @@ namespace Autoplay
                 Pos = ClosestAllyTurret(int.MaxValue).Position.Extend(Spawn, 300).To3D();
                 ChangedToAllies = false;
             }
-
+            if (minion != null || allyminion != null)
+            {
+                Waitingminions = false;
+            }
 
             if (Environment.TickCount - tick  > 10000)
             {

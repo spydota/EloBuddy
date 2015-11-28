@@ -5,6 +5,7 @@ using SharpDX;
 using System;
 using Plugins;
 using System.Linq;
+using Color = System.Drawing.Color;
 
 namespace Autoplay
 {
@@ -29,8 +30,8 @@ namespace Autoplay
             Game.OnUpdate += Game_OnUpdate;
             Drawing.OnDraw += Drawing_OnDraw;
             Player.OnDamage += Player_OnDamage;
-            Write("Ryze injected");
-           random = GetRandompos(-150, 150);
+            Console.WriteLine("Ryze injected");
+            random = GetRandompos(-150, 150);
         }
 
         private static void Player_OnDamage(AttackableUnit sender, AttackableUnitDamageEventArgs args)
@@ -43,7 +44,6 @@ namespace Autoplay
                     {
                         LeaveTowerPls = true;
                         tower = (Obj_AI_Turret)sender;
-                        Write("y u do dis tower");
                     }
                 }
             }
@@ -51,18 +51,37 @@ namespace Autoplay
 
         private static void Drawing_OnDraw(EventArgs args)
         {
-            Drawing.DrawCircle(Pos + random, 150, System.Drawing.Color.Yellow);
+            if (RecallNoob)
+            {
+                if (myHero.Distance(recall) > 50 + myHero.BoundingRadius)
+                {
+                    Drawing.DrawText(300, 235, Color.White, "Walking to recall point");
+                }
+                else
+                {
+                    Drawing.DrawText(300, 235, Color.White, "Recalling");
+                } 
+            }
             if (ComboPLS)
             {
-                Drawing.DrawText(836, 481, System.Drawing.Color.White, "Combo ON");
+                Drawing.DrawText(300, 220, Color.White, "Combo ON");
             }
-            if (tower != null && myHero.Distance(tower) < 1500)
+            if (Waitingminions)
             {
-                if (LeaveTowerPls)
-                {
-                    Drawing.DrawCircle(tower.Position, 1000, System.Drawing.Color.Red);
-                }
+                Drawing.DrawText(300, 205, Color.White, "Waiting minions...");
             }
+            if (ChangedToAllies)
+            {
+                Drawing.DrawText(300, 190, Color.White, "Following allies");
+            }
+            if (LeaveTowerPls)
+            {
+                Drawing.DrawCircle(tower.Position, 1000, Color.Red);
+                Drawing.DrawText(157, 800, Color.Red, "Leaving tower");
+            }
+
+            Drawing.DrawCircle(Pos + random, 50, Color.Yellow);
+
         }
         private static void Game_OnUpdate(EventArgs args)
         {
@@ -135,7 +154,7 @@ namespace Autoplay
             }
             if (!myHero.IsRecalling())
             {
-                if (!RecallNoob)
+                if (!RecallNoob && !LeaveTowerPls)
                 {
                     Orbwalk.OrbwalkManager();
                     if (!ComboPLS) { Farm(); }
@@ -168,16 +187,17 @@ namespace Autoplay
             }
             if (myHero.Distance(recall) > 50 + myHero.BoundingRadius)
             {
-                Write("Walking to recall point");
                 Player.IssueOrder(GameObjectOrder.MoveTo, recall);
             }
             else
             {
                 if (!myHero.IsRecalling())
                 {
-                    myHero.Spellbook.CastSpell(SpellSlot.Recall);
-                    Write("Recalling");
-                    Checked = false;
+                    if (B.IsReady())
+                    {
+                        B.Cast();
+                        Checked = false;
+                    }
                 }               
             }
         }

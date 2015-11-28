@@ -109,9 +109,8 @@ namespace Plugins
                 if (QDmg + WDmg + EDmg > target.Health && (target.CountEnemiesInRange(500) <= 3 || Stacks >= 3) && !target.IsDead)
                 {
                     ComboPLS = true;
-                    Write("DIEEEE");
                 }
-                else { ComboPLS = false; Write("Combo = false"); }
+                else { ComboPLS = false; }
             }
             else { ComboPLS = false; }
 

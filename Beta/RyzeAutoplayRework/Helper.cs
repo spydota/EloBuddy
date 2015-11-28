@@ -9,6 +9,8 @@ namespace Autoplay
 {
     public class Helper
     {
+        public static Spell.Active B = new Spell.Active(SpellSlot.Recall);
+        public static bool Waitingminions = false;
         public static AIHeroClient myHero { get { return ObjectManager.Player; } }
         public static readonly Vector3 Toplane = new Vector3(1117, 10878, 53);
         public static Vector3 Spawn;
@@ -235,7 +237,7 @@ namespace Autoplay
         public static AIHeroClient GetNearestAlly()
         {
             //Like old times Kappa
-            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) &&
+            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsRecalling() && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) &&
             !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name)).OrderBy(x => x.Distance(myHero));
 
             return (ally.Count() > 0 ? ally.First() : null);
@@ -243,22 +245,11 @@ namespace Autoplay
         public static AIHeroClient GetNearestAlly(float range)
         {
             //Like old times Kappa
-            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) &&
+            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsRecalling() && !x.IsInShopRange() && !x.IsDead && !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner1).Name) &&
             !SmiteNames.Contains(x.Spellbook.GetSpell(SpellSlot.Summoner2).Name) &&
             x.Distance(myHero) < range).OrderBy(x => x.Distance(myHero));
 
             return (ally.Count() > 0 ? ally.First() : null);
-        }
-
-        private static string Text = "";
-        public static void Write(string text)
-        {
-            if (text == Text)
-                return;
-
-            Console.WriteLine(text);
-            Text = text;
-
         }
         public static int GetRandompos(int min, int max)
         {

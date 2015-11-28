@@ -31,14 +31,14 @@ namespace Autoplay
         {
             if (myHero.CountEnemiesInRange(900) > 0)
             {
-                if (myHero.HealthPercent <= 40)
+                if (myHero.HealthPercent <= 50)
                 {
                     if (Heal != null && Heal.IsReady())
                     {
                         Heal.Cast();
                     }
                 }
-                else if (myHero.HealthPercent <= 25)
+                else if (myHero.HealthPercent <= 35)
                 {
                     if (Barrier != null && Barrier.IsReady())
                     {
