@@ -39,7 +39,7 @@ namespace AutoQSS
 
         private static void Main(string[] args)
         {
-            Loading.OnLoadingComplete += Game_OnStart;           
+            Loading.OnLoadingComplete += Game_OnStart;
         }
         private static void Game_OnStart(EventArgs args)
         {
@@ -58,9 +58,24 @@ namespace AutoQSS
 
             Menu.AddLabel("(You can increase / decrease the min buffs without pressing shift)");
             Menu.AddSeparator();
-            Menu.Add("increase", new KeyBind("Increase the min buffs to QSS", false, KeyBind.BindTypes.HoldActive, 'J'));            
-            Menu.Add("decrease", new KeyBind("Decrease the min buffs to QSS", false, KeyBind.BindTypes.HoldActive, 'N'));
-
+            var a = Menu.Add("increase", new KeyBind("Increase the min buffs to QSS", false, KeyBind.BindTypes.HoldActive, 'J'));
+            var b = Menu.Add("decrease", new KeyBind("Decrease the min buffs to QSS", false, KeyBind.BindTypes.HoldActive, 'N'));
+            a.OnValueChange += delegate
+            (ValueBase<bool> sender, ValueBase<bool>.ValueChangeArgs Aargs)
+            {
+                if (Aargs.NewValue)
+                {
+                    Menu["minbuff"].Cast<Slider>().CurrentValue++;
+                }
+            };
+            b.OnValueChange += delegate
+            (ValueBase<bool> sender, ValueBase<bool>.ValueChangeArgs Aargs)
+            {
+                if (Aargs.NewValue)
+                {
+                    Menu["minbuff"].Cast<Slider>().CurrentValue--;
+                }
+            };
             CC.AddGroupLabel("Auto QSS if :");
             CC.Add("Taunt", new CheckBox("Taunt"));
             CC.Add("Stun", new CheckBox("Stun"));
@@ -81,39 +96,18 @@ namespace AutoQSS
             Ult.Add("PoppyUlt", new CheckBox("Poppy Ult"));
             Ult.Add("UltDelay", new Slider("Delay for Ults", 1000, 0, 3000));
 
-              
+
             Obj_AI_Base.OnBuffGain += OnBuffGain;
             Obj_AI_Base.OnBuffLose += OnBuffLose;
             Drawing.OnDraw += Game_OnDraw;
-            Game.OnUpdate += OnUpdate;
         }
-        private static void OnUpdate(EventArgs args)
-        {
-            if (Menu["increase"].Cast<KeyBind>().CurrentValue && increased == 0)
-            {
-                Menu["minbuff"].Cast<Slider>().CurrentValue++;
-                increased = 1;
-            }
-            if (!Menu["increase"].Cast<KeyBind>().CurrentValue && increased == 1)
-            {
-                increased = 0;
-            }
-            if (Menu["decrease"].Cast<KeyBind>().CurrentValue && decreased == 0)
-            {
-                Menu["minbuff"].Cast<Slider>().CurrentValue--;
-                decreased = 1;
-            }
-            if (!Menu["decrease"].Cast<KeyBind>().CurrentValue && decreased == 1)
-            {
-                decreased = 0;
-            }
-        }
+
         private static void OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs args)
         {
             if (!sender.IsMe) return;
-
             var type = args.Buff.Type;
             var duration = args.Buff.EndTime - Game.Time;
+            var Name = args.Buff.Name.ToLower();
 
             if (type == BuffType.Taunt && Taunt)
             {
@@ -182,28 +176,28 @@ namespace AutoQSS
             if (type == BuffType.Silence && Silence)
             {
                 DebuffCount++;
-                if(duration >= MinDuration)
+                if (duration >= MinDuration)
                 {
                     DoQSS();
                 }
             }
-            if (args.Buff.Name == "zedulttargetmark" && ZedUlt)
+            if (Name == "zedrdeathmark" && ZedUlt)
             {
                 UltQSS();
             }
-            if (args.Buff.Name == "VladimirHemoplague" && VladUlt)
+            if (Name == "vladimirhemoplague" && VladUlt)
             {
                 UltQSS();
             }
-            if (args.Buff.Name == "FizzMarinerDoom" && FizzUlt)
+            if (Name == "fizzmarinerdoom" && FizzUlt)
             {
                 UltQSS();
             }
-            if (args.Buff.Name == "MordekaiserChildrenOfTheGrave" && MordUlt)
+            if (Name == "mordekaiserchildrenofthegrave" && MordUlt)
             {
                 UltQSS();
             }
-            if (args.Buff.Name == "PoppyDiplomaticImmunity" && PoppyUlt)
+            if (Name == "poppydiplomaticimmunity" && PoppyUlt)
             {
                 UltQSS();
             }
@@ -260,8 +254,8 @@ namespace AutoQSS
                 var pos = Drawing.WorldToScreen(Player.Instance.Position);
                 Drawing.DrawText(pos.X - 45, pos.Y + 30, keybind ? Color.White : Color.Red, keybind ? "Auto QSS ON" : "Auto QSS OFF");
             }
-            Drawing.DrawText(1300, 30, Color.White, "Min buffs to QSS: " + MinBuff);
-            
+            Drawing.DrawText(Drawing.Width - 220, Drawing.Height / 13.5f, Color.White, "Min buffs to QSS: " + MinBuff);
+
         }
         private static void DoQSS()
         {
@@ -291,6 +285,6 @@ namespace AutoQSS
                 Core.DelayAction(() => Mercurial.Cast(), Ult["UltDelay"].Cast<Slider>().CurrentValue);
             }
         }
-             
-    }   
+
+    }
 }
