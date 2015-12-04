@@ -23,7 +23,8 @@ namespace KaPoppy
         {
             Combo = Menu.AddSubMenu("Combo");
             Combo.Add("Q", new CheckBox("Use Q"));
-            Combo.Add("W", new Slider("Use W if less than {0} stacks", 3, 0, 10));
+            Combo.Add("W", new CheckBox("Use W", false));
+            Combo.Add("Ws", new Slider("Use W if less than {0} stacks", 3, 0, 10));
             Combo.Add("E", new CheckBox("Use E"));
             Combo.Add("Es", new CheckBox("Use E only stun"));
             Combo.Add("FEs", new KeyBind("Use Flash E to stun", false, KeyBind.BindTypes.PressToggle, 'U'));
@@ -34,7 +35,8 @@ namespace KaPoppy
             Harass = Menu.AddSubMenu("Harass");
             Harass.Add("Q", new CheckBox("Use Q"));
             Harass.Add("Qm", new Slider("Q min mana %", 40, 0, 100));
-            Harass.Add("W", new Slider("Use W if less than {0} stacks", 5, 0, 10));
+            Harass.Add("W", new CheckBox("Use W", false));
+            Harass.Add("Ws", new Slider("Use W if less than {0} stacks", 5, 0, 10));
             Harass.Add("Wm", new Slider("W min mana %", 40, 0, 100));
             Harass.Add("E", new CheckBox("Use E"));
             Harass.Add("Es", new CheckBox("Use E only stun", false));
@@ -53,7 +55,8 @@ namespace KaPoppy
             Jungleclear = Menu.AddSubMenu("Jungleclear");
             Jungleclear.Add("Q", new CheckBox("Use Q"));
             Jungleclear.Add("Qm", new Slider("Use Q min mana", 20, 0, 100));
-            Jungleclear.Add("W", new Slider("Use W if less than {0} stacks", 5, 0, 10));
+            Jungleclear.Add("W", new CheckBox("Use W", false));
+            Jungleclear.Add("Ws", new Slider("Use W if less than {0} stacks", 5, 0, 10));
             Jungleclear.Add("Wm", new Slider("Use W min mana"));
             Jungleclear.Add("E", new CheckBox("Use E", false));
 
@@ -63,7 +66,8 @@ namespace KaPoppy
         {
             Flee = Menu.AddSubMenu("Flee");
             Flee.Add("E", new CheckBox("Use E to nearest in minion mouse pos"));
-            Flee.Add("W", new Slider("Use W if less than {0} stacks", 6, 0, 10));
+            Flee.Add("W", new CheckBox("Use W", false));
+            Flee.Add("Ws", new Slider("Use W if less than {0} stacks", 6, 0, 10));
             MiscMenu();
         }
         private static void MiscMenu()
@@ -112,7 +116,8 @@ namespace KaPoppy
             }
             public static bool UseW
             {
-                get { return CastSlider(Combo, "W") >= Lib.PassiveCount(); }
+                get { return CastCheckbox(Combo, "W") &&
+                        CastSlider(Combo, "Ws") >= Lib.PassiveCount(); }
             }
             public static bool UseE
             {
@@ -137,7 +142,8 @@ namespace KaPoppy
             }
             public static bool UseW
             {
-                get { return CastSlider(Harass, "W") >= Lib.PassiveCount() &&
+                get { return CastCheckbox(Harass, "W") && 
+                        CastSlider(Harass, "Ws") >= Lib.PassiveCount() &&
                         CastSlider(Harass, "Wm") <= myHero.ManaPercent; }
             }
             public static bool UseE
@@ -173,7 +179,8 @@ namespace KaPoppy
             public static bool UseW
             {
                 get {
-                    return CastSlider(Jungleclear, "W") >= Lib.PassiveCount() &&
+                    return CastCheckbox(Jungleclear, "W") && 
+                        CastSlider(Jungleclear, "Ws") >= Lib.PassiveCount() &&
                       CastSlider(Jungleclear, "Wm") <= myHero.ManaPercent;
                 }
             }
@@ -190,7 +197,8 @@ namespace KaPoppy
             }
             public static bool UseW
             {
-                get { return CastSlider(Flee, "W") >= Lib.PassiveCount(); }
+                get { return CastCheckbox(Flee, "W") && 
+                        CastSlider(Flee, "Ws") >= Lib.PassiveCount(); }
             }
         }
         public static class MiscSettings
