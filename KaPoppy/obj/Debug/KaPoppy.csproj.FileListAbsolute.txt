@@ -1,0 +1,12 @@
+C:\Users\User\Documents\Arktos\Addons\KaPoppy\bin\Debug\KaPoppy.exe.config
+C:\Users\User\Documents\Arktos\Addons\KaPoppy\bin\Debug\KaPoppy.exe
+C:\Users\User\Documents\Arktos\Addons\KaPoppy\bin\Debug\KaPoppy.pdb
+C:\Users\User\Documents\Arktos\Addons\KaPoppy\bin\Debug\EloBuddy.dll
+C:\Users\User\Documents\Arktos\Addons\KaPoppy\bin\Debug\EloBuddy.Sandbox.dll
+C:\Users\User\Documents\Arktos\Addons\KaPoppy\bin\Debug\EloBuddy.SDK.dll
+C:\Users\User\Documents\Arktos\Addons\KaPoppy\bin\Debug\SharpDX.Direct3D9.dll
+C:\Users\User\Documents\Arktos\Addons\KaPoppy\bin\Debug\SharpDX.dll
+C:\Users\User\Documents\Arktos\Addons\KaPoppy\bin\Debug\Newtonsoft.Json.dll
+C:\Users\User\Documents\Arktos\Addons\KaPoppy\obj\Debug\KaPoppy.csprojResolveAssemblyReference.cache
+C:\Users\User\Documents\Arktos\Addons\KaPoppy\obj\Debug\KaPoppy.exe
+C:\Users\User\Documents\Arktos\Addons\KaPoppy\obj\Debug\KaPoppy.pdb
