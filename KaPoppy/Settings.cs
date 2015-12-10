@@ -83,7 +83,7 @@ namespace KaPoppy
             Misc = Menu.AddSubMenu("Misc");
             Misc.AddGroupLabel("Misc");
             Misc.Add("percent", new Slider("Stun chance %", 40, 1, 100));
-            Misc.Add("stun", new KeyBind("Force stun selected target", false, KeyBind.BindTypes.HoldActive, 'Z'));
+            Misc.Add("stun", new KeyBind("Force stun selected target", false, KeyBind.BindTypes.HoldActive, 'K'));
             Misc.AddLabel("How it works: Orbwalk to nearest position where you");
             Misc.AddLabel("can stun selected target");
             Misc.AddLabel("(If flash E is enabled, it will Flash E)");

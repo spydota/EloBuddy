@@ -13,6 +13,8 @@ namespace KaPoppy
     class Program : Helper
     {
         private static void Main(string[] args) { Loading.OnLoadingComplete += Game_OnStart; }
+        static Vector3 start = new Vector3();
+        static Vector3 end = new Vector3();
         private static void Game_OnStart(EventArgs args)
         {
             if (myHero.Hero != Champion.Poppy) return;
@@ -26,13 +28,30 @@ namespace KaPoppy
                 Lib.Flash = new Spell.Targeted(Flash.Slot, 425);
             }
             Obj_AI_Base.OnProcessSpellCast += Modes.Misc.SpellCast;
+            Obj_AI_Base.OnSpellCast += RectangleManager;
             Game.OnUpdate += Game_OnUpdate;
             Drawing.OnDraw += Drawings;
             GameObject.OnCreate += Modes.Misc.AntiRengar;
         }
 
+        private static void RectangleManager(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (sender.IsMe)
+            {
+                if (args.Slot == SpellSlot.Q)
+                {
+                    start = args.Start;
+                    end = args.Start.Extend(args.End, Lib.Q.Range).To3D();
+                    Core.DelayAction(() => start = new Vector3(), 1000);
+                    Core.DelayAction(() => end = new Vector3(), 1000);
+                }
+            }
+        }
+        public static Geometry.Polygon.Rectangle rectangle = null;
         private static void Drawings(EventArgs args)
         {
+            
+
             if (Config.StunTarget)
             {
                 var target = TargetSelector.SelectedTarget;
@@ -72,7 +91,23 @@ namespace KaPoppy
         }
         private static void Game_OnUpdate(EventArgs args)
         {
+            if (start.IsValid() && end.IsValid())
+            {
+                rectangle = new Geometry.Polygon.Rectangle(start, end, Lib.Q.Width);
+                rectangle.Draw(Color.Red, 2);
+            }
+            else
+                rectangle = null;
+
             if (myHero.IsDead) return;
+
+            if (Settings.ComboSettings.UseFlashE)
+            {
+                Lib.R.StartCharging();
+                Core.DelayAction(() =>
+                Lib.R.Cast(Game.CursorPos), 10
+                );
+            } 
             if (Config.StunTarget)
             {
                 Modes.Stun.Execute();
