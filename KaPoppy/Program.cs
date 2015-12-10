@@ -50,8 +50,6 @@ namespace KaPoppy
         public static Geometry.Polygon.Rectangle rectangle = null;
         private static void Drawings(EventArgs args)
         {
-            
-
             if (Config.StunTarget)
             {
                 var target = TargetSelector.SelectedTarget;
@@ -91,6 +89,8 @@ namespace KaPoppy
         }
         private static void Game_OnUpdate(EventArgs args)
         {
+            if (myHero.IsDead) return;
+
             if (start.IsValid() && end.IsValid())
             {
                 rectangle = new Geometry.Polygon.Rectangle(start, end, Lib.Q.Width);
@@ -99,15 +99,6 @@ namespace KaPoppy
             else
                 rectangle = null;
 
-            if (myHero.IsDead) return;
-
-            if (Settings.ComboSettings.UseFlashE)
-            {
-                Lib.R.StartCharging();
-                Core.DelayAction(() =>
-                Lib.R.Cast(Game.CursorPos), 10
-                );
-            } 
             if (Config.StunTarget)
             {
                 Modes.Stun.Execute();

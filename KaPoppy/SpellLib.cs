@@ -88,8 +88,6 @@ namespace KaPoppy
         public static bool CanStun(AIHeroClient unit, Vector2 pos)
         {
             if (unit.HasBuffOfType(BuffType.SpellImmunity) || unit.HasBuffOfType(BuffType.SpellShield) || Player.Instance.IsDashing()) return false;
-
-            var predictionsList = pos;
             for (var i = 0; i < 300; i += 10)
             {
                 var cPos = pos.Extend(unit, pos.Distance(unit) + i).To3D();
@@ -98,7 +96,6 @@ namespace KaPoppy
                     return true;
                 }
             }
-
             return false;
         }
     }
