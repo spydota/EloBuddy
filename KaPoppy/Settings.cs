@@ -32,6 +32,7 @@ namespace KaPoppy
             Combo.AddSeparator(0);
             Combo.Add("Es", new CheckBox("Use E only stun", false));
             Combo.Add("FEs", new KeyBind("Use Flash E to stun", false, KeyBind.BindTypes.PressToggle, 'J'));
+            Combo.AddLabel("R in combo is disabled for now, cast it by yourself");
             Combo.Add("R", new CheckBox("Use R to knockup enemies"));
             Combo.Add("Rm", new Slider("Min enemies to knockup: {0}", 3, 1, 5));
             HarassMenu();
@@ -74,6 +75,7 @@ namespace KaPoppy
             Flee.Add("E", new CheckBox("Use E to nearest in minion mouse pos"));
             Flee.Add("W", new CheckBox("Use W", false));
             Flee.Add("Ws", new CheckBox("Use W only if less than 40% health", false));
+            Flee.Add("R", new CheckBox("Use R to make your enemies fly"));
             MiscMenu();
         }
         private static void MiscMenu()
@@ -231,6 +233,10 @@ namespace KaPoppy
             public static bool Whealth
             {
                 get { return CastCheckbox(Flee, "Ws"); }
+            }
+            public static bool UseR
+            {
+                get { return CastCheckbox(Flee, "R"); }
             }
         }
         public static class MiscSettings

@@ -65,6 +65,7 @@ namespace DashSpells
                 champ = Champion.Ekko,
                 champname = "Ekko",
                 spellKey = SpellSlot.E,
+                spellname = "PhaseDive"
             });
             #endregion
             #region Fiora
@@ -85,6 +86,16 @@ namespace DashSpells
                 champname = "Fizz",
                 spellKey = SpellSlot.Q,
                 enabled = true,
+            });
+            #endregion
+            #region Gnar
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Gnar,
+                champname = "Gnar",
+                spellKey = SpellSlot.E,
+                enabled = true
             });
             #endregion
             #region Gragas
@@ -135,6 +146,17 @@ namespace DashSpells
                 champname = "Jax",
                 spellKey = SpellSlot.Q,
                 enabled = true,
+            });
+            #endregion
+            #region Jayce
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Jayce,
+                champname = "Jayce",
+                spellKey = SpellSlot.E,
+                enabled = true,
+                spellname = "JayceThunderingBlow"
             });
             #endregion
             #region Kha'Zix
@@ -217,6 +239,19 @@ namespace DashSpells
                 enabled = true,
             });
             #endregion
+            #region Nidalee
+
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Nidalee,
+                champname = "Nidalee",
+                spellKey = SpellSlot.W,
+                enabled = true,
+                spellname = "Pounce"
+            });
+
+            #endregion
             #region Pantheon
             Dashes.Add(
             new SpellData
@@ -246,7 +281,6 @@ namespace DashSpells
                 spellKey = SpellSlot.E,
             });
             #endregion
-            //Change Name
             #region Rek'Sai 
             Dashes.Add(
             new SpellData
@@ -255,7 +289,6 @@ namespace DashSpells
                 champname = "Rek'Sai",
                 spellKey = SpellSlot.E,
                 enabled = true,
-                spellname = ""
             });
             #endregion
             #region Riven
@@ -265,6 +298,14 @@ namespace DashSpells
                 champ = Champion.Riven,
                 champname = "Riven",
                 spellKey = SpellSlot.Q,
+                enabled = false,
+            });
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Riven,
+                champname = "Riven",
+                spellKey = SpellSlot.E,
                 enabled = false,
             });
             #endregion
@@ -298,7 +339,26 @@ namespace DashSpells
                 enabled = true,
             });
             #endregion
-            //Change Name
+            #region Tryndamere
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Tryndamere,
+                champname = "Tryndamere",
+                spellKey = SpellSlot.E,
+                enabled = true,
+            });
+            #endregion
+            #region Vayne
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Vayne,
+                champname = "Vayne",
+                spellKey = SpellSlot.Q,
+                enabled = true,
+            });
+            #endregion
             #region Vi
             Dashes.Add(
             new SpellData
@@ -307,7 +367,6 @@ namespace DashSpells
                 champname = "Vi",
                 spellKey = SpellSlot.Q,
                 enabled = true,
-                spellname = ""
             });
             #endregion   
             #region Yasuo
@@ -317,6 +376,16 @@ namespace DashSpells
                 champ = Champion.Yasuo,
                 champname = "Yasuo",
                 spellKey = SpellSlot.E,
+            });
+            #endregion
+            #region Zac
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Zac,
+                champname = "Zac",
+                spellKey = SpellSlot.E,
+                enabled = true
             });
             #endregion
 

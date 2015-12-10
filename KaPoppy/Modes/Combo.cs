@@ -3,6 +3,7 @@ using EloBuddy.SDK;
 using KaPoppy;
 namespace Modes
 {
+    using System;
     using System.Linq;
     using Menu = Settings.ComboSettings;
     class Combo : Helper
@@ -55,19 +56,19 @@ namespace Modes
                         }
                     }
                 }
-                if (Menu.UseR)
+               /* if (Menu.UseR)
                 {
                     if (Lib.R.IsReady())
                     {
-                        if (myHero.CountEnemiesInRange(250) >= Menu.RMin)
-                        {
+                        if (myHero.CountEnemiesInRange(Lib.R.MinimumRange) >= Menu.RMin)
+                        {               
                             Lib.R.StartCharging();
                             Core.DelayAction(() =>
-                            Lib.R.Cast(target), 20
+                            Lib.R.Cast(target), 10
                             );
                         }
                     }
-                }
+                }*/
             }
             
             if (Menu.UseW)
@@ -78,8 +79,6 @@ namespace Modes
 
                 Lib.W.Cast();
             }
-
-            
         }
     }
 }

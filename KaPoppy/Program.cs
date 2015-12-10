@@ -73,7 +73,6 @@ namespace KaPoppy
         private static void Game_OnUpdate(EventArgs args)
         {
             if (myHero.IsDead) return;
-
             if (Config.StunTarget)
             {
                 Modes.Stun.Execute();
