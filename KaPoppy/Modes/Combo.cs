@@ -47,44 +47,46 @@ namespace Modes
                     }
                 }
             }
-            /* if (Menu.UseR)
-             {
-                 if (Lib.R.IsReady())
-                 {
-                     if (myHero.CountEnemiesInRange(Lib.R.MinimumRange) >= Menu.RMin)
-                     {               
-                         Lib.R.StartCharging();
-                         Core.DelayAction(() =>
-                         Lib.R.Cast(target), 10
-                         );
-                     }
-                 }
-             }*/
+            if (Menu.UseR)
+            {
+                if (Lib.R.IsReady())
+                {
+                    if (GetComboDamage(target) < target.Health && !target.HasBuffOfType(BuffType.SpellImmunity))
+                    {
+                        if (target.IsFacing(myHero) ? myHero.IsInRange(target, Lib.R.MinimumRange - 30) : myHero.IsInRange(target, Lib.R.MinimumRange - 100))
+                        {
+                            Lib.R.StartCharging();
+                            myHero.Spellbook.UpdateChargeableSpell(SpellSlot.R, target.ServerPosition, true);
+                        }
+                    }
+                }
+            }
         }
 
         private static void CastE(AIHeroClient target)
         {
-            if (!Menu.UseEs && myHero.Distance(target) > myHero.GetAutoAttackRange())
+            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsDead && x.Health > 200 && x.Distance(myHero) < 1200).OrderBy(x => x.Distance(myHero));
+            var turret = EntityManager.Turrets.Allies.Where(x => !x.IsDead && x.Distance(myHero) < 1200).OrderBy(x => x.Distance(myHero));
+            var push = target.ServerPosition.Extend(myHero, -300);
+            if (
+                (Menu.UseEStun && Lib.CanStun(target)) ||
+                (Menu.UseEPassive && Lib.Passive != null && push.Distance(Lib.Passive) < myHero.Distance(Lib.Passive)) ||
+                (Menu.UseEInsec && turret.Count() > 0 && push.Distance(turret.First()) < target.Distance(turret.First())) ||
+                (Menu.UseEInsec && ally.Count() > 0 && push.Distance(ally.First()) < target.Distance(ally.First()))
+                )
             {
                 Lib.E.Cast(target);
             }
-            else
+            else if (Menu.UseFlashE)
             {
-                if (Lib.CanStun(target))
+                if (Lib.Flash != null)
                 {
-                    Lib.E.Cast(target);
-                }
-                else if (Menu.UseFlashE)
-                {
-                    if (Lib.Flash != null)
+                    var flashpos = Lib.PointsAroundTheTarget(target, 525).Where(x => Lib.CanStun(target, x.To2D()) && !IsWall(x)).OrderBy(x => x.Distance(myHero));
+                    if (flashpos.Count() > 0)
                     {
-                        var flashpos = Lib.PointsAroundTheTarget(target, 525).Where(x => Lib.CanStun(target, x.To2D()) && !IsWall(x)).OrderBy(x => x.Distance(myHero));
-                        if (flashpos.Count() > 0)
+                        if (Lib.Flash.IsReady() && Lib.Flash.IsInRange(flashpos.First()))
                         {
-                            if (Lib.Flash.IsReady() && Lib.Flash.IsInRange(flashpos.First()))
-                            {
-                                Lib.Flash.Cast(flashpos.First());
-                            }
+                            Lib.Flash.Cast(flashpos.First());
                         }
                     }
                 }
@@ -92,5 +94,6 @@ namespace Modes
         }
     }
 }
+
 
 

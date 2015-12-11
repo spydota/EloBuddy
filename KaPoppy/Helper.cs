@@ -99,5 +99,19 @@ namespace KaPoppy
             }
             return myHero.CalculateDamageOnUnit(target, DamageType.Physical, damage) - 30;
         }
+        public static float GetComboDamage(AIHeroClient target)
+        {
+            float damage = 0;
+            damage += myHero.GetAutoAttackDamage(target);
+            if (Settings.ComboSettings.UseQ && Lib.Q.IsReady())
+            {
+                damage += GetDamage(target, SpellSlot.Q);
+            }
+            if (Settings.ComboSettings.UseE && Lib.E.IsReady())
+            {
+                damage += (Lib.CanStun(target) ? GetDamage(target, SpellSlot.E) * 2 : GetDamage(target, SpellSlot.E));
+            }
+            return damage;
+        }
     }
 }

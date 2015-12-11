@@ -14,8 +14,8 @@ namespace Modes
         {
             if (Menu.SemiAutoR)
             {
-                var selectedtgt = TargetSelector.SelectedTarget;
-                if (selectedtgt != null && Lib.R.IsReady())
+                var selectedtgt = TargetSelector.SelectedTarget ?? TargetSelector.GetTarget(Lib.R.MaximumRange - 250, DamageType.Physical);
+                if (selectedtgt != null && selectedtgt.IsValidTarget(Lib.R.MaximumRange - 250) && !selectedtgt.IsDead && Lib.R.IsReady())
                 {
                     if (selectedtgt.IsValidTarget(Lib.R.MaximumRange - 250))
                     {
@@ -40,16 +40,16 @@ namespace Modes
             var QDMG = GetDamage(target, SpellSlot.Q);
             var EDMG = GetDamage(target, SpellSlot.W);
             var RDMG = GetDamage(target, SpellSlot.R);
-
-            if (Menu.UseQ && QDMG > target.Health && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range) && Lib.Q.GetPrediction(target).HitChance >= EloBuddy.SDK.Enumerations.HitChance.Medium)
+            if (Menu.UseQ && QDMG > target.Health + target.AttackShield && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range) && 
+                Lib.Q.GetPrediction(target).HitChance >= EloBuddy.SDK.Enumerations.HitChance.Medium)
             {
                 Lib.Q.Cast(Lib.Q.GetPrediction(target).CastPosition);
             }
-            else if (Menu.UseE && (Lib.CanStun(target) ? EDMG * 2 > target.Health : EDMG > target.Health) && Lib.E.IsReady() && target.IsValidTarget(Lib.E.Range))
+            else if (Menu.UseE && (Lib.CanStun(target) ? EDMG * 2 > target.Health : EDMG > target.Health + target.AttackShield) && Lib.E.IsReady() && target.IsValidTarget(Lib.E.Range))
             {
                 Lib.E.Cast(target);
             }
-            else if (Menu.UseR && RDMG > target.Health && Lib.R.IsReady() && target.IsValidTarget(Lib.R.MaximumRange - 250))
+            else if (Menu.UseR && RDMG > target.Health + target.AttackShield && Lib.R.IsReady() && target.IsValidTarget(Lib.R.MaximumRange - 250))
             {
                 if (!Lib.R.IsCharging)
                 {

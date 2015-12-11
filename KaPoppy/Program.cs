@@ -21,6 +21,7 @@ namespace KaPoppy
             CheckForUpdates();
             Settings.Init();
 
+
             var flash = myHero.Spellbook.Spells.Where(x => x.Name.ToLower().Contains("summonerflash"));
             SpellDataInst Flash = flash.Any() ? flash.First() : null;
             if (Flash != null)
@@ -90,18 +91,23 @@ namespace KaPoppy
         public static Geometry.Polygon.Rectangle rectangle = null;
         private static void Drawings(EventArgs args)
         {
-            var target = TargetSelector.SelectedTarget;
-            if (Config.SemiAutoR || Config.StunTarget)
+            var target = TargetSelector.SelectedTarget?? TargetSelector.GetTarget(Lib.R.MaximumRange - 250, DamageType.Physical);
+            if (Config.StunTarget || Config.SemiAutoR)
             {
-                if (target == null)
+                if (target == null || target.IsDead || !target.IsValidTarget())
                 {
                     Drawing.DrawText(Drawing.WorldToScreen(myHero.ServerPosition) - new Vector2(125, 30),
                          Color.Red, "Select a target" + Environment.NewLine + "with left click!", 9);
                 }
+                else
+                {
+                    Drawing.DrawText(Drawing.WorldToScreen(myHero.ServerPosition) - new Vector2(125, 30),
+                         Color.White, "Target is:" + Environment.NewLine + target.ChampionName, 9);
+                }
             }
             if (Config.StunTarget)
             {
-                if (target != null)
+                if (target != null && !target.IsDead && target.IsValidTarget())
                 {
                     var pos = Lib.PointsAroundTheTarget(target, 525).Where(x => Lib.CanStun(target, x.To2D()) && !IsWall(x)).OrderBy(x => x.Distance(myHero));
                     if (pos.Count() > 0)
@@ -135,12 +141,13 @@ namespace KaPoppy
                 var pos2 = Lib.Passive.Position;
                 Line.DrawLine(Color.White, pos1, pos2);
             }
+
         }
 
         private static void Game_OnUpdate(EventArgs args)
         {
             if (myHero.IsDead) return;
-
+            
             if (start.IsValid() && end.IsValid())
             {
                 rectangle = new Geometry.Polygon.Rectangle(start, end, Lib.Q.Width);

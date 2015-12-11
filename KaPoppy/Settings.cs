@@ -29,8 +29,9 @@ namespace KaPoppy
             Combo.Add("Ws", new CheckBox("Use W only if less than 40% health", false));
             Combo.AddSeparator(0);
             Combo.Add("E", new CheckBox("Use E"));
-            Combo.AddSeparator(0);
-            Combo.Add("Es", new CheckBox("Use E only stun", false));
+            Combo.Add("EStun", new CheckBox("Use E if can stun"));
+            Combo.Add("EInsec", new CheckBox("Use E if can insec"));
+            Combo.Add("EPassive", new CheckBox("Use E to catch passive shield", false));
             Combo.Add("FEs", new KeyBind("Use Flash E to stun", false, KeyBind.BindTypes.PressToggle, 'J'));
             Combo.AddLabel("R in combo is disabled for now, cast it by yourself");
             Combo.Add("R", new CheckBox("Use R to knockup enemies"));
@@ -46,7 +47,10 @@ namespace KaPoppy
             Harass.Add("Ws", new CheckBox("Use W only if less than 40% health", false));
             Harass.Add("Wm", new Slider("W min mana %", 40, 0, 100));
             Harass.Add("E", new CheckBox("Use E"));
-            Harass.Add("Es", new CheckBox("Use E only stun", false));
+            Harass.Add("EStun", new CheckBox("Use E if can stun"));
+            Harass.Add("EInsec", new CheckBox("Use E if can insec"));
+            Harass.Add("EPassive", new CheckBox("Use E to catch passive shield"));
+            Harass.Add("EAlways", new CheckBox("Always use E", false));
             LaneclearMenu();
         }
         private static void LaneclearMenu()
@@ -88,7 +92,7 @@ namespace KaPoppy
             Misc.AddLabel("can stun selected target");
             Misc.AddLabel("(If flash E is enabled, it will Flash E)");
             Misc.AddSeparator(0);
-            Misc.Add("semiR", new KeyBind("Semi automatic R (select a target with left click)", false, KeyBind.BindTypes.HoldActive, 'R'));
+            Misc.Add("semiR", new KeyBind("Semi automatic R (select a target with left click)", false, KeyBind.BindTypes.HoldActive, 'G'));
             Misc.AddSeparator();
             Misc.AddGroupLabel("Drawings");
             Misc.Add("dQ", new CheckBox("Draw Q"));
@@ -142,9 +146,17 @@ namespace KaPoppy
             {
                 get { return CastCheckbox(Combo, "E"); }
             }
-            public static bool UseEs
+            public static bool UseEStun
             {
-                get { return CastCheckbox(Combo, "Es"); }
+                get { return CastCheckbox(Combo, "EStun"); }
+            }
+            public static bool UseEInsec
+            {
+                get { return CastCheckbox(Combo, "EInsec"); }
+            }
+            public static bool UseEPassive
+            {
+                get { return CastCheckbox(Combo, "EPassive"); }
             }
             public static bool UseFlashE
             {
@@ -180,9 +192,21 @@ namespace KaPoppy
             {
                 get { return CastCheckbox(Harass, "E"); }
             }
-            public static bool UseEs
+            public static bool UseEStun
             {
-                get { return CastCheckbox(Harass, "Es"); }
+                get { return CastCheckbox(Harass, "EStun"); }
+            }
+            public static bool UseEInsec
+            {
+                get { return CastCheckbox(Harass, "EInsec"); }
+            }
+            public static bool UseEPassive
+            {
+                get { return CastCheckbox(Harass, "EPassive"); }
+            }
+            public static bool UseEAlways
+            {
+                get { return CastCheckbox(Harass, "EAlways"); }
             }
         }
         public static class LaneclearSettings
