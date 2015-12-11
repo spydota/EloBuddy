@@ -87,7 +87,8 @@ namespace LegendOfPoroKing
 
         private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
-
+            if (sender.IsEnemy)
+            {
                 if (args.SData.Name == "summonerporothrow")
                 {
                     Poros.Add(
@@ -97,6 +98,7 @@ namespace LegendOfPoroKing
                             end = args.End //Start.Extend(args.End, 2500).To3D()
                         });
                 }
+            }
         }
 
         //kingporo_porofollower
