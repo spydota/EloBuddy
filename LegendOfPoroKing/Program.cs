@@ -26,7 +26,6 @@ namespace LegendOfPoroKing
             Chat.Print("LegendOfPoroKing loaded", System.Drawing.Color.White);
 
             Menu = MainMenu.AddMenu("LegendOfPoroKing", "plasma");
-            Menu.AddGroupLabel("Dont forget to upvote :)");
             draw = Menu.Add("Draw", new CheckBox("Draw poros"));
             Menu.AddGroupLabel("Select your target with left click first!");
             poro = Menu.Add("Poro", new KeyBind("Throw poros (Hold)", false, KeyBind.BindTypes.HoldActive, 'Z'));
