@@ -3,7 +3,6 @@ using EloBuddy.SDK;
 using EloBuddy.SDK.Menu;
 using EloBuddy.SDK.Menu.Values;
 using SharpDX;
-using System.Drawing;
 using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;

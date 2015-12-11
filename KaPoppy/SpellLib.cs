@@ -15,6 +15,7 @@ namespace KaPoppy
         public static Spell.Targeted E;
         public static Spell.Chargeable R;
         public static Spell.Targeted Flash;
+        public static GameObject Passive = null;
         static Lib()
         {
             Q = new Spell.Skillshot(SpellSlot.Q, 430, SkillShotType.Linear, 250, null, 100);

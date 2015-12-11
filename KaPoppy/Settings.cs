@@ -87,6 +87,8 @@ namespace KaPoppy
             Misc.AddLabel("How it works: Orbwalk to nearest position where you");
             Misc.AddLabel("can stun selected target");
             Misc.AddLabel("(If flash E is enabled, it will Flash E)");
+            Misc.AddSeparator(0);
+            Misc.Add("semiR", new KeyBind("Semi automatic R (select a target with left click)", false, KeyBind.BindTypes.HoldActive, 'R'));
             Misc.AddSeparator();
             Misc.AddGroupLabel("Drawings");
             Misc.Add("dQ", new CheckBox("Draw Q"));
@@ -294,6 +296,10 @@ namespace KaPoppy
             public static bool StunTarget
             {
                 get { return CastKeybind(Misc, "stun"); }
+            }
+            public static bool SemiAutoR
+            {
+                get { return CastKeybind(Misc, "semiR"); }
             }
         }
     }

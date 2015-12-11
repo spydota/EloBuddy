@@ -12,6 +12,28 @@ namespace Modes
     {
         public static void Execute()
         {
+            if (Menu.SemiAutoR)
+            {
+                var selectedtgt = TargetSelector.SelectedTarget;
+                if (selectedtgt != null && Lib.R.IsReady())
+                {
+                    if (selectedtgt.IsValidTarget(Lib.R.MaximumRange - 250))
+                    {
+                        if (!Lib.R.IsCharging)
+                            Lib.R.StartCharging();
+                        else
+                        {
+                            var pred = Lib.R.GetPrediction(selectedtgt);
+                            if (pred.HitChance >= EloBuddy.SDK.Enumerations.HitChance.High)
+                            {
+                                Lib.R.Cast(pred.CastPosition);
+                            }
+                            else if (Lib.R.Range == Lib.R.MaximumRange)
+                                Lib.R.Cast(pred.CastPosition);
+                        }
+                    }
+                }
+            }
             var target = TargetSelector.GetTarget(Lib.R.MaximumRange, DamageType.Physical);
             if (target == null) return;
 

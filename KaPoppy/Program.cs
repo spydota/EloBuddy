@@ -27,13 +27,53 @@ namespace KaPoppy
             {
                 Lib.Flash = new Spell.Targeted(Flash.Slot, 425);
             }
+
             Obj_AI_Base.OnProcessSpellCast += Modes.Misc.SpellCast;
             Obj_AI_Base.OnSpellCast += RectangleManager;
-            Game.OnUpdate += Game_OnUpdate;
+            
             Drawing.OnDraw += Drawings;
+
             GameObject.OnCreate += Modes.Misc.AntiRengar;
+
+            GameObject.OnCreate += GameObject_OnCreate;
+            GameObject.OnDelete += GameObject_OnDelete;
+
+            Obj_AI_Base.OnBuffGain += Obj_AI_Base_OnBuffGain;
+
+            Game.OnUpdate += Game_OnUpdate;
         }
 
+        private static void Obj_AI_Base_OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs args)
+        {
+            if (sender.IsMe)
+            {
+                if (args.Buff.Name.ToLower() == "poppypassiveshield")
+                {
+                    Lib.Passive = null;
+                }
+            }
+        }
+
+        private static void GameObject_OnCreate(GameObject sender, EventArgs args)
+        {
+            if (sender.IsAlly)
+            {
+                if (sender.Name.ToLower() == "shield")
+                {
+                    Lib.Passive = sender;
+                }
+            }
+        }
+        private static void GameObject_OnDelete(GameObject sender, EventArgs args)
+        {
+            if (sender.IsAlly)
+            {
+                if (sender.Name.ToLower() == "shield")
+                {
+                    Lib.Passive = null;
+                }
+            }
+        }
         private static void RectangleManager(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             if (sender.IsMe)
@@ -50,15 +90,18 @@ namespace KaPoppy
         public static Geometry.Polygon.Rectangle rectangle = null;
         private static void Drawings(EventArgs args)
         {
-            if (Config.StunTarget)
+            var target = TargetSelector.SelectedTarget;
+            if (Config.SemiAutoR || Config.StunTarget)
             {
-                var target = TargetSelector.SelectedTarget;
                 if (target == null)
                 {
                     Drawing.DrawText(Drawing.WorldToScreen(myHero.ServerPosition) - new Vector2(125, 30),
                          Color.Red, "Select a target" + Environment.NewLine + "with left click!", 9);
                 }
-                else
+            }
+            if (Config.StunTarget)
+            {
+                if (target != null)
                 {
                     var pos = Lib.PointsAroundTheTarget(target, 525).Where(x => Lib.CanStun(target, x.To2D()) && !IsWall(x)).OrderBy(x => x.Distance(myHero));
                     if (pos.Count() > 0)
@@ -86,7 +129,14 @@ namespace KaPoppy
                 var pos = Drawing.WorldToScreen(myHero.ServerPosition) - new Vector2(-45, 15);
                 Drawing.DrawText(pos, Color.White, "Flash stun!", 9);
             }
+            if (Lib.Passive != null)
+            {
+                var pos1 = myHero.Position;
+                var pos2 = Lib.Passive.Position;
+                Line.DrawLine(Color.White, pos1, pos2);
+            }
         }
+
         private static void Game_OnUpdate(EventArgs args)
         {
             if (myHero.IsDead) return;
