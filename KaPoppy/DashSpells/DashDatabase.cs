@@ -18,6 +18,16 @@ namespace DashSpells
                 enabled = true,
             });
             #endregion
+            #region Alistar
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Alistar,
+                champname = "Alistar",
+                spellKey = SpellSlot.W,
+                enabled = true,
+            });
+            #endregion
             #region Ahri
             Dashes.Add(
             new SpellData
@@ -38,6 +48,25 @@ namespace DashSpells
                 enabled = true,
             });
             #endregion
+            #region Azir
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Azir,
+                champname = "Azir",
+                spellKey = SpellSlot.E,
+            });
+            #endregion
+            #region Braum
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Braum,
+                champname = "Braum",
+                spellKey = SpellSlot.W,
+                enabled = true,
+            });
+            #endregion
             #region Corki
             Dashes.Add(
             new SpellData
@@ -45,6 +74,16 @@ namespace DashSpells
                 champ = Champion.Corki,
                 champname = "Corki",
                 spellKey = SpellSlot.W,
+                enabled = true,
+            });
+            #endregion
+            #region Darius
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Darius,
+                champname = "Darius",
+                spellKey = SpellSlot.R,
                 enabled = true,
             });
             #endregion
@@ -56,6 +95,17 @@ namespace DashSpells
                 champname = "Diana",
                 spellKey = SpellSlot.R,
                 enabled = true,
+            });
+            #endregion
+            #region Elise
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Elise,
+                champname = "Elise",
+                spellKey = SpellSlot.Q,
+                enabled = true,
+                spellname = "EliseSpiderQCast"
             });
             #endregion
             #region Ekko
@@ -154,9 +204,9 @@ namespace DashSpells
             {
                 champ = Champion.Jayce,
                 champname = "Jayce",
-                spellKey = SpellSlot.E,
+                spellKey = SpellSlot.Q,
                 enabled = true,
-                spellname = "JayceThunderingBlow"
+                spellname = "JayceToTheSkies"
             });
             #endregion
             #region Kha'Zix
@@ -309,6 +359,15 @@ namespace DashSpells
                 enabled = false,
             });
             #endregion
+            #region Sejuani
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.Sejuani,
+                champname = "Sejuani",
+                spellKey = SpellSlot.Q,
+            });
+            #endregion
             #region Shen
             Dashes.Add(
             new SpellData
@@ -368,7 +427,25 @@ namespace DashSpells
                 spellKey = SpellSlot.Q,
                 enabled = true,
             });
-            #endregion   
+            #endregion
+            #region Wukong
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.MonkeyKing,
+                champname = "Wukong",
+                spellKey = SpellSlot.E,
+            });
+            #endregion
+            #region XinZhao
+            Dashes.Add(
+            new SpellData
+            {
+                champ = Champion.XinZhao,
+                champname = "XinZhao",
+                spellKey = SpellSlot.E,
+            });
+            #endregion
             #region Yasuo
             Dashes.Add(
             new SpellData
