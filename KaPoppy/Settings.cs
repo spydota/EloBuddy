@@ -33,9 +33,7 @@ namespace KaPoppy
             Combo.Add("EInsec", new CheckBox("Use E if can insec"));
             Combo.Add("EPassive", new CheckBox("Use E to catch passive shield", false));
             Combo.Add("FEs", new KeyBind("Use Flash E to stun", false, KeyBind.BindTypes.PressToggle, 'J'));
-            Combo.AddLabel("R in combo is disabled for now, cast it by yourself");
             Combo.Add("R", new CheckBox("Use R to knockup enemies"));
-            Combo.Add("Rm", new Slider("Min enemies to knockup: {0}", 3, 1, 5));
             HarassMenu();
         }
         private static void HarassMenu()

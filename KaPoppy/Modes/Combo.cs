@@ -26,10 +26,9 @@ namespace Modes
 
             if (!Orbwalker.IsAutoAttacking)
             {
-                if (Menu.UseQ && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range))
+                if (Menu.UseQ && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range) && Lib.Q.GetPrediction(target).HitChance >= EloBuddy.SDK.Enumerations.HitChance.Medium)
                 {
                     var pred = Lib.Q.GetPrediction(target);
-                    if (pred.HitChance >= EloBuddy.SDK.Enumerations.HitChance.Medium)
                         Lib.Q.Cast(pred.CastPosition);
                 }
                 else if (Menu.UseE && Lib.E.IsReady() && target.IsValidTarget(Lib.E.Range))
@@ -65,17 +64,25 @@ namespace Modes
 
         private static void CastE(AIHeroClient target)
         {
-            var ally = EntityManager.Heroes.Allies.Where(x => !x.IsMe && !x.IsDead && x.Health > 200 && x.Distance(myHero) < 1200).OrderBy(x => x.Distance(myHero));
             var turret = EntityManager.Turrets.Allies.Where(x => !x.IsDead && x.Distance(myHero) < 1200).OrderBy(x => x.Distance(myHero));
             var push = target.ServerPosition.Extend(myHero, -300);
             if (
                 (Menu.UseEStun && Lib.CanStun(target)) ||
                 (Menu.UseEPassive && Lib.Passive != null && push.Distance(Lib.Passive) < myHero.Distance(Lib.Passive)) ||
-                (Menu.UseEInsec && turret.Count() > 0 && push.Distance(turret.First()) < target.Distance(turret.First())) ||
-                (Menu.UseEInsec && ally.Count() > 0 && push.Distance(ally.First()) < target.Distance(ally.First()))
+                (Menu.UseEInsec && turret.Count() > 0 && push.Distance(turret.First()) < target.Distance(turret.First()))
                 )
             {
                 Lib.E.Cast(target);
+            }
+            else if (Menu.UseEInsec)
+            {
+                foreach (var ally in EntityManager.Heroes.Allies.Where(x => !x.IsDead && !x.IsMe && !x.IsInAutoAttackRange(target) && x.Distance(myHero) < 1200))
+                {
+                    if (push.Distance(ally) < myHero.Distance(ally))
+                    {
+                        Lib.E.Cast(target);
+                    }
+                }
             }
             else if (Menu.UseFlashE)
             {

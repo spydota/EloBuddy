@@ -69,7 +69,7 @@ namespace KaPoppy
             var wallsFound = 0;
             foreach (var position in predictionsList)
             {
-                for (var i = 0; i < 300; i += 10)
+                for (var i = 0; i < 300; i += (int) unit.BoundingRadius)
                 {
                     var cPos = Player.Instance.Position.Extend(position, Player.Instance.Distance(position) + i).To3D();
                     if (Helper.IsWall(cPos))
