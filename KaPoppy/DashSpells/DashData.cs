@@ -7,7 +7,7 @@ namespace DashSpells
     {
         public Champion champ;
         public string champname;
-        public SpellSlot spellKey = SpellSlot.Q;
+        public SpellSlot spellKey;
         public bool enabled = false;
         public string spellname = string.Empty;
 

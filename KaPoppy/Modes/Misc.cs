@@ -38,14 +38,19 @@ namespace Modes
             if (target == null) return;
 
             var QDMG = GetDamage(target, SpellSlot.Q);
-            var EDMG = GetDamage(target, SpellSlot.W);
+            var EDMG = Lib.CanStun(target) ? GetDamage(target, SpellSlot.E) * 2 : GetDamage(target, SpellSlot.E);
             var RDMG = GetDamage(target, SpellSlot.R);
             if (Menu.UseQ && QDMG > target.Health + target.AttackShield && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range) && 
                 Lib.Q.GetPrediction(target).HitChance >= EloBuddy.SDK.Enumerations.HitChance.Medium)
             {
                 Lib.Q.Cast(Lib.Q.GetPrediction(target).CastPosition);
             }
-            else if (Menu.UseE && (Lib.CanStun(target) ? EDMG * 2 > target.Health : EDMG > target.Health + target.AttackShield) && Lib.E.IsReady() && target.IsValidTarget(Lib.E.Range))
+            else if (Menu.UseE && EDMG > target.Health  + target.AttackShield && Lib.E.IsReady() && target.IsValidTarget(Lib.E.Range))
+            {
+                Lib.E.Cast(target);
+            }
+            else if (Menu.UseQ && Menu.UseE && QDMG + EDMG > target.Health + target.AttackShield && target.IsValidTarget(Lib.E.Range) &&
+                Lib.Q.IsReady() && Lib.E.IsReady())
             {
                 Lib.E.Cast(target);
             }
