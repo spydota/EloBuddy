@@ -78,7 +78,7 @@ namespace Modes
             if (
                 (Menu.UseEStun && Lib.CanStun(target)) ||
                 (Menu.UseEPassive && Lib.Passive != null && push.Distance(Lib.Passive) < myHero.Distance(Lib.Passive) - 100) ||
-                (Menu.UseEInsec && turret.Count() > 0 && push.Distance(turret.First()) < target.Distance(turret.First()) && turret.First().IsInRange(target, 1000))
+                (Menu.UseEInsec && turret.Count() > 0 && push.Distance(turret.First()) < target.Distance(turret.First()) && turret.First().IsInRange(push, 1050))
                 )
             {
                 Lib.E.Cast(target);
