@@ -7,7 +7,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 
-namespace MasterySpammer
+namespace CloneControl
 {
     class Program
     {
