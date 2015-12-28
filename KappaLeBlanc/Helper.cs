@@ -21,7 +21,9 @@ namespace KappaLeBlanc
             return obj[value].Cast<Slider>().CurrentValue;
         }
 
-        public static AIHeroClient myHero { get { return ObjectManager.Player; } }
+        public static GameObject Clone = null;
+
+        public static AIHeroClient myHero { get { return Player.Instance; } }
 
         public static float ComboDamage(AIHeroClient hero)
         {

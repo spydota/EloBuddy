@@ -8,7 +8,7 @@ namespace Modes
     {
         public static void Execute()
         {
-            if (CastSlider(LBMenu.KSM, "AutoW") > myHero.HealthPercent)
+            if (CastSlider(LBMenu.Misc, "AutoW") > myHero.HealthPercent)
             {
                 if (Lib.W.Name == "leblancslidereturn")
                 {

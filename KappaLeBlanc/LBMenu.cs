@@ -5,7 +5,8 @@ namespace KappaLeBlanc
 {
     class LBMenu : Helper
     {
-        public static Menu Menu, ComboM, LCM, KSM, AntiGapcloserM, HSM,DrawM, FLM;
+        public static Menu Menu, ComboM, LCM, KSM, AntiGapcloserM, HSM,DrawM, FLM, Misc;
+        static readonly string[] Modes = new string[] { "Move to nearest ally tower", "Move to mouse", "Move to enemy" };
         public static void StartMenu()
         {
             Menu = MainMenu.AddMenu("Kappa Leblanc", "menu");
@@ -17,6 +18,12 @@ namespace KappaLeBlanc
             Menu.AddLabel("Current Version: " + Assembly.GetExecutingAssembly().GetName().Version);
 
             DrawingsMenu();
+            ComboMenu();
+            LaneClearMenu();
+            KillstealMenu();
+            AntiGapMenu();
+            Flee();
+            MiscMenu();
         }
         private static void DrawingsMenu()
         {
@@ -30,7 +37,6 @@ namespace KappaLeBlanc
             DrawM.Add("line", new CheckBox("Draw line to killable target"));
             DrawM.Add("dist", new Slider("Max line distance", 1000, 500, 3000));   
 
-            ComboMenu();
         }
         private static void ComboMenu()
         {
@@ -44,7 +50,6 @@ namespace KappaLeBlanc
             ComboM.Add("RW", new CheckBox("Use R (W)", false));
             ComboM.Add("RE", new CheckBox("Use R (E)"));
 
-            LaneClearMenu();
         }
         private static void LaneClearMenu()
         {
@@ -61,7 +66,6 @@ namespace KappaLeBlanc
 
             //Who uses E in laneclear -.-
 
-            KillstealMenu();
         }
         private static void KillstealMenu()
         {
@@ -72,9 +76,7 @@ namespace KappaLeBlanc
             KSM.Add("wr", new CheckBox("Use W+R + Q/E to KS"));
             KSM.Add("E", new CheckBox("Use E KS"));
             KSM.Add("R", new CheckBox("Use R KS"));
-            KSM.Add("AutoW", new Slider("Auto W2 when your health is lower than", 20, 0, 100));
 
-            AntiGapMenu();
         }
         private static void AntiGapMenu()
         {
@@ -101,7 +103,6 @@ namespace KappaLeBlanc
             HSM.AddSeparator();
             HSM.Add("Auto", new KeyBind("Auto harass", false, KeyBind.BindTypes.PressToggle, 'N'));
 
-            Flee();
         }
         private static void Flee()
         {
@@ -110,6 +111,20 @@ namespace KappaLeBlanc
             FLM.Add("E", new CheckBox("Use E"));
             FLM.Add("W", new CheckBox("Use W to cursor pos"));
             FLM.Add("R", new CheckBox("Use R to cursor pos", false));
+        }
+        private static void MiscMenu()
+        {
+            Misc = Menu.AddSubMenu("Misc");
+
+            Misc.Add("AutoW", new Slider("Auto W2 when your health is lower than", 20, 0, 100));
+            Misc.Add("Clone", new CheckBox("Control clone"));
+            var a = Misc.Add("CloneMode", new Slider("", 1, 0, 2));
+            a.DisplayName = Modes[a.CurrentValue];
+            a.OnValueChange += delegate
+                (ValueBase<int> sender, ValueBase<int>.ValueChangeArgs Args)
+            {
+                sender.DisplayName = Modes[Args.NewValue];
+            };
         }
     }
 }

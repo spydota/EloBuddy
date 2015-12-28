@@ -29,22 +29,32 @@ namespace KappaLeBlanc
 
         private static void ObjectOnDelete(GameObject sender, EventArgs args)
         {
+            if (sender.Name == myHero.Name)
+            {
+                Clone = null;
+                Chat.Print("Removed clone");
+            }
             //if (sender.Name == "LeBlanc_Base_W_return_indicator.troy") { }
             //if (sender.Name == "LeBlanc_Base_RW_return_indicator.troy") { }
-            if (!sender.Name.Contains("LeBlanc_Base_W_return_indicator.troy") && !sender.Name.Contains("LeBlanc_Base_RW_return_indicator.troy"))
-                return;
-
-            for (var i = 0; i < Slides.Count; i++)
+            if (sender.Name.Contains("LeBlanc_Base_W_return_indicator.troy") || sender.Name.Contains("LeBlanc_Base_RW_return_indicator.troy"))
             {
-                if (Slides[i].NetworkId == sender.NetworkId)
+                for (var i = 0; i < Slides.Count; i++)
                 {
-                    Slides.RemoveAt(i);
-                    return;
+                    if (Slides[i].NetworkId == sender.NetworkId)
+                    {
+                        Slides.RemoveAt(i);
+                        return;
+                    }
                 }
-            }          
+            }
         }
         private static void ObjectOnCreate(GameObject sender, EventArgs args)
         {
+            if (sender.Name == myHero.Name)
+            {
+                Clone = sender;
+                Chat.Print("Added clone");
+            }
             if (sender.Name.Contains("LeBlanc_Base_W_return_indicator.troy") || sender.Name.Contains("LeBlanc_Base_RW_return_indicator.troy"))
             {
                 Slides.Add(
@@ -121,24 +131,21 @@ namespace KappaLeBlanc
         {
             if (myHero.IsDead) return;
 
-            switch (Orbwalker.ActiveModesFlags)
-            {
-                case Orbwalker.ActiveModes.Combo:
-                    Modes.Combo.Execute();
-                    break;
-                case Orbwalker.ActiveModes.LaneClear:
-                    Modes.Laneclear.Execute();
-                    break;
-                case Orbwalker.ActiveModes.Flee:
-                    Modes.Flee.Execute();
-                    break;
-            }
-            if (Orbwalker.ActiveModesFlags == Orbwalker.ActiveModes.Harass || LBMenu.HSM["Auto"].Cast<KeyBind>().CurrentValue)
-            {
-                Modes.Harass.Execute();
-            }
             Modes.Killsteal.Execute();
-        }
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
+                Modes.Combo.Execute();
 
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear))
+                Modes.Laneclear.Execute();
+
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
+                Modes.Flee.Execute();
+
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass) || LBMenu.HSM["Auto"].Cast<KeyBind>().CurrentValue)
+                Modes.Harass.Execute();
+
+            if (CastCheckbox(LBMenu.Misc, "Clone"))
+                Modes.CloneControl.Execute();
+        }
     }    
 }
