@@ -48,7 +48,7 @@ namespace KaPoppy
         {
             if (sender.IsMe)
             {
-                if (args.Buff.Name.ToLower() == "poppypassiveshield")
+                if (args.Buff.Name == "poppypassiveshield")
                 {
                     Lib.Passive = null;
                 }
@@ -157,20 +157,7 @@ namespace KaPoppy
                 rectangle = null;
 
             if (Config.StunTarget)
-            {
                 Modes.Stun.Execute();
-                if (!Orbwalker.DisableAttacking)
-                    Orbwalker.DisableAttacking = true;
-                if (!Orbwalker.DisableMovement)
-                    Orbwalker.DisableMovement = true;
-            }
-            else
-            {
-                if (Orbwalker.DisableAttacking)
-                    Orbwalker.DisableAttacking = false;
-                if (Orbwalker.DisableMovement)
-                    Orbwalker.DisableMovement = false;
-            }
 
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
                 Modes.Combo.Execute();

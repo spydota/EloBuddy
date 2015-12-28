@@ -88,16 +88,38 @@ namespace KaPoppy
         }
         public static bool CanStun(AIHeroClient unit, Vector2 pos)
         {
-            if (unit.HasBuffOfType(BuffType.SpellImmunity) || unit.HasBuffOfType(BuffType.SpellShield) || Player.Instance.IsDashing()) return false;
-            for (var i = 0; i < 300; i += 10)
+            if (unit.HasBuffOfType(BuffType.SpellImmunity) || unit.HasBuffOfType(BuffType.SpellShield)) return false;
+            var prediction = Prediction.Position.PredictUnitPosition(unit, 400);
+            var predictionsList = new List<Vector3>
+                        {
+                            unit.ServerPosition,
+                            unit.Position,
+                            prediction.To3D(),
+                        };
+
+            var wallsFound = 0;
+            foreach (var position in predictionsList)
             {
-                var cPos = pos.Extend(unit, pos.Distance(unit) + i).To3D();
-                if (Helper.IsWall(cPos))
+                for (var i = 0; i < 300; i += (int) unit.BoundingRadius)
                 {
-                    return true;
+                    var cPos = pos.Extend(position, pos.Distance(position) + i).To3D();
+                    if (Helper.IsWall(cPos))
+                    {
+                        wallsFound++;
+                        break;
+                    }
                 }
             }
+            if ((wallsFound / predictionsList.Count) >= Settings.MiscSettings.StunPercent / 100f)
+            {
+                return true;
+            }
+
             return false;
+        }
+        public static float GetPassiveDamage(Obj_AI_Base unit)
+        {
+            return Player.Instance.CalculateDamageOnUnit(unit, DamageType.Magical, 9 * Player.Instance.Level + 20);
         }
     }
 }

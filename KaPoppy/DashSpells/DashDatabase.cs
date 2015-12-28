@@ -277,6 +277,7 @@ namespace DashSpells
                 champname = "Leona",
                 spellKey = SpellSlot.E,
                 enabled = true,
+                spellname = "LeonaZenithBladeMissile"
             });
             #endregion
             #region Lucian

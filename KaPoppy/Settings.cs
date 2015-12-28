@@ -22,6 +22,8 @@ namespace KaPoppy
         private static void ComboMenu()
         {
             Combo = Menu.AddSubMenu("Combo");
+            Combo.Add("Passive", new CheckBox("Auto-Attack minion if can kill & passive is up"));
+            Combo.AddSeparator(0);
             Combo.Add("Q", new CheckBox("Use Q"));
             Combo.AddSeparator(0);
             Combo.Add("W", new CheckBox("Use W", false));
@@ -128,6 +130,10 @@ namespace KaPoppy
         }
         public static class ComboSettings
         {
+            public static bool UsePassive
+            {
+                get { return CastCheckbox(Combo, "Passive"); }
+            }
             public static bool UseQ
             {
                 get { return CastCheckbox(Combo, "Q"); }

@@ -99,6 +99,7 @@ namespace KaPoppy
             }
             return myHero.CalculateDamageOnUnit(target, DamageType.Physical, damage) - 30;
         }
+
         public static float GetComboDamage(AIHeroClient target)
         {
             float damage = 0;
