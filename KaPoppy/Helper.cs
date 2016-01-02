@@ -85,10 +85,6 @@ namespace KaPoppy
                     damage = new float[] { 30, 65, 100, 135, 170 }[spellLevel] + 0.65f * Player.Instance.TotalAttackDamage + (0.06f * target.MaxHealth);
                     break;
 
-                case SpellSlot.W:
-                    damage = new float[] { 70, 110, 150, 190, 230 }[spellLevel] + 0.7f * Player.Instance.TotalMagicalDamage;
-                    break;
-
                 case SpellSlot.E:
                     damage = new float[] { 50, 70, 90, 110, 130 }[spellLevel] + 0.5f * Player.Instance.TotalAttackDamage;
                     break;

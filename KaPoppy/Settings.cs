@@ -7,7 +7,7 @@ namespace KaPoppy
 {
     class Settings : Helper
     {
-        public static Menu Menu, Combo, Harass, Laneclear, Jungleclear, Flee, Misc, WSettings;
+        public static Menu Menu, Combo, Harass, Laneclear, Jungleclear, Flee, Misc, WSettings, Items;
         public static void Init()
         {
             Menu = MainMenu.AddMenu("KaPoppy", "menu");
@@ -23,19 +23,16 @@ namespace KaPoppy
         {
             Combo = Menu.AddSubMenu("Combo");
             Combo.Add("Passive", new CheckBox("Auto-Attack minion if can kill & passive is up"));
-            Combo.AddSeparator(0);
             Combo.Add("Q", new CheckBox("Use Q"));
-            Combo.AddSeparator(0);
             Combo.Add("W", new CheckBox("Use W", false));
-            Combo.AddSeparator(0);
             Combo.Add("Ws", new CheckBox("Use W only if less than 40% health", false));
-            Combo.AddSeparator(0);
             Combo.Add("E", new CheckBox("Use E"));
             Combo.Add("EStun", new CheckBox("Use E if can stun"));
             Combo.Add("EInsec", new CheckBox("Use E if can insec"));
             Combo.Add("EPassive", new CheckBox("Use E to catch passive shield", false));
             Combo.Add("FEs", new KeyBind("Use Flash E to stun", false, KeyBind.BindTypes.PressToggle, 'J'));
             Combo.Add("R", new CheckBox("Use R to knockup enemies"));
+            Combo.Add("Rm", new Slider("Min enemies to use R", 2, 1, 5));
             HarassMenu();
         }
         private static void HarassMenu()
@@ -59,6 +56,7 @@ namespace KaPoppy
             Laneclear.Add("Q", new CheckBox("Use Q"));
             Laneclear.Add("Qs", new Slider("Use Q if will hit {0} minions", 3, 1, 10));
             Laneclear.Add("Qm", new Slider("Q min mana %", 40, 0, 100));
+
             JungleclearMenu();
         }
         private static void JungleclearMenu()
@@ -111,13 +109,17 @@ namespace KaPoppy
 
             WSettings.Add("W", new CheckBox("Use W"));
             WSettings.AddGroupLabel("Use W in: ");
-            foreach (var dash in DashSpells.DashSpells.Dashes)
+
+            foreach (AIHeroClient enemy in EntityManager.Heroes.Enemies)
             {
-                foreach (AIHeroClient enemy in EntityManager.Heroes.Enemies)
+                foreach (var dash in DashSpells.DashSpells.Dashes)
                 {
                     if (enemy.Hero == dash.champ)
                     {
-                        WSettings.Add("w" + dash.champname + dash.spellKey, new CheckBox(dash.champname + " " + dash.spellKey, dash.enabled));
+                        if (dash.spellname == string.Empty)
+                            WSettings.Add("w" + dash.champname + dash.spellKey, new CheckBox(dash.champname + " " + dash.spellKey, dash.enabled));
+                        else
+                            WSettings.Add("w" + dash.champname + dash.spellname, new CheckBox(dash.champname + " " + dash.spellKey, dash.enabled));
                     }
                     if (enemy.Hero == Champion.Rengar)
                     {
@@ -126,7 +128,30 @@ namespace KaPoppy
                     }
                 }
             }
+            ItemsMenu();
+        }
+        public  static void ItemsMenu()
+        {
+            Items = Menu.AddSubMenu("Item manager");
 
+            Items.AddGroupLabel("Combo");
+            Items.Add("ComboHydra", new CheckBox("Use Hydra/Tiamat"));
+
+            Items.AddGroupLabel("Harass");
+            Items.Add("HarassHydra", new CheckBox("Use Hydra/Tiamat", false));
+
+            Items.AddGroupLabel("Laneclear");
+            Items.Add("LaneclearHydra", new CheckBox("Use Hydra/Tiamat"));
+
+            Items.AddGroupLabel("Jungleclear");
+            Items.Add("JungleclearHydra", new CheckBox("Use Hydra/Tiamat"));
+        }
+        public static class ItemsSettings
+        {
+            public static bool UseHydra(string mode)
+            {
+                return CastCheckbox(Items, mode + "Hydra");
+            }
         }
         public static class ComboSettings
         {
@@ -312,6 +337,20 @@ namespace KaPoppy
                         if (dash.spellKey == slot)
                         {
                             return CastCheckbox(WSettings, "w" + dash.champname + dash.spellKey);
+                        }
+                    }
+                }
+                return false;
+            }
+            public static bool WEnabled(Champion champ, string spellName)
+            {
+                foreach (var dash in DashSpells.DashSpells.Dashes)
+                {
+                    if (dash.champ == champ)
+                    {
+                        if (dash.spellname == spellName)
+                        {
+                            return CastCheckbox(WSettings, "w" + dash.champname + dash.spellname);
                         }
                     }
                 }

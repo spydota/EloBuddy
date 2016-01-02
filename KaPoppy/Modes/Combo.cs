@@ -35,8 +35,8 @@ namespace Modes
                 else
                     Lib.W.Cast();
             }
-
-            if (Menu.UseQ && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range) && Lib.Q.GetPrediction(target).HitChance >= EloBuddy.SDK.Enumerations.HitChance.Medium)
+            if (Menu.UseQ && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range) && Lib.Q.GetPrediction(target).HitChance >= EloBuddy.SDK.Enumerations.HitChance.High &&
+                (!Lib.CanStun(target) || !Lib.E.IsReady()))
             {
                 Lib.Q.Cast(Lib.Q.GetPrediction(target).CastPosition);
             }
@@ -44,7 +44,7 @@ namespace Modes
             {
                 if (Program.rectangle != null)
                 {
-                    if (!Program.rectangle.IsInside(target))
+                    if (!Program.rectangle.IsInside(target) || Lib.CanStun(target))
                     {
                         CastE(target);
                     }
@@ -59,7 +59,8 @@ namespace Modes
             {
                 if (Lib.R.IsReady())
                 {
-                    if (GetComboDamage(target) < target.Health && !target.HasBuffOfType(BuffType.SpellImmunity))
+                    var predict = Prediction.Position.PredictLinearMissile(target, Lib.R.MinimumRange, Lib.R.Width, 0, int.MaxValue, int.MaxValue);
+                    if ((GetComboDamage(target) < target.Health || Menu.RMin <= predict.CollisionObjects.Count() + 1) && !target.HasBuffOfType(BuffType.SpellImmunity))
                     {
                         if (target.IsFacing(myHero) ? myHero.IsInRange(target, Lib.R.MinimumRange - 30) : myHero.IsInRange(target, Lib.R.MinimumRange - 100))
                         {
@@ -94,7 +95,7 @@ namespace Modes
                 {
                     if (Lib.Flash != null)
                     {
-                        var flashpos = Lib.PointsAroundTheTarget(target, 525).Where(x => Lib.CanStun(target, x.To2D()) && !IsWall(x)).OrderBy(x => x.Distance(myHero));
+                        var flashpos = Lib.PointsAroundTheTarget(target, 300).Where(x => Lib.CanStun(target, x.To2D()) && !IsWall(x)).OrderBy(x => x.Distance(myHero));
                         if (flashpos.Count() > 0)
                         {
                             if (Lib.Flash.IsReady() && Lib.Flash.IsInRange(flashpos.First()))

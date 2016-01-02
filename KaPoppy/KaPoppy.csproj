@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="DashSpells\DashData.cs" />
     <Compile Include="DashSpells\DashDatabase.cs" />
+    <Compile Include="ItemManager.cs" />
     <Compile Include="Modes\Jungleclear.cs" />
     <Compile Include="Modes\Combo.cs" />
     <Compile Include="Modes\Harass.cs" />

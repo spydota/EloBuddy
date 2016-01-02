@@ -40,12 +40,12 @@ namespace Modes
             var QDMG = GetDamage(target, SpellSlot.Q);
             var EDMG = Lib.CanStun(target) ? GetDamage(target, SpellSlot.E) * 2 : GetDamage(target, SpellSlot.E);
             var RDMG = GetDamage(target, SpellSlot.R);
-            if (Menu.UseQ && QDMG > target.Health + target.AttackShield && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range) && 
+            if (Menu.UseQ && QDMG > target.Health + target.AttackShield && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range) &&
                 Lib.Q.GetPrediction(target).HitChance >= EloBuddy.SDK.Enumerations.HitChance.Medium)
             {
                 Lib.Q.Cast(Lib.Q.GetPrediction(target).CastPosition);
             }
-            else if (Menu.UseE && EDMG > target.Health  + target.AttackShield && Lib.E.IsReady() && target.IsValidTarget(Lib.E.Range))
+            else if (Menu.UseE && EDMG > target.Health + target.AttackShield && Lib.E.IsReady() && target.IsValidTarget(Lib.E.Range))
             {
                 Lib.E.Cast(target);
             }
@@ -109,15 +109,21 @@ namespace Modes
                 {
                     if (enemy.Hero == dash.champ)
                     {
-                        if (args.Slot == dash.spellKey)
+                        if (dash.spellname == string.Empty)
                         {
-                            if (Menu.WEnabled(dash.champ, dash.spellKey))
+                            if (args.Slot == dash.spellKey)
                             {
-                                if (dash.spellname == string.Empty)
+                                if (Menu.WEnabled(dash.champ, dash.spellKey))
                                 {
                                     Lib.W.Cast();
                                 }
-                                else if (args.SData.Name == dash.spellname)
+                            }
+                        }
+                        else
+                        {
+                            if (args.SData.Name == dash.spellname)
+                            {
+                                if (Menu.WEnabled(dash.champ, dash.spellname))
                                 {
                                     Lib.W.Cast();
                                 }
@@ -129,6 +135,7 @@ namespace Modes
         }
     }
 }
+
 
 
 

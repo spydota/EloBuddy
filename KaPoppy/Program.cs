@@ -20,7 +20,7 @@ namespace KaPoppy
             if (myHero.Hero != Champion.Poppy) return;
             CheckForUpdates();
             Settings.Init();
-
+            ItemManager.Init();
 
             var flash = myHero.Spellbook.Spells.Where(x => x.Name.ToLower().Contains("summonerflash"));
             SpellDataInst Flash = flash.Any() ? flash.First() : null;
@@ -109,7 +109,7 @@ namespace KaPoppy
             {
                 if (target != null && !target.IsDead && target.IsValidTarget())
                 {
-                    var pos = Lib.PointsAroundTheTarget(target, 525).Where(x => Lib.CanStun(target, x.To2D()) && !IsWall(x)).OrderBy(x => x.Distance(myHero));
+                    var pos = Lib.PointsAroundTheTarget(target, 300).Where(x => Lib.CanStun(target, x.To2D()) && !IsWall(x)).OrderBy(x => x.Distance(myHero));
                     if (pos.Count() > 0)
                     {
                         var pos1 = Drawing.WorldToScreen(myHero.Position);

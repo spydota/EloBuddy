@@ -23,7 +23,6 @@ namespace KaPoppy
             W = new Spell.Active(SpellSlot.W, 400);
             E = new Spell.Targeted(SpellSlot.E, 525);
             R = new Spell.Chargeable(SpellSlot.R, 500, 1200, 4000, 250, int.MaxValue, 90);
-            R.AllowedCollisionCount = int.MaxValue;
             Flash = null;
         }
         public static List<Vector3> PointsAroundTheTarget(AttackableUnit target, float dist)
@@ -88,7 +87,7 @@ namespace KaPoppy
         }
         public static bool CanStun(AIHeroClient unit, Vector2 pos)
         {
-            if (unit.HasBuffOfType(BuffType.SpellImmunity) || unit.HasBuffOfType(BuffType.SpellShield)) return false;
+            if (unit.HasBuffOfType(BuffType.SpellImmunity) || unit.HasBuffOfType(BuffType.SpellShield) || Player.Instance.IsDashing()) return false;
             var prediction = Prediction.Position.PredictUnitPosition(unit, 400);
             var predictionsList = new List<Vector3>
                         {

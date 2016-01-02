@@ -77,16 +77,6 @@ namespace DashSpells
                 enabled = true,
             });
             #endregion
-            #region Darius
-            Dashes.Add(
-            new SpellData
-            {
-                champ = Champion.Darius,
-                champname = "Darius",
-                spellKey = SpellSlot.R,
-                enabled = true,
-            });
-            #endregion
             #region Diana
             Dashes.Add(
             new SpellData
