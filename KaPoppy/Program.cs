@@ -91,7 +91,17 @@ namespace KaPoppy
         public static Geometry.Polygon.Rectangle rectangle = null;
         private static void Drawings(EventArgs args)
         {
+            
             var target = TargetSelector.SelectedTarget?? TargetSelector.GetTarget(Lib.R.MaximumRange - 250, DamageType.Physical);
+            var starget = TargetSelector.SelectedTarget;
+            if (Config.DrawStunPos && starget.IsValidTarget())
+            {
+                var stunpos = Drawing.WorldToScreen(Lib.PointsAroundTheTarget(starget).Where(x => Lib.CanStun(starget, x)).OrderBy(x => x.Distance(myHero)).FirstOrDefault().To3D());
+                if (stunpos.IsValid(true))
+                {
+                    Line.DrawLine(Color.Red, 2, myHero.Position.WorldToScreen(), stunpos);
+                }
+            }
             if (Config.StunTarget || Config.SemiAutoR)
             {
                 if (target == null || target.IsDead || !target.IsValidTarget())
@@ -103,19 +113,6 @@ namespace KaPoppy
                 {
                     Drawing.DrawText(Drawing.WorldToScreen(myHero.ServerPosition) - new Vector2(125, 30),
                          Color.White, "Target is:" + Environment.NewLine + target.ChampionName, 9);
-                }
-            }
-            if (Config.StunTarget)
-            {
-                if (target != null && !target.IsDead && target.IsValidTarget())
-                {
-                    var pos = Lib.PointsAroundTheTarget(target, 300).Where(x => Lib.CanStun(target, x.To2D()) && !IsWall(x)).OrderBy(x => x.Distance(myHero));
-                    if (pos.Count() > 0)
-                    {
-                        var pos1 = Drawing.WorldToScreen(myHero.Position);
-                        var pos2 = Drawing.WorldToScreen(pos.First());
-                        Line.DrawLine(Color.White, 4,pos1, pos2);
-                    }
                 }
             }
             if (Config.drawQ)

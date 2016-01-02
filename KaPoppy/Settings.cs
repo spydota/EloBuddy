@@ -84,6 +84,7 @@ namespace KaPoppy
         {
             Misc = Menu.AddSubMenu("Misc");
             Misc.AddGroupLabel("Misc");
+            Misc.Add("MinimumDistanceToFlash", new Slider("Minimum distance to use flash stun", 250, 0, 500));
             Misc.Add("percent", new Slider("Stun chance %", 40, 1, 100));
             Misc.Add("stun", new KeyBind("Force stun selected target", false, KeyBind.BindTypes.HoldActive, 'K'));
             Misc.AddLabel("How it works: Orbwalk to nearest position where you");
@@ -96,6 +97,7 @@ namespace KaPoppy
             Misc.Add("dQ", new CheckBox("Draw Q"));
             Misc.Add("dE", new CheckBox("Draw E"));
             Misc.Add("dR", new CheckBox("Draw R"));
+            Misc.Add("DrawStunPos", new CheckBox("Draw stun position"));
             Misc.AddGroupLabel("Killsteal");
             Misc.Add("Q", new CheckBox("Q Killsteal"));
             Misc.Add("E", new CheckBox("E Killsteal"));
@@ -308,6 +310,10 @@ namespace KaPoppy
             {
                 get { return CastCheckbox(Misc, "dR"); }
             }
+            public static bool DrawStunPos
+            {
+                get { return CastCheckbox(Misc, "DrawStunPos"); }
+            }
             public static bool UseQ
             {
                 get { return CastCheckbox(Misc, "Q"); }
@@ -327,6 +333,10 @@ namespace KaPoppy
             public static int StunPercent
             {
                 get { return CastSlider(Misc, "percent"); }
+            }
+            public static int MinimumDistanceToFlash
+            {
+                get { return CastSlider(Misc, "MinimumDistanceToFlash"); }
             }
             public static bool WEnabled(Champion champ, SpellSlot slot)
             {

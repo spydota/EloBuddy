@@ -93,14 +93,14 @@ namespace Modes
                 }
                 else if (Menu.UseFlashE)
                 {
-                    if (Lib.Flash != null)
+                    if (Lib.Flash != null && !Lib.CanStun(target))
                     {
-                        var flashpos = Lib.PointsAroundTheTarget(target, 300).Where(x => Lib.CanStun(target, x.To2D()) && !IsWall(x)).OrderBy(x => x.Distance(myHero));
-                        if (flashpos.Count() > 0)
+                        var pos = Lib.PointsAroundTheTarget(target).Where(x => Lib.CanStun(target, x)).OrderBy(x => x.Distance(myHero)).FirstOrDefault();
+                        if (pos.IsValid(true))
                         {
-                            if (Lib.Flash.IsReady() && Lib.Flash.IsInRange(flashpos.First()))
+                            if (Lib.Flash.IsReady() && Lib.Flash.IsInRange(pos.To3D()) && myHero.Distance(pos) >= Settings.MiscSettings.MinimumDistanceToFlash)
                             {
-                                Lib.Flash.Cast(flashpos.First());
+                                Lib.Flash.Cast(pos.To3D());
                             }
                         }
                     }

@@ -22,21 +22,19 @@ namespace Modes
                 Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
                 return;
             }
-            var pos = Lib.PointsAroundTheTarget(target, 300).Where(x => Lib.CanStun(target, x.To2D()) && !IsWall(x)).OrderBy(x => x.Distance(myHero));
-            if (pos.Count() == 0)
+            var pos = Lib.PointsAroundTheTarget(target).Where(x => Lib.CanStun(target, x)).OrderBy(x => x.Distance(myHero)).FirstOrDefault();
+            if (!pos.IsValid(true))
+            {
                 Player.IssueOrder(GameObjectOrder.MoveTo, Game.CursorPos);
-            else
-                Player.IssueOrder(GameObjectOrder.MoveTo, pos.First());
-
-            if (Lib.CanStun(target))
-            {
-                Lib.E.Cast(target);
+                return;
             }
-            else if (Settings.ComboSettings.UseFlashE && pos.Count() > 0)
+
+            Player.IssueOrder(GameObjectOrder.MoveTo, pos.To3D());
+            if (Lib.Flash != null && Settings.ComboSettings.UseFlashE && !Lib.CanStun(target))
             {
-                if (Lib.Flash.IsReady() && Lib.Flash.IsInRange(pos.First()) && myHero.Distance(pos.First()) > 50)
+                if (Lib.Flash.IsReady() && Lib.Flash.IsInRange(pos.To3D()) && myHero.Distance(pos) >= Settings.MiscSettings.MinimumDistanceToFlash)
                 {
-                    Lib.Flash.Cast(pos.First());
+                    Lib.Flash.Cast(pos.To3D());
                 }
             }
         }

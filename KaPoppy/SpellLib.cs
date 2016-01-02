@@ -5,6 +5,7 @@ using EloBuddy.SDK.Events;
 using SharpDX;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace KaPoppy
 {
@@ -25,32 +26,28 @@ namespace KaPoppy
             R = new Spell.Chargeable(SpellSlot.R, 500, 1200, 4000, 250, int.MaxValue, 90);
             Flash = null;
         }
-        public static List<Vector3> PointsAroundTheTarget(AttackableUnit target, float dist)
+        public static List<Vector2> PointsAroundTheTarget(AttackableUnit target)
         {
             if (target == null)
             {
-                return new List<Vector3>();
+                return new List<Vector2>();
             }
-            List<Vector3> list = new List<Vector3>();
-            var newPos = new Vector3();
-            var prec = 15;
-            if (dist > 1)
+            List<Vector2> list = new List<Vector2>();
+            foreach (var point in new Geometry.Polygon.Circle(target.Position, 400).Points.Where(x => !Helper.IsWall(x)))
             {
-                prec = 30;
+                list.Add(point);
             }
-            var k = (float)((2 * dist * Math.PI) / prec);
-            for (int i = 1; i < prec + 1; i++)
+            foreach (var point in new Geometry.Polygon.Circle(target.Position, 325).Points.Where(x => !Helper.IsWall(x)))
             {
-                for (int j = 0; j < 3; j++)
-                {
-                    var perimeter =
-                        target.Position.Extend(
-                            new Vector3(target.Direction.X, target.Direction.Y, target.Position.Z), dist);
-                    newPos = new Vector3(perimeter.X + 65 * j, perimeter.Y + 65 * j, target.Position.Z);
-                    var rotated = newPos.To2D().RotateAroundPoint(target.Position.To2D(), k * i).To3D();
-                    list.Add(rotated);
-                }
+                list.Add(point);
             }
+            foreach (var point in new Geometry.Polygon.Circle(target.Position, 225).Points.Where(x => !Helper.IsWall(x)))
+            {
+                list.Add(point);
+            }
+
+
+
             return list;
         }
 
