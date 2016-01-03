@@ -83,9 +83,12 @@ namespace KaPoppy
             {
                 damage += Lib.Q.GetDamage(target);
             }
-            if (Settings.ComboSettings.UseW && Lib.W.IsReady())
+            if (Settings.ComboSettings.UseE && Lib.E.IsReady())
             {
-                damage += Lib.W.GetDamage(target);
+                if (Settings.ComboSettings.UseEStun && Lib.CanStun(target))
+                    damage += Lib.E.GetDamage(target);
+
+                damage += Lib.E.GetDamage(target);
             }
             if (Settings.ComboSettings.UseR && Lib.R.IsReady())
             {

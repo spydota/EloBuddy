@@ -38,7 +38,7 @@ namespace Modes
             if (target == null) return;
 
             var QDMG = Lib.Q.GetDamage(target);
-            var EDMG = Lib.CanStun(target) ? Lib.E.GetDamage(target) * 2 : Lib.E.GetDamage(target);
+            var EDMG = Lib.E.GetDamage(target);
             var RDMG = Lib.R.GetDamage(target);
             if (Menu.UseQ && QDMG > target.Health + target.AttackShield && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range) &&
                 Lib.Q.GetPrediction(target).HitChance >= EloBuddy.SDK.Enumerations.HitChance.Medium)
