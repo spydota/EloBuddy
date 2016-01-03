@@ -33,15 +33,15 @@ namespace KaPoppy
                 return new List<Vector2>();
             }
             List<Vector2> list = new List<Vector2>();
-            foreach (var point in new Geometry.Polygon.Circle(target.Position, 400).Points.Where(x => !Helper.IsWall(x)))
+            foreach (var point in new Geometry.Polygon.Circle(target.Position, 400).Points.Where(x => !x.IsWall()))
             {
                 list.Add(point);
             }
-            foreach (var point in new Geometry.Polygon.Circle(target.Position, 325).Points.Where(x => !Helper.IsWall(x)))
+            foreach (var point in new Geometry.Polygon.Circle(target.Position, 325).Points.Where(x => !x.IsWall()))
             {
                 list.Add(point);
             }
-            foreach (var point in new Geometry.Polygon.Circle(target.Position, 225).Points.Where(x => !Helper.IsWall(x)))
+            foreach (var point in new Geometry.Polygon.Circle(target.Position, 225).Points.Where(x => !x.IsWall()))
             {
                 list.Add(point);
             }
@@ -68,7 +68,7 @@ namespace KaPoppy
                 for (var i = 0; i < 300; i += (int) unit.BoundingRadius)
                 {
                     var cPos = Player.Instance.Position.Extend(position, Player.Instance.Distance(position) + i).To3D();
-                    if (Helper.IsWall(cPos))
+                    if (cPos.IsWall())
                     {
                         wallsFound++;
                         break;
@@ -99,7 +99,7 @@ namespace KaPoppy
                 for (var i = 0; i < 300; i += (int) unit.BoundingRadius)
                 {
                     var cPos = pos.Extend(position, pos.Distance(position) + i).To3D();
-                    if (Helper.IsWall(cPos))
+                    if (cPos.IsWall())
                     {
                         wallsFound++;
                         break;

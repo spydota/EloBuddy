@@ -126,7 +126,8 @@ namespace KaPoppy
                     if (enemy.Hero == Champion.Rengar)
                     {
                         WSettings.Add("AntiRengar", new CheckBox("Anti rengar"));
-                        Chat.Print("Anti rengo loaded");
+                        //Chat.Print("Anti rengo loaded");
+                        Chat.Print("Poppy W isn't canceling rengar dash, blame rito");
                     }
                 }
             }

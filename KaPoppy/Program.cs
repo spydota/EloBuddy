@@ -18,9 +18,11 @@ namespace KaPoppy
         private static void Game_OnStart(EventArgs args)
         {
             if (myHero.Hero != Champion.Poppy) return;
+
             CheckForUpdates();
             Settings.Init();
             ItemManager.Init();
+            DamageIndicator.Initialize(Extensions.GetComboDamage);
 
             var flash = myHero.Spellbook.Spells.Where(x => x.Name.ToLower().Contains("summonerflash"));
             SpellDataInst Flash = flash.Any() ? flash.First() : null;
@@ -91,7 +93,6 @@ namespace KaPoppy
         public static Geometry.Polygon.Rectangle rectangle = null;
         private static void Drawings(EventArgs args)
         {
-            
             var target = TargetSelector.SelectedTarget?? TargetSelector.GetTarget(Lib.R.MaximumRange - 250, DamageType.Physical);
             var starget = TargetSelector.SelectedTarget;
             if (Config.DrawStunPos && starget.IsValidTarget())

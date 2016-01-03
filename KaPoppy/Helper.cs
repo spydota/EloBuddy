@@ -27,7 +27,6 @@ namespace KaPoppy
         {
             return obj[value].Cast<Slider>().CurrentValue;
         }
-
         public static AIHeroClient myHero { get { return ObjectManager.Player; } }
         public static void CheckForUpdates()
         {
@@ -44,71 +43,6 @@ namespace KaPoppy
                     Chat.Print(Assembly.GetExecutingAssembly().GetName().Name + " loaded, Enjoy free elo Kappa", Color.AliceBlue);
                 }
             }
-        }
-        public static bool IsWall(Vector2 pos)
-        {
-            if (!pos.IsValid())
-                return false;
-
-            var ipos = pos.ToNavMeshCell().CollFlags;
-            if (ipos.HasFlag(CollisionFlags.Wall) || ipos.HasFlag(CollisionFlags.Building))
-            {
-                return true;
-            }
-            return false;
-        }
-        public static bool IsWall(Vector3 pos)
-        {
-            if (!pos.IsValid())
-                return false;
-
-            var ipos = pos.ToNavMeshCell().CollFlags;
-            if (ipos.HasFlag(CollisionFlags.Wall) || ipos.HasFlag(CollisionFlags.Building))
-            {
-                return true;
-            }
-            return false;
-        }
-        public static float GetDamage(Obj_AI_Base target, SpellSlot slot)
-        {
-            var spellLevel = Player.Instance.Spellbook.GetSpell(slot).Level;
-            float damage = 0;
-            if (spellLevel == 0)
-            {
-                return 0;
-            }
-            spellLevel--;
-
-            switch (slot)
-            {
-                case SpellSlot.Q:
-                    damage = new float[] { 30, 65, 100, 135, 170 }[spellLevel] + 0.65f * Player.Instance.TotalAttackDamage + (0.06f * target.MaxHealth);
-                    break;
-
-                case SpellSlot.E:
-                    damage = new float[] { 50, 70, 90, 110, 130 }[spellLevel] + 0.5f * Player.Instance.TotalAttackDamage;
-                    break;
-
-                case SpellSlot.R:
-                    damage = new float[] { 200, 300, 400 }[spellLevel] + 0.9f * Player.Instance.TotalAttackDamage;
-                    break;
-            }
-            return myHero.CalculateDamageOnUnit(target, DamageType.Physical, damage) - 30;
-        }
-
-        public static float GetComboDamage(AIHeroClient target)
-        {
-            float damage = 0;
-            damage += myHero.GetAutoAttackDamage(target);
-            if (Settings.ComboSettings.UseQ && Lib.Q.IsReady())
-            {
-                damage += GetDamage(target, SpellSlot.Q);
-            }
-            if (Settings.ComboSettings.UseE && Lib.E.IsReady())
-            {
-                damage += (Lib.CanStun(target) ? GetDamage(target, SpellSlot.E) * 2 : GetDamage(target, SpellSlot.E));
-            }
-            return damage;
         }
     }
 }

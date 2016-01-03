@@ -60,7 +60,7 @@ namespace Modes
                 if (Lib.R.IsReady())
                 {
                     var predict = Prediction.Position.PredictLinearMissile(target, Lib.R.MinimumRange, Lib.R.Width, 0, int.MaxValue, int.MaxValue);
-                    if ((GetComboDamage(target) < target.Health || Menu.RMin <= predict.CollisionObjects.Count() + 1) && !target.HasBuffOfType(BuffType.SpellImmunity))
+                    if ((target.GetComboDamage() < target.Health || Menu.RMin <= predict.CollisionObjects.Count() + 1) && !target.HasBuffOfType(BuffType.SpellImmunity))
                     {
                         if (target.IsFacing(myHero) ? myHero.IsInRange(target, Lib.R.MinimumRange - 30) : myHero.IsInRange(target, Lib.R.MinimumRange - 100))
                         {

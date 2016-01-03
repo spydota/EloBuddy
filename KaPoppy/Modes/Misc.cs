@@ -37,9 +37,9 @@ namespace Modes
             var target = TargetSelector.GetTarget(Lib.R.MaximumRange, DamageType.Physical);
             if (target == null) return;
 
-            var QDMG = GetDamage(target, SpellSlot.Q);
-            var EDMG = Lib.CanStun(target) ? GetDamage(target, SpellSlot.E) * 2 : GetDamage(target, SpellSlot.E);
-            var RDMG = GetDamage(target, SpellSlot.R);
+            var QDMG = Lib.Q.GetDamage(target);
+            var EDMG = Lib.CanStun(target) ? Lib.E.GetDamage(target) * 2 : Lib.E.GetDamage(target);
+            var RDMG = Lib.R.GetDamage(target);
             if (Menu.UseQ && QDMG > target.Health + target.AttackShield && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range) &&
                 Lib.Q.GetPrediction(target).HitChance >= EloBuddy.SDK.Enumerations.HitChance.Medium)
             {
@@ -80,6 +80,7 @@ namespace Modes
 
         internal static void AntiRengar(GameObject sender, EventArgs args)
         {
+            return;
             if (sender.IsAlly || Lib.W.IsReady()) return;
             var rengo = EntityManager.Heroes.Enemies.Where(x => x.Hero == Champion.Rengar);
             if (rengo.Count() > 0)
