@@ -7,7 +7,7 @@ namespace KaPoppy
 {
     class Settings : Helper
     {
-        public static Menu Menu, Combo, Harass, Laneclear, Jungleclear, Flee, Misc, WSettings, Items;
+        public static Menu Menu, Combo, Harass, Laneclear, Jungleclear, Flee, Misc, WSettings;
         public static void Init()
         {
             Menu = MainMenu.AddMenu("KaPoppy", "menu");
@@ -131,23 +131,6 @@ namespace KaPoppy
                     }
                 }
             }
-            ItemsMenu();
-        }
-        public  static void ItemsMenu()
-        {
-            Items = Menu.AddSubMenu("Item manager");
-
-            Items.AddGroupLabel("Combo");
-            Items.Add("ComboHydra", new CheckBox("Use Hydra/Tiamat"));
-
-            Items.AddGroupLabel("Harass");
-            Items.Add("HarassHydra", new CheckBox("Use Hydra/Tiamat", false));
-
-            Items.AddGroupLabel("Laneclear");
-            Items.Add("LaneclearHydra", new CheckBox("Use Hydra/Tiamat"));
-
-            Items.AddGroupLabel("Jungleclear");
-            Items.Add("JungleclearHydra", new CheckBox("Use Hydra/Tiamat"));
         }
         public static class ComboSettings
         {

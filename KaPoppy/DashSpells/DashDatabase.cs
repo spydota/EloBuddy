@@ -168,16 +168,6 @@ namespace DashSpells
                 enabled = true,
             });
             #endregion
-            #region JarvanIV
-            Dashes.Add(
-            new SpellData
-            {
-                champ = Champion.JarvanIV,
-                champname = "JarvanIV",
-                spellKey = SpellSlot.Q,
-                enabled = true,
-            });
-            #endregion
             #region Jax
             Dashes.Add(
             new SpellData

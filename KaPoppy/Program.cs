@@ -21,8 +21,8 @@ namespace KaPoppy
 
             CheckForUpdates();
             Settings.Init();
-            ItemManager.Init();
             DamageIndicator.Initialize(Extensions.GetComboDamage);
+            ItemManager.Init();
 
             var flash = myHero.Spellbook.Spells.Where(x => x.Name.ToLower().Contains("summonerflash"));
             SpellDataInst Flash = flash.Any() ? flash.First() : null;
