@@ -10,8 +10,6 @@ namespace KaPoppy
         public static Item Hydra, Tiamat;
         internal static void Init()
         {
-            Hydra = new Item(ItemId.Ravenous_Hydra_Melee_Only, 250);
-            Tiamat = new Item(ItemId.Tiamat_Melee_Only, 250);
 
             Orbwalker.OnPostAttack += Orbwalker_OnPostAttack;
         }
@@ -22,19 +20,9 @@ namespace KaPoppy
             {
                 if (Menu.UseHydra("Combo"))
                 {
-                    if (Hydra.IsOwned())
+                    if (HasHydra())
                     {
-                        if (Hydra.IsInRange(target.Position))
-                        {
-                            Hydra.Cast();
-                        }
-                    }
-                    else if (Tiamat.IsOwned())
-                    {
-                        if (Tiamat.IsInRange(target.Position))
-                        {
-                            Tiamat.Cast();
-                        }
+                        CastHydra();
                     }
                 }
             }
@@ -42,19 +30,9 @@ namespace KaPoppy
             {
                 if (Menu.UseHydra("Harass"))
                 {
-                    if (Hydra.IsOwned())
+                    if (HasHydra())
                     {
-                        if (Hydra.IsInRange(target.Position))
-                        {
-                            Hydra.Cast();
-                        }
-                    }
-                    else if (Tiamat.IsOwned())
-                    {
-                        if (Tiamat.IsInRange(target.Position))
-                        {
-                            Tiamat.Cast();
-                        }
+                        CastHydra();
                     }
                 }
             }
@@ -62,19 +40,9 @@ namespace KaPoppy
             {
                 if (Menu.UseHydra("Laneclear"))
                 {
-                    if (Hydra.IsOwned())
+                    if (HasHydra())
                     {
-                        if (Hydra.IsInRange(target.Position))
-                        {
-                            Hydra.Cast();
-                        }
-                    }
-                    else if (Tiamat.IsOwned())
-                    {
-                        if (Tiamat.IsInRange(target.Position))
-                        {
-                            Tiamat.Cast();
-                        }
+                        CastHydra();
                     }
                 }
             }
@@ -82,22 +50,23 @@ namespace KaPoppy
             {
                 if (Menu.UseHydra("Jungleclear"))
                 {
-                    if (Hydra.IsOwned())
+                    if (HasHydra())
                     {
-                        if (Hydra.IsInRange(target.Position))
-                        {
-                            Hydra.Cast();
-                        }
-                    }
-                    else if (Tiamat.IsOwned())
-                    {
-                        if (Tiamat.IsInRange(target.Position))
-                        {
-                            Tiamat.Cast();
-                        }
+                        CastHydra();
                     }
                 }
             }
+        }
+
+        public static bool HasHydra()
+        {
+            return Item.CanUseItem(3077) || Item.CanUseItem(3074) || Item.CanUseItem(3748);
+        }
+        public static void CastHydra()
+        {
+            Item.UseItem(3077);
+            Item.UseItem(3074);
+            Item.UseItem(3748);
         }
     }
 }
