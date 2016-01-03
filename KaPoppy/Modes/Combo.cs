@@ -35,8 +35,7 @@ namespace Modes
                 else
                     Lib.W.Cast();
             }
-            if (Menu.UseQ && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range) && Lib.Q.GetPrediction(target).HitChance >= EloBuddy.SDK.Enumerations.HitChance.High &&
-                (!Lib.CanStun(target) || !Lib.E.IsReady()))
+            if (Menu.UseQ && Lib.Q.IsReady() && target.IsValidTarget(Lib.Q.Range) && Lib.Q.GetPrediction(target).HitChance >= EloBuddy.SDK.Enumerations.HitChance.High && !Lib.CanStun(target, true))
             {
                 Lib.Q.Cast(Lib.Q.GetPrediction(target).CastPosition);
             }

@@ -149,13 +149,6 @@ namespace KaPoppy
             Items.AddGroupLabel("Jungleclear");
             Items.Add("JungleclearHydra", new CheckBox("Use Hydra/Tiamat"));
         }
-        public static class ItemsSettings
-        {
-            public static bool UseHydra(string mode)
-            {
-                return CastCheckbox(Items, mode + "Hydra");
-            }
-        }
         public static class ComboSettings
         {
             public static bool UsePassive

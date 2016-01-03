@@ -101,7 +101,7 @@ namespace Modes
         internal static void SpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
         {
             if (!Lib.W.IsReady() || !Menu.AntiGapcloser) return;
-            if (sender == null || !sender.IsEnemy || sender.IsMinion) return;
+            if (sender == null || !sender.IsEnemy || sender.IsMinion || (sender is AIHeroClient)) return;
             var enemy = (AIHeroClient)sender;
 
             if (Lib.W.IsInRange(args.End) || Lib.W.IsInRange(args.Start))

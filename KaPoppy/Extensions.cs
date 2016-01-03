@@ -94,7 +94,7 @@ namespace KaPoppy
             {
                 damage += Lib.R.GetDamage(target);
             }
-            if (Settings.ItemsSettings.UseHydra("Combo") && ItemManager.HasHydra())
+            if (ItemsSettings.UseHydra("Combo") && ItemManager.HasHydra())
             {
                 damage += Player.Instance.GetItemDamage(target, ItemId.Ravenous_Hydra_Melee_Only);
             }

@@ -4,12 +4,27 @@ using EloBuddy.SDK;
 
 namespace KaPoppy
 {
-    using Menu = Settings.ItemsSettings;
+    using EloBuddy.SDK.Menu;
+    using EloBuddy.SDK.Menu.Values;
+    using Config = ItemsSettings;
     internal class ItemManager
     {
-        public static Item Hydra, Tiamat;
+        public static Menu Items;
         internal static void Init()
         {
+            Items = Settings.Menu.AddSubMenu("Item manager");
+
+            Items.AddGroupLabel("Combo");
+            Items.Add("ComboHydra", new CheckBox("Use Hydra/Tiamat"));
+
+            Items.AddGroupLabel("Harass");
+            Items.Add("HarassHydra", new CheckBox("Use Hydra/Tiamat", false));
+
+            Items.AddGroupLabel("Laneclear");
+            Items.Add("LaneclearHydra", new CheckBox("Use Hydra/Tiamat"));
+
+            Items.AddGroupLabel("Jungleclear");
+            Items.Add("JungleclearHydra", new CheckBox("Use Hydra/Tiamat"));
 
             Orbwalker.OnPostAttack += Orbwalker_OnPostAttack;
         }
@@ -18,7 +33,7 @@ namespace KaPoppy
         {
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
             {
-                if (Menu.UseHydra("Combo"))
+                if (Config.UseHydra("Combo") && Player.Instance.Distance(target.Position) < 250)
                 {
                     if (HasHydra())
                     {
@@ -28,7 +43,7 @@ namespace KaPoppy
             }
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass))
             {
-                if (Menu.UseHydra("Harass"))
+                if (Config.UseHydra("Harass") && Player.Instance.Distance(target.Position) < 250)
                 {
                     if (HasHydra())
                     {
@@ -38,7 +53,7 @@ namespace KaPoppy
             }
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear))
             {
-                if (Menu.UseHydra("Laneclear"))
+                if (Config.UseHydra("Laneclear") && Player.Instance.Distance(target.Position) < 250)
                 {
                     if (HasHydra())
                     {
@@ -48,7 +63,7 @@ namespace KaPoppy
             }
             if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.JungleClear))
             {
-                if (Menu.UseHydra("Jungleclear"))
+                if (Config.UseHydra("Jungleclear") && Player.Instance.Distance(target.Position) < 250)
                 {
                     if (HasHydra())
                     {
@@ -67,6 +82,13 @@ namespace KaPoppy
             Item.UseItem(3077);
             Item.UseItem(3074);
             Item.UseItem(3748);
+        }
+    }
+    public class ItemsSettings : Helper
+    {
+        public static bool UseHydra(string mode)
+        {
+            return CastCheckbox(ItemManager.Items, mode + "Hydra");
         }
     }
 }

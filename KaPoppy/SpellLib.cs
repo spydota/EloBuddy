@@ -51,9 +51,11 @@ namespace KaPoppy
             return list;
         }
 
-        public static bool CanStun(AIHeroClient unit)
+        public static bool CanStun(AIHeroClient unit, bool ECheck = false)
         {
             if (unit.HasBuffOfType(BuffType.SpellImmunity) || unit.HasBuffOfType(BuffType.SpellShield) || Player.Instance.IsDashing()) return false;
+            if (ECheck && !E.IsReady()) return false;
+
             var prediction = Prediction.Position.PredictUnitPosition(unit, 400);
             var predictionsList = new List<Vector3>
                         {
