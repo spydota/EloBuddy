@@ -10,6 +10,7 @@ namespace KappaLeBlanc
         public static Spell.Skillshot W;
         public static Spell.Skillshot E;
         public static Spell.Targeted R;
+        public static float QlasTick;
 
         static Lib()
         {

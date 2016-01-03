@@ -20,11 +20,24 @@ namespace KappaLeBlanc
             CheckForUpdates();
             LBMenu.StartMenu();
             Lib.W.AllowedCollisionCount = int.MaxValue;
+            DamageIndicator.Initialize(Extensions.GetComboDamage);
             Game.OnUpdate += Game_OnUpdate;
             Drawing.OnDraw += Drawings;
             Gapcloser.OnGapcloser += Modes.AntiGapcloser.Execute;
             GameObject.OnCreate += ObjectOnCreate;
             GameObject.OnDelete += ObjectOnDelete;
+            Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
+        }
+
+        private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
+        {
+            if (sender.IsMe)
+            {
+                if (args.Slot == SpellSlot.Q)
+                    Lib.QlasTick = Environment.TickCount;
+                else if (args.Slot == SpellSlot.R && Lib.R.Name == "LeblancChaosOrbM")
+                    Lib.QlasTick = Environment.TickCount;
+            }
         }
 
         private static void ObjectOnDelete(GameObject sender, EventArgs args)
@@ -32,7 +45,6 @@ namespace KappaLeBlanc
             if (sender.Name == myHero.Name)
             {
                 Clone = null;
-                Chat.Print("Removed clone");
             }
             //if (sender.Name == "LeBlanc_Base_W_return_indicator.troy") { }
             //if (sender.Name == "LeBlanc_Base_RW_return_indicator.troy") { }
@@ -53,7 +65,6 @@ namespace KappaLeBlanc
             if (sender.Name == myHero.Name)
             {
                 Clone = sender;
-                Chat.Print("Added clone");
             }
             if (sender.Name.Contains("LeBlanc_Base_W_return_indicator.troy") || sender.Name.Contains("LeBlanc_Base_RW_return_indicator.troy"))
             {

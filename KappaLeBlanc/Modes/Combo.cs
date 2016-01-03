@@ -2,6 +2,7 @@
 using EloBuddy.SDK;
 using EloBuddy.SDK.Enumerations;
 using KappaLeBlanc;
+using System;
 namespace Modes
 {
     class Combo : Helper
@@ -18,7 +19,7 @@ namespace Modes
                 {
                     if (Lib.Q.IsReady())
                     {
-                        if (WReady || Lib.E.IsReady() || Lib.R.IsReady() || target.HasBuff("LeblancSoulShackle"))
+                        if (WReady || Lib.E.IsReady() || Lib.R.IsReady() || target.HasBuff("LeblancSoulShackle") || Lib.QlasTick < Environment.TickCount + 250 || myHero.Level == 1)
                         {
                             if (target.IsValidTarget(Lib.Q.Range))
                             {
@@ -56,7 +57,7 @@ namespace Modes
                         {
                             if (Lib.W.IsInRange(target))
                             {
-                                if (target.HasBuff("LeblancChaosOrb") || target.HasBuff("LeblancSoulShackle"))
+                                if (target.HasBuff("LeblancChaosOrb") || target.HasBuff("LeblancSoulShackle") || myHero.Level == 1)
                                 {
                                     Lib.CastW(target);
                                 }
@@ -66,7 +67,7 @@ namespace Modes
                 }
                 if (CastCheckbox(ComboM, "E"))
                 {
-                    if (Lib.E.IsReady())
+                    if (Lib.E.IsReady() && (!WReady || myHero.Level == 1))
                     {
                         var epred = Lib.E.GetPrediction(target);
 
@@ -84,7 +85,7 @@ namespace Modes
                         {
                             if (Lib.R.Name == "LeblancChaosOrbM") // Q
                             {
-                                if (Lib.Q.IsReady() || WReady || Lib.E.IsReady() || target.HasBuff("LeblancSoulShackle") || target.HasBuff("LeblancChaosOrb"))
+                                if (Lib.Q.IsReady() || WReady || Lib.E.IsReady() || target.HasBuff("LeblancSoulShackle") || target.HasBuff("LeblancChaosOrb") || Lib.QlasTick < Environment.TickCount + 250)
                                 {
                                     Lib.CastR(target);
                                 }

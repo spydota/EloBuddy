@@ -57,6 +57,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DamageIndicator.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="Modes\CloneControl.cs" />
     <Compile Include="Modes\Combo.cs" />
     <Compile Include="Modes\Harass.cs" />
