@@ -45,19 +45,7 @@ namespace KaPoppy
             }
             return false;
         }
-        public static float GetDamage(this Spell.Active spell, Obj_AI_Base target)
-        {
-            return spell.Slot.GetDamage(target);
-        }
-        public static float GetDamage(this Spell.Chargeable spell, Obj_AI_Base target)
-        {
-            return spell.Slot.GetDamage(target);
-        }
-        public static float GetDamage(this Spell.Skillshot spell, Obj_AI_Base target)
-        {
-            return spell.Slot.GetDamage(target);
-        }
-        public static float GetDamage(this Spell.Targeted spell, Obj_AI_Base target)
+        public static float GetDamage(this Spell.SpellBase spell, Obj_AI_Base target)
         {
             return spell.Slot.GetDamage(target);
         }
