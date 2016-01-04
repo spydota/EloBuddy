@@ -8,22 +8,19 @@ namespace Modes
     {
         public static void Execute()
         {
-            var _Q = CastCheckbox(LBMenu.LCM, "Q") && Lib.Q.IsReady(); var manaQ = CastSlider(LBMenu.LCM, "QMana") < myHero.ManaPercent;
-            var _W = CastCheckbox(LBMenu.LCM, "W") && Lib.W.IsReady(); var manaW = CastSlider(LBMenu.LCM, "WMana") < myHero.ManaPercent;
+            var _Q = CastCheckbox(LBMenu.LCM, "Q") && Lib.Q.IsReady() && CastSlider(LBMenu.LCM, "QMana") < myHero.ManaPercent;
+            var _W = CastCheckbox(LBMenu.LCM, "W") && Lib.W.IsReady() && CastSlider(LBMenu.LCM, "WMana") < myHero.ManaPercent;
             var _R = CastCheckbox(LBMenu.LCM, "R") && Lib.R.IsReady() && Lib.R.Name == "LeblancSlideM";
 
             if (_W)
             {
-                if (manaW)
+                var minions = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy, myHero.ServerPosition, Lib.W.Range);
+                if (minions != null)
                 {
-                    var minions = EntityManager.MinionsAndMonsters.GetLaneMinions(EntityManager.UnitTeam.Enemy, myHero.ServerPosition, Lib.W.Range);
-                    if (minions != null)
+                    var Wminions = EntityManager.MinionsAndMonsters.GetCircularFarmLocation(minions, Lib.W.Width, (int)Lib.W.Range);
+                    if (CastSlider(LBMenu.LCM, "WMin") <= Wminions.HitNumber)
                     {
-                        var Wminions = EntityManager.MinionsAndMonsters.GetCircularFarmLocation(minions, Lib.W.Width, (int)Lib.W.Range);
-                        if (CastSlider(LBMenu.LCM, "WMin") <= Wminions.HitNumber)
-                        {
-                            Lib.CastW(Wminions.CastPosition);
-                        }
+                        Lib.CastW(Wminions.CastPosition);
                     }
                 }
             }
@@ -41,15 +38,12 @@ namespace Modes
             }
             if (_Q)
             {
-                if (manaQ)
+                var Qminion = EntityManager.MinionsAndMonsters.EnemyMinions.FirstOrDefault(minion => minion.Health < myHero.GetSpellDamage(minion, SpellSlot.Q)
+                && myHero.Distance(minion) <= Lib.Q.Range
+                && minion.IsEnemy);
+                if (Qminion != null)
                 {
-                    var Qminion = ObjectManager.Get<Obj_AI_Minion>().FirstOrDefault(minion => minion.Health < myHero.GetSpellDamage(minion, SpellSlot.Q)
-                    && myHero.Distance(minion) <= Lib.Q.Range
-                    && minion.IsEnemy);
-                    if (Qminion != null)
-                    {
-                        Lib.Q.Cast(Qminion);
-                    }
+                    Lib.Q.Cast(Qminion);
                 }
             }
             if (CastCheckbox(LBMenu.LCM, "W2"))
@@ -60,5 +54,5 @@ namespace Modes
                 }
             }
         }
-    }    
+    }
 }

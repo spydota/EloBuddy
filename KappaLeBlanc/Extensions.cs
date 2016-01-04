@@ -81,6 +81,8 @@ namespace KappaLeBlanc
                     switch(Lib.R.Name)
                     {
                         case "LeblancChaosOrbM":
+                            damage = new float[] { 100, 200, 300 }[spellLevel] + 0.6f * Player.Instance.TotalMagicalDamage;
+                            break;
                         case "LeblancSoulShackleM":
                             damage = new float[] { 100, 200, 300 }[spellLevel] + 0.6f * Player.Instance.TotalMagicalDamage;
                             break;

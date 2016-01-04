@@ -71,7 +71,7 @@ namespace KappaLeBlanc
             KSM = Menu.AddSubMenu("Killsteal", "ks");
             KSM.Add("Q", new CheckBox("Use Q KS"));
             KSM.Add("W", new CheckBox("Use W KS"));
-            KSM.Add("extW", new CheckBox("Use extended W to KS (W + Q or E)"));
+            KSM.Add("extW", new CheckBox("Use extended W (or R) to KS (W + Q or E)"));
             KSM.Add("wr", new CheckBox("Use W+R + Q/E to KS"));
             KSM.Add("E", new CheckBox("Use E KS"));
             KSM.Add("R", new CheckBox("Use R KS"));

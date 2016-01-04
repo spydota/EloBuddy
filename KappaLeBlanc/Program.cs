@@ -27,13 +27,26 @@ namespace KappaLeBlanc
             GameObject.OnCreate += ObjectOnCreate;
             GameObject.OnDelete += ObjectOnDelete;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
-            Obj_AI_Base.OnBuffGain += Obj_AI_Base_OnBuffGain;
         }
-
-        private static void Obj_AI_Base_OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs args)
+        private static void Game_OnUpdate(EventArgs args)
         {
-            if (sender.IsEnemy)
-                Chat.Print("{0}", args.Buff.Name, Color.White);
+            if (myHero.IsDead) return;
+
+            Modes.Killsteal.Execute();
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
+                Modes.Combo.Execute();
+
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear))
+                Modes.Laneclear.Execute();
+
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
+                Modes.Flee.Execute();
+
+            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass) || LBMenu.HSM["Auto"].Cast<KeyBind>().CurrentValue)
+                Modes.Harass.Execute();
+
+            if (CastCheckbox(LBMenu.Misc, "Clone"))
+                Modes.CloneControl.Execute();
         }
 
         private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
@@ -139,26 +152,6 @@ namespace KappaLeBlanc
                 var pos = Drawing.WorldToScreen(myHero.ServerPosition);
                 Drawing.DrawText(pos - new Vector2(-45, 30), Color.White, "Harass ON", 9);
             }
-        }
-        private static void Game_OnUpdate(EventArgs args)
-        {
-            if (myHero.IsDead) return;
-
-            Modes.Killsteal.Execute();
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Combo))
-                Modes.Combo.Execute();
-
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.LaneClear))
-                Modes.Laneclear.Execute();
-
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Flee))
-                Modes.Flee.Execute();
-
-            if (Orbwalker.ActiveModesFlags.HasFlag(Orbwalker.ActiveModes.Harass) || LBMenu.HSM["Auto"].Cast<KeyBind>().CurrentValue)
-                Modes.Harass.Execute();
-
-            if (CastCheckbox(LBMenu.Misc, "Clone"))
-                Modes.CloneControl.Execute();
         }
     }    
 }
