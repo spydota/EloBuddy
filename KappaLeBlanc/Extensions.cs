@@ -45,6 +45,10 @@ namespace KappaLeBlanc
             }
             return false;
         }
+        public static float GetCooldown(this Spell.SpellBase spell)
+        {
+            return spell.Handle.CooldownExpires - Game.Time;
+        }
         public static float GetDamage(this Spell.SpellBase spell, Obj_AI_Base target)
         {
             return spell.Slot.GetDamage(target);
@@ -91,9 +95,12 @@ namespace KappaLeBlanc
         public static float GetComboDamage(this AIHeroClient target)
         {
             float damage = 0;
+
             var WReady = ObjectManager.Player.Spellbook.GetSpell(SpellSlot.W).Name != "leblancslidereturn" && Lib.W.IsReady();
             var RReady = Lib.R.Name.Equals("LeblancChaosOrbM") || Lib.R.Name.Equals("LeblancSoulShackleM") || Lib.R.Name.Equals("LeblancSlideM");
+
             damage += Player.Instance.GetAutoAttackDamage(target);
+
             if (Helper.CastCheckbox(LBMenu.ComboM, "Q") && Lib.Q.IsReady())
             {
                 if (

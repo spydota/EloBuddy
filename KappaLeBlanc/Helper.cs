@@ -24,28 +24,6 @@ namespace KappaLeBlanc
         public static GameObject Clone = null;
 
         public static AIHeroClient myHero { get { return Player.Instance; } }
-
-        public static float ComboDamage(AIHeroClient hero)
-        {
-            double damage = 0;
-            if (Lib.Q.IsReady() && CastCheckbox(LBMenu.ComboM, "Q"))
-            {
-                damage += myHero.GetSpellDamage(hero, SpellSlot.Q);
-            }
-            if (Lib.W.IsReady() && CastCheckbox(LBMenu.ComboM, "W"))
-            {
-                damage += myHero.GetSpellDamage(hero, SpellSlot.W);
-            }
-            if (Lib.E.IsReady() && CastCheckbox(LBMenu.ComboM, "E"))
-            {
-                damage += myHero.GetSpellDamage(hero, SpellSlot.W);
-            }
-            if (Lib.R.IsReady() && CastCheckbox(LBMenu.ComboM, "R"))
-            {
-                damage += myHero.GetSpellDamage(hero, SpellSlot.R);
-            }
-            return (float)damage;
-        }
         public static void CheckForUpdates()
         {
             string RawVersion = new WebClient().DownloadString("https://raw.githubusercontent.com/Phandaros/EloBuddy/master/" + Assembly.GetExecutingAssembly().GetName().Name + "/Properties/AssemblyInfo.cs");

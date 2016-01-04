@@ -33,7 +33,6 @@ namespace KappaLeBlanc
             DrawM.Add("WPos", new CheckBox("Draw W Position", false));
             DrawM.Add("E", new CheckBox("Draw E range", false));
             DrawM.AddSeparator();
-            DrawM.Add("text", new CheckBox("Draw text on killable target"));
             DrawM.Add("line", new CheckBox("Draw line to killable target"));
             DrawM.Add("dist", new Slider("Max line distance", 1000, 500, 3000));   
 

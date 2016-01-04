@@ -70,7 +70,7 @@
     <Compile Include="Helper.cs" />
     <Compile Include="Slide.cs" />
     <Compile Include="SpellLib.cs" />
-    <Compile Include="KappaLeBlanc.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

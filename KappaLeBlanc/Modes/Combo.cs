@@ -19,7 +19,8 @@ namespace Modes
                 {
                     if (Lib.Q.IsReady())
                     {
-                        if (WReady || Lib.E.IsReady() || Lib.R.IsReady() || target.HasBuff("LeblancSoulShackle") || Lib.QlasTick < Environment.TickCount + 250 || myHero.Level == 1)
+                        if (WReady || Lib.E.IsReady() || Lib.R.IsReady() || target.HasBuff("LeblancSoulShackle") || Lib.QlasTick > Environment.TickCount || myHero.Level == 1 ||
+                            target.HasBuff("LeblancChaosOrbM") || (Lib.W.GetCooldown() > 0 && Lib.W.GetCooldown() < 4) || (Lib.E.GetCooldown() > 0 && Lib.E.GetCooldown() < 4))
                         {
                             if (target.IsValidTarget(Lib.Q.Range))
                             {
@@ -57,7 +58,7 @@ namespace Modes
                         {
                             if (Lib.W.IsInRange(target))
                             {
-                                if (target.HasBuff("LeblancChaosOrb") || target.HasBuff("LeblancSoulShackle") || myHero.Level == 1)
+                                if (target.HasBuff("LeblancChaosOrb") || target.HasBuff("LeblancSoulShackle") || myHero.Level == 1 || target.HasBuff("LeblancChaosOrbM") || target.HasBuff("LeblancSoulShackleM") || Lib.QlasTick > Environment.TickCount)
                                 {
                                     Lib.CastW(target);
                                 }
@@ -85,7 +86,8 @@ namespace Modes
                         {
                             if (Lib.R.Name == "LeblancChaosOrbM") // Q
                             {
-                                if (Lib.Q.IsReady() || WReady || Lib.E.IsReady() || target.HasBuff("LeblancSoulShackle") || target.HasBuff("LeblancChaosOrb") || Lib.QlasTick < Environment.TickCount + 250)
+                                if (WReady || Lib.E.IsReady() || Lib.Q.IsReady() || target.HasBuff("LeblancSoulShackle") || Lib.QlasTick > Environment.TickCount || target.HasBuff("LeblancChaosOrb") || (Lib.W.GetCooldown() > 0 && Lib.W.GetCooldown() <= 4) || (Lib.E.GetCooldown() > 0 && Lib.E.GetCooldown() <= 4)
+                                    )
                                 {
                                     Lib.CastR(target);
                                 }

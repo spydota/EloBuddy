@@ -27,6 +27,13 @@ namespace KappaLeBlanc
             GameObject.OnCreate += ObjectOnCreate;
             GameObject.OnDelete += ObjectOnDelete;
             Obj_AI_Base.OnProcessSpellCast += Obj_AI_Base_OnProcessSpellCast;
+            Obj_AI_Base.OnBuffGain += Obj_AI_Base_OnBuffGain;
+        }
+
+        private static void Obj_AI_Base_OnBuffGain(Obj_AI_Base sender, Obj_AI_BaseBuffGainEventArgs args)
+        {
+            if (sender.IsEnemy)
+                Chat.Print("{0}", args.Buff.Name, Color.White);
         }
 
         private static void Obj_AI_Base_OnProcessSpellCast(Obj_AI_Base sender, GameObjectProcessSpellCastEventArgs args)
@@ -34,9 +41,9 @@ namespace KappaLeBlanc
             if (sender.IsMe)
             {
                 if (args.Slot == SpellSlot.Q)
-                    Lib.QlasTick = Environment.TickCount;
+                    Lib.QlasTick = Environment.TickCount + 500;
                 else if (args.Slot == SpellSlot.R && Lib.R.Name == "LeblancChaosOrbM")
-                    Lib.QlasTick = Environment.TickCount;
+                    Lib.QlasTick = Environment.TickCount + 500;
             }
         }
 
@@ -96,13 +103,8 @@ namespace KappaLeBlanc
             var target = TargetSelector.GetTarget(Lib.E.Range, DamageType.Magical);
             if (target != null && !target.IsDead)
             {
-                if (ComboDamage(target) > target.Health)
+                if (target.GetComboDamage() > target.Health)
                 {
-                    if (CastCheckbox(LBMenu.DrawM, "text"))
-                    {
-                        Drawing.DrawText(target.Position.WorldToScreen(), Color.White, "Killable enemy!", 9);
-                    }
-
                     if (CastCheckbox(LBMenu.DrawM, "line"))
                     {
                         if (CastSlider(LBMenu.DrawM, "dist") >= myHero.Distance(target))
